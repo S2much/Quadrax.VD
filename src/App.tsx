@@ -44,9 +44,9 @@ function App() {
         </h1>
         <button 
           onClick={toggleChatbot}
-          className="bg-[#00beef] text-black px-3 py-2 text-lg md:text-2xl font-bold flex items-center gap-2 rounded-lg hover:bg-[#00a8d6] transition-colors duration-300"
+          className="bg-[#00beef] text-black px-3 py-2 text-lg md:text-2xl font-bold flex items-center gap-2 hover:bg-[#00a8d6] transition-colors duration-300"
         >
-          <Bot size={24} className="md:w-10 md:h-10" />
+          <Bot size={28} className="md:w-10 md:h-10" />
           <span className="hidden md:inline">QUADRAX_AI</span>
         </button>
       </header>

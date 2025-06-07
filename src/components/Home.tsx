@@ -146,7 +146,7 @@ export default function Home() {
           {/* Navigation Buttons */}
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-[#00699a] text-white p-3 rounded-full transition-all duration-300 z-20"
+            className="absolute left-4 top-1/2 w-10 transform -translate-y-1/2 bg-black/50 hover:bg-[#00699a] text-white p-3 rounded-full transition-all duration-300 z-20"
           >
             <ChevronLeft size={24} />
           </button>
