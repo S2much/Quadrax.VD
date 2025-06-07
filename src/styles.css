@@ -31,30 +31,10 @@ h1 {
 nav {
     height: 90vh;
     background: #000;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: inline-block;
     position: relative;
     left: 0;
     width: 20vw;
-
-}
-button {
-    border: none;
-    color: #fff;
-    font-size: 1.2rem;
-    background: transparent;
-    width: 40%;
-    display: flex;
-    justify-content: space-between;
-    text-align: left;
-    align-items: center;
-}
-#AI {
-    width: 20%;
-    font-size: 2.1rem;
-    color: #00beef;
-    font-weight: 700;
 }
 hr {
     border: none;
@@ -137,12 +117,6 @@ main {
 #welcomeSlogan {
     color: #0cf;
     font-size: 2.5rem;
-}
-#card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 30px;
-    margin: 20px;
 }
 #card {
     background: linear-gradient(#000, #000, #004667);
