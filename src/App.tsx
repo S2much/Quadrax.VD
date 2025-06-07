@@ -5,6 +5,9 @@ import Workshop from './components/Workshop';
 import VirtualMachines from './components/VirtualMachines';
 import Home from './components/Home';
 import Chatbot from './components/Chatbot';
+import Datakits from './components/Datakits';
+import Codesheets from './components/Codesheets';
+import Pipelines from './components/Pipelines';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -62,6 +65,9 @@ function App() {
           {currentPage === 'home' && <Home />}
           {currentPage === 'workshops' && <Workshop />}
           {currentPage === 'vms' && <VirtualMachines />}
+          {currentPage === 'datakits' && <Datakits />}
+          {currentPage === 'notebooks' && <Codesheets />}
+          {currentPage === 'pipelines' && <Pipelines />}
           
           {/* Other components will be rendered here based on currentPage */}
         </div>
