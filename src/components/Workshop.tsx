@@ -1,8 +1,6 @@
-
 import { Plus, Terminal, Code } from 'lucide-react';
 
 function Workshop() {
-
   const workstations = [
     {
       id: 1,
@@ -14,95 +12,99 @@ function Workshop() {
   ];
 
   return (
-    <section className="h-[90vh] p-6">
+    <section className="p-6 min-h-screen">
       <div className="text-white mb-6">
-        <h2 className="text-3xl font-bold text-white [text-shadow:2px_2px_2px_#000] bg-[#00000055] p-2">
+        <h2 className="text-3xl font-bold text-white [text-shadow:2px_2px_2px_#000] bg-black/30 p-4 rounded-lg">
           Workshop
         </h2>
-        <hr className="border-none bg-black h-[2px] w-full my-4" />
+        <hr className="border-none bg-[#00beef] h-[2px] w-full my-4" />
       </div>
 
-      <div className="bg-black p-4 mt-6">
-        <div className="flex justify-between items-center mb-4">
-          <h4 className="text-2xl text-white font-normal w-3/5 border-r-2 border-b-2 border-[#00699a] p-2">
+      <div className="bg-black/80 backdrop-blur-sm p-6 rounded-lg shadow-2xl">
+        <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+          <h4 className="text-2xl text-white font-normal flex-1 border-r-2 border-b-2 border-[#00699a] p-2">
             Workstations
           </h4>
-          <div className="space-x-2">
-            <button className="text-white  border-white p-2 bg-black italic">
+          <div className="flex gap-2">
+            <button className="text-white border border-[#00699a] px-4 py-2 bg-black/50 rounded hover:bg-[#00699a] transition-colors duration-300">
               Import
             </button>
-            <button className="text-white  border-white p-2 bg-black italic">
+            <button className="text-white border border-[#00699a] px-4 py-2 bg-black/50 rounded hover:bg-[#00699a] transition-colors duration-300">
               Export
             </button>
           </div>
-          <div className="space-x-2">
-              <button className="text-[#15b0f8] border-2 border-[#00beef] p-2 rounded bg-black italic flex items-center gap-2">
-                <Code size={20} /> Open VScode
-              </button>
-              <button className="text-[#15b0f8] border-2 border-[#00beef] p-2 rounded bg-black italic flex items-center gap-2">
-                <Terminal size={20} /> Open Terminal
-              </button>
-            </div>
+          <div className="flex gap-2">
+            <button className="text-[#00beef] border-2 border-[#00beef] px-4 py-2 rounded bg-black/50 flex items-center gap-2 hover:bg-[#00699a] hover:text-white transition-all duration-300">
+              <Code size={20} /> VSCode
+            </button>
+            <button className="text-[#00beef] border-2 border-[#00beef] px-4 py-2 rounded bg-black/50 flex items-center gap-2 hover:bg-[#00699a] hover:text-white transition-all duration-300">
+              <Terminal size={20} /> Terminal
+            </button>
+          </div>
         </div>
 
-        <div className="w-4/5">
-          <ul className="flex gap-2 p-2 mb-4">
+        <div className="overflow-x-auto">
+          <ul className="flex gap-2 p-2 mb-4 flex-wrap">
             {['Edit', 'Train', 'Evaluate', 'Extract', 'Delete'].map((action) => (
-              <li key={action} className="px-5 py-2 border border-[#00beef] rounded-lg text-white">
+              <li key={action} className="px-4 py-2 border border-[#00beef] rounded-lg text-white hover:bg-[#00699a] cursor-pointer transition-colors duration-300">
                 {action}
               </li>
             ))}
           </ul>
 
-          <table className="w-full text-left">
-            <thead>
-              <tr>
-                <th className="p-2 bg-[#004667]">#</th>
-                <th className="p-2 bg-[#004667] w-1/2">Name</th>
-                <th className="p-2 bg-[#004667] w-1/4">Date created</th>
-                <th className="p-2 bg-[#004667]">Age</th>
-                <th className="p-2 bg-[#004667]">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {workstations.map(ws => (
-                <tr key={ws.id}>
-                  <td className="p-2 bg-[#00151f]">{ws.id}</td>
-                  <td className="p-2 bg-[#00151f]">{ws.name}</td>
-                  <td className="p-2 bg-[#00151f]">{ws.dateCreated}</td>
-                  <td className="p-2 bg-[#00151f]">{ws.age}</td>
-                  <td className="p-2 bg-[#00151f]">{ws.status}</td>
+          <div className="bg-black/50 rounded-lg overflow-hidden">
+            <table className="w-full text-left">
+              <thead>
+                <tr>
+                  <th className="p-3 bg-[#004667] text-white">#</th>
+                  <th className="p-3 bg-[#004667] text-white">Name</th>
+                  <th className="p-3 bg-[#004667] text-white">Date Created</th>
+                  <th className="p-3 bg-[#004667] text-white">Age</th>
+                  <th className="p-3 bg-[#004667] text-white">Status</th>
                 </tr>
-              ))}
-              {[...Array(3)].map((_, i) => (
-                <tr key={`empty-${i}`}>
-                  <td className="p-2 bg-[#00151f]">---</td>
-                  <td className="p-2 bg-[#00151f]">---</td>
-                  <td className="p-2 bg-[#00151f]">---</td>
-                  <td className="p-2 bg-[#00151f]">---</td>
-                  <td className="p-2 bg-[#00151f]">---</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {workstations.map(ws => (
+                  <tr key={ws.id} className="hover:bg-[#00699a]/20 transition-colors duration-300">
+                    <td className="p-3 text-white">{ws.id}</td>
+                    <td className="p-3 text-white font-medium">{ws.name}</td>
+                    <td className="p-3 text-white">{ws.dateCreated}</td>
+                    <td className="p-3 text-white">{ws.age}</td>
+                    <td className="p-3">
+                      <span className="px-2 py-1 bg-green-600 text-white rounded-full text-sm">
+                        {ws.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                {[...Array(3)].map((_, i) => (
+                  <tr key={`empty-${i}`} className="opacity-50">
+                    <td className="p-3 text-gray-400">---</td>
+                    <td className="p-3 text-gray-400">---</td>
+                    <td className="p-3 text-gray-400">---</td>
+                    <td className="p-3 text-gray-400">---</td>
+                    <td className="p-3 text-gray-400">---</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div className="bg-gradient-to-b from-black via-black to-[#005778] mt-6 p-4">
-          <div className="flex justify-between items-center mb-4">
-            <h4 className="text-2xl text-white font-normal w-3/5 border-r-2 border-b-2 border-[#00699a] p-2">
-              Create a workstation
-            </h4>
-          </div>
+        <div className="bg-gradient-to-b from-black via-black to-[#005778] mt-8 p-6 rounded-lg">
+          <h4 className="text-2xl text-white font-normal mb-6 border-b-2 border-[#00699a] pb-2">
+            Create a Workstation
+          </h4>
 
-          <form className="w-1/2 mx-auto bg-gradient-to-b from-[#005778] via-black to-black border border-[#00beef] rounded-lg p-5 flex flex-col items-center mt-5">
+          <form className="max-w-md mx-auto bg-gradient-to-b from-[#005778] via-black to-black border border-[#00beef] rounded-lg p-6 flex flex-col items-center">
             <button 
               type="button"
-              className="w-24 text-4xl font-medium text-white border-2 border-[#00beef] bg-black rounded-lg mb-3"
+              className="w-20 h-20 text-4xl font-medium text-white border-2 border-[#00beef] bg-black rounded-lg mb-4 hover:bg-[#00699a] transition-all duration-300 flex items-center justify-center"
             >
               <Plus />
             </button>
-            <label className="text-2xl text-white">Initialize workstation</label>
-            <p className="text-white text-center mt-2">
+            <label className="text-xl text-white mb-3">Initialize Workstation</label>
+            <p className="text-white text-center text-sm leading-relaxed">
               Create and setup a dataset configuration tool, database, pipeline, training environment, model and more.
             </p>
           </form>

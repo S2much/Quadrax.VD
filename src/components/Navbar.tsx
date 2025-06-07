@@ -1,4 +1,4 @@
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface NavItem {
   id: string;
@@ -11,12 +11,23 @@ interface NavbarProps {
   bottomNavItems: NavItem[];
   currentPage: string;
   setCurrentPage: (page: string) => void;
+  isCollapsed: boolean;
+  setIsCollapsed: (collapsed: boolean) => void;
 }
 
-function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage }: NavbarProps) {
+function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isCollapsed, setIsCollapsed }: NavbarProps) {
   return (
-    <nav className="h-[90vh] bg-black flex flex-col">
-      <ul className="list-none m-0 p-0 flex flex-col">
+    <nav className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-black flex flex-col transition-all duration-300 z-40 ${isCollapsed ? 'w-16' : 'w-64'}`}>
+      <div className="flex justify-end p-2">
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="text-white hover:bg-[#00699a] p-1 rounded transition-colors duration-300"
+        >
+          {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+        </button>
+      </div>
+
+      <ul className="list-none m-0 p-0 flex flex-col flex-1">
         {navItems.map((item) => (
           <li 
             key={item.id}
@@ -26,10 +37,11 @@ function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage }: Navba
           >
             <button
               onClick={() => setCurrentPage(item.id)}
-              className="w-full p-3 flex items-center gap-3 text-white"
+              className={`w-full p-3 flex items-center text-white ${isCollapsed ? 'justify-center' : 'gap-3'}`}
+              title={isCollapsed ? item.label : ''}
             >
               <item.icon size={20} />
-              {item.label}
+              {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
             </button>
           </li>
         ))}
@@ -44,10 +56,11 @@ function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage }: Navba
             >
               <button
                 onClick={() => setCurrentPage(item.id)}
-                className="w-full p-3 flex items-center gap-3 text-white"
+                className={`w-full p-3 flex items-center text-white ${isCollapsed ? 'justify-center' : 'gap-3'}`}
+                title={isCollapsed ? item.label : ''}
               >
                 <item.icon size={20} />
-                {item.label}
+                {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
               </button>
             </li>
           ))}
@@ -58,4 +71,4 @@ function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage }: Navba
   );
 }
 
-export default Navbar
+export default Navbar;

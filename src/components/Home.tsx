@@ -1,30 +1,191 @@
+import { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+const cardData = [
+  { 
+    title: 'Workshops', 
+    desc: 'Organize your projects with dedicated workspaces. Create new workstations, initialize, organize, evaluate, train and deploy ML models for AI development and Automation systems',
+    doodle: '🔬',
+    pattern: 'workshop'
+  },
+  { 
+    title: 'Datakits', 
+    desc: 'Manage and explore your datasets efficiently with powerful tools and visualizations.',
+    doodle: '📊',
+    pattern: 'data'
+  },
+  { 
+    title: 'Codesheets', 
+    desc: 'Interactive notebooks for data analysis and model training with real-time collaboration.',
+    doodle: '📝',
+    pattern: 'code'
+  },
+  { 
+    title: 'Virtual Machines', 
+    desc: 'Configure virtual machines and run compute clusters and automation pipelines.',
+    doodle: '💻',
+    pattern: 'vm'
+  },
+  { 
+    title: 'Models', 
+    desc: 'Deploy and manage your machine learning models with advanced monitoring.',
+    doodle: '🤖',
+    pattern: 'model'
+  }, 
+  { 
+    title: 'Documentation', 
+    desc: 'Learn more about Quadrax•ML with comprehensive guides and tutorials.',
+    doodle: '📚',
+    pattern: 'docs'
+  }
+];
+
 export default function Home() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % cardData.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [isAutoPlaying]);
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % cardData.length);
+    setIsAutoPlaying(false);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + cardData.length) % cardData.length);
+    setIsAutoPlaying(false);
+  };
+
+  const getCardIndex = (offset: number) => {
+    return (currentIndex + offset + cardData.length) % cardData.length;
+  };
+
+  const getPatternClass = (pattern: string) => {
+    const patterns = {
+      workshop: 'bg-[radial-gradient(circle_at_20%_50%,_rgba(0,190,239,0.1)_0%,_transparent_50%),_radial-gradient(circle_at_80%_20%,_rgba(0,105,154,0.1)_0%,_transparent_50%)]',
+      data: 'bg-[radial-gradient(circle_at_30%_40%,_rgba(0,190,239,0.1)_0%,_transparent_50%),_linear-gradient(45deg,_rgba(0,105,154,0.05)_25%,_transparent_25%)]',
+      code: 'bg-[repeating-linear-gradient(45deg,_rgba(0,190,239,0.05)_0px,_rgba(0,190,239,0.05)_2px,_transparent_2px,_transparent_10px)]',
+      vm: 'bg-[radial-gradient(ellipse_at_center,_rgba(0,190,239,0.1)_0%,_transparent_70%)]',
+      model: 'bg-[conic-gradient(from_0deg_at_50%_50%,_rgba(0,190,239,0.1)_0deg,_transparent_60deg,_rgba(0,105,154,0.1)_120deg,_transparent_180deg)]',
+      docs: 'bg-[linear-gradient(90deg,_rgba(0,190,239,0.05)_50%,_transparent_50%),_linear-gradient(0deg,_rgba(0,105,154,0.05)_50%,_transparent_50%)]'
+    };
+    return patterns[pattern as keyof typeof patterns] || patterns.workshop;
+  };
+
   return (
-    <div id="hero" className="bg-gradient-to-b from-[#00beef] to-black  text-white min-h-screen overflow-hidden">
+    <div className="bg-gradient-to-b from-[#00beef] to-black text-white min-h-screen overflow-hidden">
       {/* Hero */}
-      <section id="welcomeSec" className="text-center py-16 px-4 bg-gradient-to-b from-black to-[#008aab]">
-        <h1 id="welcomeNote"  className="text-5xl font-extrabold mb-6 text-white [text-shadow:2px_2px_2px_#000]">Welcome to QUADRAX•ML!</h1>
-        <p id="welcomeSlogan" className="text-4xl font-bold text-white mb-8 [text-shadow:2px_2px_2px_#000]">Simplicity in complexity</p>
-        <input id="signup" className="bg-[#00beef-500 hover:bg-cyan-400 text-black text-3xl font-bold py-2 px-6 [border:5px_solid_#000] rounded-sm transition duration-300 [text-shadow:2px_2px_4px_#00beef,_-2px_-2px_4px_#00beef,_2px_-2px_4px_#00beef,_-2px_2px_4px_#00beef]" type="button" value="Get Started"/>
+      <section className="text-center py-16 px-4 bg-gradient-to-b from-black to-[#008aab]">
+        <h1 className="text-3xl md:text-5xl font-extrabold mb-6 text-white [text-shadow:2px_2px_2px_#000]">
+          Welcome to QUADRAX•ML!
+        </h1>
+        <p className="text-2xl md:text-4xl font-bold text-white mb-8 [text-shadow:2px_2px_2px_#000]">
+          Simplicity in complexity
+        </p>
+        <button className="bg-black hover:bg-[#00699a] text-[#00beef] text-xl md:text-3xl font-bold py-3 px-8 border-4 border-[#00beef] rounded-lg transition-all duration-300 hover:scale-105 [text-shadow:1px_1px_2px_rgba(0,190,239,0.5)]">
+          Get Started
+        </button>
       </section>
 
-      {/* Explore */}
-      <section className="px-6 py-3">
-        <h2 id="explore" className="text-3xl font-bold mb-8 text-cyan-200">Explore</h2>
-        <div  id="card-grid"className="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-4 gap-8">
-          {[
-            { title: 'Workshops', desc: 'Organize your projects with dedicated workspaces. Create new workstations, initialize, organize, evaluate, train and deploy ML models for AI development and Automation systems' },
-            { title: 'Datakits', desc: 'Manage and explore your datasets efficiently.' },
-            { title: 'Codesheets', desc: 'Interactive notebooks for data analysis and model training.' },
-            { title: 'Virtual Machines', desc: 'Configure virtuals machine and run compute clusters and automation pipelines.' },
-            { title: 'Models', desc: 'Deploy and manage your machine learning models.' }, 
-            { title: 'Documentation', desc: 'Learn more about Quadrax•ML.' }
-          ].map((card, i) => (
-            <div id="card" key={i} className="bg-gradient-to-b from-black to-[#005778] rounded-m p-6 hover:shadow-lg hover:shadow-cyan-500/30 transition">
-              <h3 id="card-title" className="text-4xl font-bold text-white mb-2">{card.title}</h3>
-              <p id="card-description" className="text-lg text-white">{card.desc}</p>
+      {/* Slideshow */}
+      <section className="px-6 py-12 relative">
+        <h2 className="text-3xl font-bold mb-12 text-center text-cyan-200">
+          Explore Our Platform
+        </h2>
+        
+        <div className="relative h-96 overflow-hidden">
+          <div className="flex items-center justify-center h-full">
+            {/* Previous Card */}
+            <div className="absolute left-0 w-[10%] h-80 opacity-30 blur-sm transition-all duration-500">
+              <div className={`h-full bg-gradient-to-b from-black to-[#005778] rounded-lg p-4 ${getPatternClass(cardData[getCardIndex(-1)].pattern)}`}>
+                <div className="text-6xl mb-4 text-center">
+                  {cardData[getCardIndex(-1)].doodle}
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2 text-center">
+                  {cardData[getCardIndex(-1)].title}
+                </h3>
+              </div>
             </div>
+
+            {/* Current Card */}
+            <div className="w-[80%] h-80 transition-all duration-500 relative z-10">
+              <div className={`h-full bg-gradient-to-b from-black to-[#005778] rounded-lg p-8 shadow-2xl border border-[#00699a] ${getPatternClass(cardData[currentIndex].pattern)}`}>
+                <div className="text-8xl mb-6 text-center animate-bounce">
+                  {cardData[currentIndex].doodle}
+                </div>
+                <h3 className="text-3xl font-bold text-white mb-4 text-center">
+                  {cardData[currentIndex].title}
+                </h3>
+                <p className="text-lg text-white text-center leading-relaxed">
+                  {cardData[currentIndex].desc}
+                </p>
+              </div>
+            </div>
+
+            {/* Next Card */}
+            <div className="absolute right-0 w-[10%] h-80 opacity-30 blur-sm transition-all duration-500">
+              <div className={`h-full bg-gradient-to-b from-black to-[#005778] rounded-lg p-4 ${getPatternClass(cardData[getCardIndex(1)].pattern)}`}>
+                <div className="text-6xl mb-4 text-center">
+                  {cardData[getCardIndex(1)].doodle}
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2 text-center">
+                  {cardData[getCardIndex(1)].title}
+                </h3>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Buttons */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-[#00699a] text-white p-3 rounded-full transition-all duration-300 z-20"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-[#00699a] text-white p-3 rounded-full transition-all duration-300 z-20"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
+
+        {/* Indicators */}
+        <div className="flex justify-center mt-8 space-x-2">
+          {cardData.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setCurrentIndex(index);
+                setIsAutoPlaying(false);
+              }}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                index === currentIndex ? 'bg-[#00beef] scale-125' : 'bg-white/30 hover:bg-white/50'
+              }`}
+            />
           ))}
+        </div>
+
+        {/* Auto-play toggle */}
+        <div className="text-center mt-6">
+          <button
+            onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+            className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+              isAutoPlaying 
+                ? 'bg-[#00beef] text-black' 
+                : 'bg-black/50 text-white border border-[#00699a]'
+            }`}
+          >
+            {isAutoPlaying ? 'Pause Auto-play' : 'Resume Auto-play'}
+          </button>
         </div>
       </section>
     </div>
