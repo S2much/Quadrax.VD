@@ -1,0 +1,165 @@
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:wght@100;200;300;400;500;600;800;900&display=swap");
+
+
+body {
+  background: linear-gradient(#00adde, #000);
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Exo 2';
+}
+header {
+    background: linear-gradient(#000, #000, #00699a);
+    box-shadow: 0 2px 4px #000;
+    height: 8vh;
+    color: #fff;
+    padding: 0 15px;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+h1 {
+    font-size: 2.5rem;
+    text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000;
+    font-weight: 600;
+    color: #fff;
+}
+nav {
+    height: 90vh;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    left: 0;
+    width: 20vw;
+
+}
+button {
+    border: none;
+    color: #fff;
+    font-size: 1.2rem;
+    background: transparent;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+    align-items: center;
+}
+#AI {
+    width: 20%;
+    font-size: 2.1rem;
+    color: #00beef;
+    font-weight: 700;
+}
+hr {
+    border: none;
+    background: #00beef;
+    height: 1px;
+    width: 100%;
+}
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: #fff;
+}
+a, li {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+    width: 100%;
+    padding: 10px;
+    transition: background 0.3s ease;
+}
+li:hover {
+    background: #00699a;
+}
+
+#signup {
+    text-shadow: 2px 2px 1px #00beef,  -2px -2px 1px #00beef,  2px -2px 1px #00beef,  -2px 2px 1px #00beef;
+    color: #000;
+    box-shadow: 0 0 2px 2px #00beef, inset 0 0 2px 2px #00beef;
+    border: 4px solid #000;
+    background: black;
+    font-size: 2rem;
+    font-weight: 700;
+    padding: 5px 35px;
+}
+#quadraxai {
+    background: #00beef;
+    color: #000;
+    padding: 0 10px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: none;
+}
+#hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 70%;
+}
+h2 {
+    padding: 0 20px;
+    font-size: 2rem;
+    margin: 0;
+}
+main {
+    display: flex;
+    height: 90vh;
+}
+#explore {
+    color: #fff;
+    text-shadow: 2px 2px 1px #000;
+    font-size: 3rem;
+    font-weight: 400;
+}
+#welcomeSec {
+    padding: 15px 10px;
+    text-align: center;
+    background: linear-gradient(#00adde,#000, #000);
+    width: 100%;
+}
+#welcomeNote {
+    font-size: 3rem;
+}
+#welcomeSlogan {
+    color: #0cf;
+    font-size: 2.5rem;
+}
+#card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin: 20px;
+}
+#card {
+    background: linear-gradient(#000, #000, #004667);
+    color: #fff;
+    box-shadow: 0 3px 6px #000;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    outline: 1px solid #000;
+    outline-offset: 15px;
+}
+#card-title {
+    font-size: 1.6rem;
+    margin-top: 0;
+}
+#card-description {
+    font-size: 1.2rem;
+    margin-bottom: 0;
+}
