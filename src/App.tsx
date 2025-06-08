@@ -8,6 +8,9 @@ import Chatbot from './components/Chatbot';
 import Datakits from './components/Datakits';
 import Codesheets from './components/Codesheets';
 import Pipelines from './components/Pipelines';
+import Models from './components/Models';
+import Documentation from './components/Documentation';
+import About from './components/About';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -68,6 +71,9 @@ function App() {
           {currentPage === 'datakits' && <Datakits />}
           {currentPage === 'notebooks' && <Codesheets />}
           {currentPage === 'pipelines' && <Pipelines />}
+          {currentPage === 'models' && <Models />}
+          {currentPage === 'documentation' && <Documentation />}
+          {currentPage === 'about' && <About />}
           
           {/* Other components will be rendered here based on currentPage */}
         </div>
