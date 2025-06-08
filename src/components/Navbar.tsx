@@ -1,4 +1,4 @@
-import { DivideIcon as LucideIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LucideIcon, ChevronLeftCircle, ChevronRightCircle } from 'lucide-react';
 
 interface NavItem {
   id: string;
@@ -18,16 +18,16 @@ interface NavbarProps {
 function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isCollapsed, setIsCollapsed }: NavbarProps) {
   return (
     <nav className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-black flex flex-col transition-all duration-300 z-40 ${isCollapsed ? 'w-16' : 'w-64'}`}>
-      <div className="flex justify-end p-2">
+      <div className="flex justify-end p-1">
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-white hover:bg-[#00699a] p-1 rounded transition-colors duration-300"
+          className="text-[#00ffff] text-center hover:bg-[#00699a] font-bold text-lg rounded transition-colors duration-300"
         >
-          {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+          {isCollapsed ? <ChevronRightCircle size={20} /> : <ChevronLeftCircle size={20} />}
         </button>
       </div>
 
-      <ul className="list-none m-0 p-0 flex flex-col flex-1">
+      <ul className="list-none m-0 p-0 text-right font-bold flex flex-col flex-1">
         {navItems.map((item) => (
           <li 
             key={item.id}

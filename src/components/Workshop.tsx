@@ -44,7 +44,7 @@ function Workshop() {
         </div>
 
         <div className="overflow-x-auto">
-          <ul className="flex gap-2 p-2 mb-4 flex-wrap">
+          <ul id="ws-options" className="flex-row gap-2 p-2 mb-4">
             {['Edit', 'Train', 'Evaluate', 'Extract', 'Delete'].map((action) => (
               <li key={action} className="px-4 py-2 border border-[#00beef] rounded-lg text-white hover:bg-[#00699a] cursor-pointer transition-colors duration-300">
                 {action}

@@ -128,6 +128,8 @@ main {
     justify-content: space-between;
     outline: 1px solid #000;
     outline-offset: 15px;
+    padding: 10px;
+    height: 60vh;
 }
 #card-title {
     font-size: 1.6rem;

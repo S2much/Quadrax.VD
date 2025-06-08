@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Play, Pause, Square, RotateCcw, Settings, Plus, GitBranch, Clock, CheckCircle, XCircle, AlertCircle, Zap, Database, Brain, Upload } from 'lucide-react';
+import { Play, Pause, Square, Settings, Plus, GitBranch, Clock, CheckCircle, XCircle, AlertCircle, Zap, Database, Brain, Upload } from 'lucide-react';
 
 function Pipelines() {
   const [selectedPipeline, setSelectedPipeline] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'logs' | 'metrics'>('overview');
+   useState<'overview' | 'logs' | 'metrics'>('overview');
 
   const pipelines = [
     {

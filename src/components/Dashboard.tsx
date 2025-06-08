@@ -1,38 +1,44 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 const cardData = [
   { 
+    ID: 'card',
     title: 'Workshops', 
-    desc: 'Organize your projects with dedicated workspaces. Create new workstations, initialize, organize, evaluate, train and deploy ML models for AI development and Automation systems',
+    desc: 'Create new workstations, initialize, organize, evaluate, train and deploy ML models for AI development and Automation systems',
     doodle: '🔬',
     pattern: 'workshop'
   },
   { 
+    ID: 'card',
     title: 'Datakits', 
     desc: 'Manage and explore your datasets efficiently with powerful tools and visualizations.',
     doodle: '📊',
     pattern: 'data'
   },
   { 
+    ID: 'card',
     title: 'Codesheets', 
     desc: 'Interactive notebooks for data analysis and model training with real-time collaboration.',
     doodle: '📝',
     pattern: 'code'
   },
   { 
+    ID: 'card',
     title: 'Virtual Machines', 
     desc: 'Configure virtual machines and run compute clusters and automation pipelines.',
     doodle: '💻',
     pattern: 'vm'
   },
   { 
+    ID: 'card',
     title: 'Models', 
     desc: 'Deploy and manage your machine learning models with advanced monitoring.',
     doodle: '🤖',
     pattern: 'model'
   }, 
   { 
+    ID: 'card',
     title: 'Documentation', 
     desc: 'Learn more about Quadrax•ML with comprehensive guides and tutorials.',
     doodle: '📚',
@@ -43,13 +49,16 @@ const cardData = [
 export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [fullscreen, setFullscreen] = useState(false);
 
   useEffect(() => {
-    if (!isAutoPlaying) return;
+    if (!isAutoPlaying) {
+      return;
+    }
     
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % cardData.length);
-    }, 4000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, [isAutoPlaying]);
@@ -83,11 +92,11 @@ export default function Home() {
   return (
     <div className="bg-gradient-to-b from-[#00beef] to-black text-white min-h-screen overflow-hidden">
       {/* Hero */}
-      <section className="text-center py-16 px-4 bg-gradient-to-b from-black to-[#008aab]">
+      <section className="text-center py-16 px-8 bg-gradient-to-b from-black to-[#008aab]">
         <h1 className="text-3xl md:text-5xl font-extrabold mb-6 text-white [text-shadow:2px_2px_2px_#000]">
           Welcome to QUADRAX•ML!
         </h1>
-        <p className="text-2xl md:text-4xl font-bold text-white mb-8 [text-shadow:2px_2px_2px_#000]">
+        <p className="text-2xl md:text-4xl text-white mb-8 [text-shadow:2px_2px_2px_#000]">
           Simplicity in complexity
         </p>
         <button className="bg-black hover:bg-[#00699a] text-[#00beef] text-xl md:text-3xl font-bold py-3 px-8 border-4 border-[#00beef] rounded-lg transition-all duration-300 hover:scale-105 [text-shadow:1px_1px_2px_rgba(0,190,239,0.5)]">
@@ -96,17 +105,17 @@ export default function Home() {
       </section>
 
       {/* Slideshow */}
-      <section className="px-6 py-12 relative">
-        <h2 className="text-3xl font-bold mb-12 text-center text-cyan-200">
+      <section className="p-0 relative">
+        <h2 className="text-5xl px-4 py-4 text-left text-white [text-shadow:2px_2px_4px_#000]">
           Explore Our Platform
         </h2>
         
-        <div className="relative h-96 overflow-hidden">
-          <div className="flex items-center justify-center h-full">
+        <div className="relative m-10 h-full overflow-hidden">
+          <div className="flex items-center justify-center py-1 cursor-pointer hover:scale-105 transition-transform z-10" onClick={() => setFullscreen(true)}>
             {/* Previous Card */}
-            <div className="absolute left-0 w-[10%] h-80 opacity-30 blur-sm transition-all duration-500">
-              <div className={`h-full bg-gradient-to-b from-black to-[#005778] rounded-lg p-4 ${getPatternClass(cardData[getCardIndex(-1)].pattern)}`}>
-                <div className="text-6xl mb-4 text-center">
+            <div id={'ID'} className="absolute left-0 w-[18%] opacity-30 blur-sm transition-all duration-500" >
+              <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 ${getPatternClass(cardData[getCardIndex(-1)].pattern)}`}>
+                <div className="text-6xl text-center">
                   {cardData[getCardIndex(-1)].doodle}
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2 text-center">
@@ -116,7 +125,7 @@ export default function Home() {
             </div>
 
             {/* Current Card */}
-            <div className="w-[80%] h-80 transition-all duration-500 relative z-10">
+            <div id={'ID'} className="w-[60%] h-120 transition-all duration-500 relative z-10">
               <div className={`h-full bg-gradient-to-b from-black to-[#005778] rounded-lg p-8 shadow-2xl border border-[#00699a] ${getPatternClass(cardData[currentIndex].pattern)}`}>
                 <div className="text-8xl mb-6 text-center animate-bounce">
                   {cardData[currentIndex].doodle}
@@ -128,12 +137,58 @@ export default function Home() {
                   {cardData[currentIndex].desc}
                 </p>
               </div>
+              {fullscreen && (
+        <div className="absolute top-0 left-0 w-full h-full z-150 bg-transparent backdrop-blur-2xl overflow-y-auto">
+          <div className="relative w-full h-full flex flex-col justify-start items-center p-10 text-black bg-transparent">
+            <button
+              onClick={() => setFullscreen(false)}
+              className="absolute top-6 right-6 bg-black text-white p-2 rounded-full hover:bg-[#00beef]"
+            >
+              <X size={24} />
+            </button>
+
+            <h2 className="text-5xl font-extrabold text-[#00beef] mb-4">
+              {cardData[currentIndex].title}
+            </h2>
+            <p className="text-lg leading-relaxed text-center max-w-4xl">
+              {cardData[currentIndex].desc} This is a dynamic AI/ML work environment where machines collaborate with humans. A synthesis of automation, intuition, and intelligence enables seamless model development, review, and deployment.
+            </p>
+
+            <div className="grid md:grid-cols-3 gap-6 mt-10 w-full max-w-6xl">
+              <div className="bg-[#00beef] text-black p-6 rounded-xl">
+                <h3 className="text-xl font-bold">🧠 Guided Intelligence</h3>
+                <p>Get suggestions on architecture, preprocessing, and training parameters in real-time.</p>
+              </div>
+              <div className="bg-black text-white p-6 rounded-xl">
+                <h3 className="text-xl font-bold">🎯 HyperTune AI</h3>
+                <p>Automated optimization powered by reinforcement and meta-learning strategies.</p>
+              </div>
+              <div className="bg-white border border-[#00beef] text-black p-6 rounded-xl">
+                <h3 className="text-xl font-bold">🎨 AI Doodles</h3>
+                <p>Visualize concepts with creative abstract illustrations and animations.</p>
+              </div>
+            </div>
+
+            <div className="mt-10">
+              <button
+                className="bg-[#00beef] text-black px-6 py-3 rounded-lg hover:bg-[#008aab] font-bold"
+                onClick={() => {
+                  document.querySelector(`#nav-${cardData[currentIndex].title.toLowerCase().replace(/\s+/g, '-')}`)?.scrollIntoView({ behavior: 'smooth' });
+                  setFullscreen(false);
+                }}
+              >
+                Go to {cardData[currentIndex].title}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
             </div>
 
             {/* Next Card */}
-            <div className="absolute right-0 w-[10%] h-80 opacity-30 blur-sm transition-all duration-500">
-              <div className={`h-full bg-gradient-to-b from-black to-[#005778] rounded-lg p-4 ${getPatternClass(cardData[getCardIndex(1)].pattern)}`}>
-                <div className="text-6xl mb-4 text-center">
+            <div id={'ID'} className="absolute right-0 w-[18%] h-120 opacity-30 blur-sm transition-all duration-500">
+              <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 ${getPatternClass(cardData[getCardIndex(1)].pattern)}`}>
+                <div className="text-8xl mb-4 text-center">
                   {cardData[getCardIndex(1)].doodle}
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2 text-center">
@@ -167,27 +222,15 @@ export default function Home() {
                 setCurrentIndex(index);
                 setIsAutoPlaying(false);
               }}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`w-3 h-3 m-0 rounded-full transition-all duration-300 ${
                 index === currentIndex ? 'bg-[#00beef] scale-125' : 'bg-white/30 hover:bg-white/50'
               }`}
             />
           ))}
         </div>
 
-        {/* Auto-play toggle */}
-        <div className="text-center mt-6">
-          <button
-            onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-            className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-              isAutoPlaying 
-                ? 'bg-[#00beef] text-black' 
-                : 'bg-black/50 text-white border border-[#00699a]'
-            }`}
-          >
-            {isAutoPlaying ? 'Pause Auto-play' : 'Resume Auto-play'}
-          </button>
-        </div>
       </section>
+      
     </div>
   );
 }

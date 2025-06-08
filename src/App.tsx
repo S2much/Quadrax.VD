@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Menu, Terminal, FlaskRound as Box, FileCode, Baseline as Pipeline, Monitor, Brain, BookOpen, User, Settings, LogIn, UserPlus, Bot, X } from 'lucide-react';
+import { Terminal, FlaskRound as Box, FileCode, Baseline as Pipeline, Monitor, Brain, BookOpen, User, Settings, LogIn, UserPlus, Bot, Home } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Workshop from './components/Workshop';
 import VirtualMachines from './components/VirtualMachines';
-import Home from './components/Home';
+import Dashboard from './components/Dashboard';
 import Chatbot from './components/Chatbot';
 import Datakits from './components/Datakits';
 import Codesheets from './components/Codesheets';
@@ -15,7 +15,7 @@ function App() {
   const [isNavCollapsed, setIsNavCollapsed] = useState(false);
 
   const navItems = [
-    { id: 'home', label: 'Home', icon: Menu },
+    { id: 'home', label: 'Home', icon: Home },
     { id: 'workshops', label: 'Workshops', icon: Terminal },
     { id: 'datakits', label: 'Datakits', icon: Box },
     { id: 'notebooks', label: 'Codesheets', icon: FileCode },
@@ -62,7 +62,7 @@ function App() {
         />
         
         <div className={`flex-1 transition-all duration-300 ${isNavCollapsed ? 'ml-16' : 'ml-64'} ${isChatbotOpen ? 'mr-80' : 'mr-0'}`}>
-          {currentPage === 'home' && <Home />}
+          {currentPage === 'home' && <Dashboard />}
           {currentPage === 'workshops' && <Workshop />}
           {currentPage === 'vms' && <VirtualMachines />}
           {currentPage === 'datakits' && <Datakits />}

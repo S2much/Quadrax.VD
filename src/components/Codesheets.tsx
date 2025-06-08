@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Play, Save, Share2, Download, Plus, Code, FileText, BarChart3, Brain, Clock, Users, Star, GitBranch } from 'lucide-react';
+import { Play, Save, Share2, Plus, Code, FileText, BarChart3, Brain, Clock, Users, Star, GitBranch } from 'lucide-react';
 
 function Codesheets() {
   const [selectedNotebook, setSelectedNotebook] = useState<number | null>(null);
@@ -8,7 +8,7 @@ function Codesheets() {
   const notebooks = [
     {
       id: 1,
-      name: 'Customer_Segmentation_Analysis',
+      name: 'Segmentation_Analysis',
       language: 'Python',
       framework: 'Pandas + Scikit-learn',
       lastModified: '2 hours ago',
@@ -24,7 +24,7 @@ function Codesheets() {
     },
     {
       id: 2,
-      name: 'Deep_Learning_Image_Classification',
+      name: 'DL_Image_Classification',
       language: 'Python',
       framework: 'TensorFlow + Keras',
       lastModified: '1 day ago',
@@ -40,7 +40,7 @@ function Codesheets() {
     },
     {
       id: 3,
-      name: 'Financial_Time_Series_Forecasting',
+      name: 'Financial_Forecasting',
       language: 'R',
       framework: 'Prophet + Tidyverse',
       lastModified: '3 days ago',
@@ -56,7 +56,7 @@ function Codesheets() {
     },
     {
       id: 4,
-      name: 'NLP_Sentiment_Analysis_Pipeline',
+      name: 'NLP_Analysis_Pipeline',
       language: 'Python',
       framework: 'Transformers + PyTorch',
       lastModified: '1 week ago',
