@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Terminal, FlaskRound as Box, FileCode, Baseline as Pipeline, Monitor, Brain, BookOpen, User, Settings, LogIn, UserPlus, Bot, Home } from 'lucide-react';
+import { Terminal, FileJson, FileCode, Baseline as Pipeline, Monitor, Brain, BookOpen, Info, Settings, LogIn, UserPlus, Bot, Home } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Workshop from './components/Workshop';
 import VirtualMachines from './components/VirtualMachines';
@@ -8,6 +8,9 @@ import Chatbot from './components/Chatbot';
 import Datakits from './components/Datakits';
 import Codesheets from './components/Codesheets';
 import Pipelines from './components/Pipelines';
+import Models from './components/Models';
+import Documentation from './components/Documentation';
+import About from './components/About';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -17,13 +20,13 @@ function App() {
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },
     { id: 'workshops', label: 'Workshops', icon: Terminal },
-    { id: 'datakits', label: 'Datakits', icon: Box },
+    { id: 'datakits', label: 'Datakits', icon: FileJson },
     { id: 'notebooks', label: 'Codesheets', icon: FileCode },
     { id: 'pipelines', label: 'Pipelines', icon: Pipeline },
     { id: 'vms', label: 'VMs', icon: Monitor },
     { id: 'models', label: 'Models', icon: Brain },
     { id: 'documentation', label: 'Documentation', icon: BookOpen },
-    { id: 'about', label: 'About', icon: User },
+    { id: 'about', label: 'About', icon: Info },
   ];
 
   const bottomNavItems = [
@@ -38,7 +41,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#00beef] to-black overflow-hidden">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black via-black to-[#00699a] h-16 text-white px-4 flex justify-between items-center shadow-lg">
+      <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-b from-black via-black to-[#00699a] h-16 text-white px-4 flex justify-between items-center shadow-lg">
         <h1 className="text-2xl md:text-4xl font-bold text-black [text-shadow:2px_2px_2px_#fff,_-2px_-2px_2px_#fff,_2px_-2px_2px_#fff,_-2px_2px_2px_#fff]">
           QUADRAX_ML
         </h1>
@@ -68,7 +71,9 @@ function App() {
           {currentPage === 'datakits' && <Datakits />}
           {currentPage === 'notebooks' && <Codesheets />}
           {currentPage === 'pipelines' && <Pipelines />}
-          
+          {currentPage === 'models' && <Models />}
+          {currentPage === 'documentation' && <Documentation />}
+          {currentPage === 'about' && <About />}
           {/* Other components will be rendered here based on currentPage */}
         </div>
 

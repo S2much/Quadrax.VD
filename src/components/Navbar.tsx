@@ -31,7 +31,7 @@ function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isColla
         {navItems.map((item) => (
           <li 
             key={item.id}
-            className={`hover:bg-[#00699a] transition-colors duration-300 ${
+            className={`hover:bg-[#00699a] text-right transition-colors duration-300 ${
               currentPage === item.id ? 'bg-[#00699a]' : ''
             }`}
           >
@@ -40,7 +40,7 @@ function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isColla
               className={`w-full p-3 flex items-center text-white ${isCollapsed ? 'justify-center' : 'gap-3'}`}
               title={isCollapsed ? item.label : ''}
             >
-              <item.icon size={20} />
+              <item.icon size={25} />
               {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
             </button>
           </li>
@@ -56,10 +56,10 @@ function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isColla
             >
               <button
                 onClick={() => setCurrentPage(item.id)}
-                className={`w-full p-3 flex items-center text-white ${isCollapsed ? 'justify-center' : 'gap-3'}`}
+                className={`w-full p-3 flex items-center text-right text-white ${isCollapsed ? 'justify-center' : 'gap-3'}`}
                 title={isCollapsed ? item.label : ''}
               >
-                <item.icon size={20} />
+                <item.icon size={25} />
                 {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
               </button>
             </li>

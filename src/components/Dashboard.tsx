@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const cardData = [
   { 
@@ -49,7 +49,6 @@ const cardData = [
 export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [fullscreen, setFullscreen] = useState(false);
 
   useEffect(() => {
     if (!isAutoPlaying) {
@@ -109,9 +108,7 @@ export default function Home() {
         <h2 className="text-5xl px-4 py-4 text-left text-white [text-shadow:2px_2px_4px_#000]">
           Explore Our Platform
         </h2>
-        
-        <div className="relative m-10 h-full overflow-hidden">
-          <div className="flex items-center justify-center py-1 cursor-pointer hover:scale-105 transition-transform z-10" onClick={() => setFullscreen(true)}>
+          <div className="flex items-center justify-center py-1 cursor-pointer hover:scale-105 transition-transform z-10">
             {/* Previous Card */}
             <div id={'ID'} className="absolute left-0 w-[18%] opacity-30 blur-sm transition-all duration-500" >
               <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 ${getPatternClass(cardData[getCardIndex(-1)].pattern)}`}>
@@ -137,53 +134,6 @@ export default function Home() {
                   {cardData[currentIndex].desc}
                 </p>
               </div>
-              {fullscreen && (
-        <div className="absolute top-0 left-0 w-full h-full z-150 bg-transparent backdrop-blur-2xl overflow-y-auto">
-          <div className="relative w-full h-full flex flex-col justify-start items-center p-10 text-black bg-transparent">
-            <button
-              onClick={() => setFullscreen(false)}
-              className="absolute top-6 right-6 bg-black text-white p-2 rounded-full hover:bg-[#00beef]"
-            >
-              <X size={24} />
-            </button>
-
-            <h2 className="text-5xl font-extrabold text-[#00beef] mb-4">
-              {cardData[currentIndex].title}
-            </h2>
-            <p className="text-lg leading-relaxed text-center max-w-4xl">
-              {cardData[currentIndex].desc} This is a dynamic AI/ML work environment where machines collaborate with humans. A synthesis of automation, intuition, and intelligence enables seamless model development, review, and deployment.
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-6 mt-10 w-full max-w-6xl">
-              <div className="bg-[#00beef] text-black p-6 rounded-xl">
-                <h3 className="text-xl font-bold">🧠 Guided Intelligence</h3>
-                <p>Get suggestions on architecture, preprocessing, and training parameters in real-time.</p>
-              </div>
-              <div className="bg-black text-white p-6 rounded-xl">
-                <h3 className="text-xl font-bold">🎯 HyperTune AI</h3>
-                <p>Automated optimization powered by reinforcement and meta-learning strategies.</p>
-              </div>
-              <div className="bg-white border border-[#00beef] text-black p-6 rounded-xl">
-                <h3 className="text-xl font-bold">🎨 AI Doodles</h3>
-                <p>Visualize concepts with creative abstract illustrations and animations.</p>
-              </div>
-            </div>
-
-            <div className="mt-10">
-              <button
-                className="bg-[#00beef] text-black px-6 py-3 rounded-lg hover:bg-[#008aab] font-bold"
-                onClick={() => {
-                  document.querySelector(`#nav-${cardData[currentIndex].title.toLowerCase().replace(/\s+/g, '-')}`)?.scrollIntoView({ behavior: 'smooth' });
-                  setFullscreen(false);
-                }}
-              >
-                Go to {cardData[currentIndex].title}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-            </div>
 
             {/* Next Card */}
             <div id={'ID'} className="absolute right-0 w-[18%] h-120 opacity-30 blur-sm transition-all duration-500">

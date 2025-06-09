@@ -21,6 +21,7 @@ header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    z-index: 100;
 }
 h1 {
     font-size: 2.5rem;
@@ -97,7 +98,14 @@ h2 {
 }
 main {
     display: flex;
-    height: 90vh;
+    height: auto;
+    overflow: auto;
+    
+}
+::-webkit-scrollbar {
+    appearance: none;
+    width: 5px;
+    z-index: 1001774835735000;
 }
 #explore {
     color: #fff;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Upload, Download, Eye, BarChart3, Database, Search, Filter, RefreshCw, Trash2, Plus, FileSpreadsheet, Image, FileText, Zap } from 'lucide-react';
+import { Upload, Download, Eye, BarChart3, Database, Search, Filter,  Plus, FileSpreadsheet, Image, FileText, Zap } from 'lucide-react';
 
 function Datakits() {
   const [selectedDataset, setSelectedDataset] = useState<number | null>(null);
@@ -22,7 +22,7 @@ function Datakits() {
     },
     {
       id: 2,
-      name: 'Medical_Imaging_Dataset',
+      name: 'Mechanical_Imaging',
       type: 'Images',
       size: '15.7 GB',
       rows: '50,000',
