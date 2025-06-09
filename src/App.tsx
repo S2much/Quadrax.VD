@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Menu, Terminal, FlaskRound as Box, FileCode, Baseline as Pipeline, Monitor, Brain, BookOpen, User, Settings, LogIn, UserPlus, Bot, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Menu, Terminal, FlaskRound as Box, FileCode, Baseline as Pipeline, Monitor, Brain, BookOpen, User, Settings as SettingsIcon, LogIn, UserPlus, Bot, X } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Workshop from './components/Workshop';
 import VirtualMachines from './components/VirtualMachines';
@@ -11,11 +11,19 @@ import Pipelines from './components/Pipelines';
 import Models from './components/Models';
 import Documentation from './components/Documentation';
 import About from './components/About';
+import Settings from './components/Settings';
+import Login from './components/Login';
+import Register from './components/Register';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [isNavCollapsed, setIsNavCollapsed] = useState(false);
+
+  // Auto scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
   const navItems = [
     { id: 'home', label: 'Home', icon: Menu },
@@ -30,7 +38,7 @@ function App() {
   ];
 
   const bottomNavItems = [
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'settings', label: 'Settings', icon: SettingsIcon },
     { id: 'login', label: 'Login', icon: LogIn },
     { id: 'register', label: 'Register', icon: UserPlus },
   ];
@@ -38,6 +46,26 @@ function App() {
   const toggleChatbot = () => {
     setIsChatbotOpen(!isChatbotOpen);
   };
+
+  const handleCancel = () => {
+    setCurrentPage('home');
+  };
+
+  // Check if current page is auth-related
+  const isAuthPage = currentPage === 'login' || currentPage === 'register';
+  
+  // Disable chatbot for auth pages
+  const isChatbotDisabled = isAuthPage;
+
+  // If on auth pages, render them without navbar/chatbot
+  if (isAuthPage) {
+    return (
+      <div className="min-h-screen">
+        {currentPage === 'login' && <Login onCancel={handleCancel} />}
+        {currentPage === 'register' && <Register onCancel={handleCancel} />}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#00beef] to-black overflow-hidden">
@@ -47,7 +75,12 @@ function App() {
         </h1>
         <button 
           onClick={toggleChatbot}
-          className="bg-[#00beef] text-black px-3 py-2 text-lg md:text-2xl font-bold flex items-center gap-2 rounded-lg hover:bg-[#00a8d6] transition-colors duration-300"
+          disabled={isChatbotDisabled}
+          className={`px-3 py-2 text-lg md:text-2xl font-bold flex items-center gap-2 rounded-lg transition-colors duration-300 ${
+            isChatbotDisabled 
+              ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
+              : 'bg-[#00beef] text-black hover:bg-[#00a8d6]'
+          }`}
         >
           <Bot size={24} className="md:w-10 md:h-10" />
           <span className="hidden md:inline">QUADRAX_AI</span>
@@ -64,7 +97,7 @@ function App() {
           setIsCollapsed={setIsNavCollapsed}
         />
         
-        <div className={`flex-1 transition-all duration-300 ${isNavCollapsed ? 'ml-16' : 'ml-64'} ${isChatbotOpen ? 'mr-80' : 'mr-0'}`}>
+        <div className={`flex-1 transition-all duration-300 ${isNavCollapsed ? 'ml-16' : 'ml-64'} ${isChatbotOpen && !isChatbotDisabled ? 'mr-80' : 'mr-0'}`}>
           {currentPage === 'home' && <Home />}
           {currentPage === 'workshops' && <Workshop />}
           {currentPage === 'vms' && <VirtualMachines />}
@@ -74,14 +107,15 @@ function App() {
           {currentPage === 'models' && <Models />}
           {currentPage === 'documentation' && <Documentation />}
           {currentPage === 'about' && <About />}
-          
-          {/* Other components will be rendered here based on currentPage */}
+          {currentPage === 'settings' && <Settings />}
         </div>
 
-        <Chatbot 
-          isOpen={isChatbotOpen} 
-          onClose={() => setIsChatbotOpen(false)} 
-        />
+        {!isChatbotDisabled && (
+          <Chatbot 
+            isOpen={isChatbotOpen} 
+            onClose={() => setIsChatbotOpen(false)} 
+          />
+        )}
       </main>
     </div>
   );
