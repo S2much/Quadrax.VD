@@ -166,7 +166,7 @@ main {
     height: 50px;
     border-radius: 50%;
     margin: auto;
-    animation: spin2 1s infinite linear;
+    animation: spin2 0.75s infinite linear;
     box-shadow: 0 4px 4px #fff;
 }
 
