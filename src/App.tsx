@@ -14,11 +14,36 @@ import About from './components/About';
 import Settings from './components/Settings';
 import Login from './components/Login';
 import Register from './components/Register';
+import LoadingSpinner from './components/LoadingSpinner';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [isNavCollapsed, setIsNavCollapsed] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(false);
+
+  // Initial loading effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Page transition loading effect
+  useEffect(() => {
+    if (!isLoading) {
+      setPageLoading(true);
+      const timer = setTimeout(() => {
+        setPageLoading(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 800);
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentPage, isLoading]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -56,6 +81,10 @@ const handleCancel = () => {
   // Disable chatbot for auth pages
   const isChatbotDisabled = isAuthPage;
 
+  // Show loading spinner
+  if (isLoading || pageLoading) {
+    return <LoadingSpinner isLoading={true} />;
+  }
   // If on auth pages, render them without navbar/chatbot
   if (isAuthPage) {
     return (
