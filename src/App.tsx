@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Terminal, FileJson, FileCode, Baseline as Pipeline, Monitor, Brain, BookOpen, Info, Settings, LogIn, UserPlus, Bot, Home } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Terminal, FileJson, FileCode, Baseline as Pipeline, Monitor, Brain, BookOpen, Info, Settings2, LogIn, UserPlus, Bot, Home } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Workshop from './components/Workshop';
 import VirtualMachines from './components/VirtualMachines';
@@ -11,11 +11,18 @@ import Pipelines from './components/Pipelines';
 import Models from './components/Models';
 import Documentation from './components/Documentation';
 import About from './components/About';
+import Settings from './components/Settings';
+import Login from './components/Login';
+import Register from './components/Register';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [isNavCollapsed, setIsNavCollapsed] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },
@@ -30,7 +37,7 @@ function App() {
   ];
 
   const bottomNavItems = [
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'settings', label: 'Preferences', icon: Settings2 },
     { id: 'login', label: 'Login', icon: LogIn },
     { id: 'register', label: 'Register', icon: UserPlus },
   ];
@@ -39,14 +46,34 @@ function App() {
     setIsChatbotOpen(!isChatbotOpen);
   };
 
+const handleCancel = () => {
+    setCurrentPage('home');
+  };
+
+  // Check if current page is auth-related
+  const isAuthPage = currentPage === 'login' || currentPage === 'register';
+  
+  // Disable chatbot for auth pages
+  const isChatbotDisabled = isAuthPage;
+
+  // If on auth pages, render them without navbar/chatbot
+  if (isAuthPage) {
+    return (
+      <div className="min-h-screen">
+        {currentPage === 'login' && <Login onCancel={handleCancel} />}
+        {currentPage === 'register' && <Register onCancel={handleCancel} />}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#00beef] to-black overflow-hidden">
       <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-b from-black via-black to-[#00699a] h-16 text-white px-4 flex justify-between items-center shadow-lg">
-        <h1 className="text-2xl md:text-4xl font-bold text-black [text-shadow:2px_2px_2px_#fff,_-2px_-2px_2px_#fff,_2px_-2px_2px_#fff,_-2px_2px_2px_#fff]">
+        <h1 className="text-2xl md:text-4xl text-white [text-shadow:2px_2px_0px_#008aab,_-2px_-2px_2px_#000,_2px_-2px_2px_#000,_-2px_2px_0px_#008aab]">
           QUADRAX_ML
         </h1>
         <button 
-          onClick={toggleChatbot}
+          onClick={toggleChatbot} disabled={isChatbotDisabled}
           className="bg-[#00beef] text-black px-3 py-2 text-lg md:text-2xl font-bold flex items-center gap-2 hover:bg-[#00a8d6] transition-colors duration-300"
         >
           <Bot size={28} className="md:w-10 md:h-10" />
@@ -74,6 +101,10 @@ function App() {
           {currentPage === 'models' && <Models />}
           {currentPage === 'documentation' && <Documentation />}
           {currentPage === 'about' && <About />}
+          {currentPage === 'settings' && <Settings />}
+          {currentPage === 'login' && <Login />}
+          {currentPage === 'register' && <Register />}
+          
           {/* Other components will be rendered here based on currentPage */}
         </div>
 

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const cardData = [
   { 
@@ -62,15 +61,6 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [isAutoPlaying]);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % cardData.length);
-    setIsAutoPlaying(false);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + cardData.length) % cardData.length);
-    setIsAutoPlaying(false);
-  };
 
   const getCardIndex = (offset: number) => {
     return (currentIndex + offset + cardData.length) % cardData.length;
@@ -89,11 +79,11 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-gradient-to-b from-[#00beef] to-black text-white min-h-screen overflow-hidden">
+    <div className="bg-gradient-to-b from-[#002445] to-black text-white min-h-screen overflow-hidden">
       {/* Hero */}
       <section className="text-center py-16 px-8 bg-gradient-to-b from-black to-[#008aab]">
-        <h1 className="text-3xl md:text-5xl font-extrabold mb-6 text-white [text-shadow:2px_2px_2px_#000]">
-          Welcome to QUADRAX•ML!
+        <h1 className="text-3xl md:text-5xl [font-weight:400] mb-6 text-white [text-shadow:2px_2px_2px_#000]">
+          Welcome to <span className="font-bold text-white [text-shadow:2px_2px_0px_#008aab,_-2px_-2px_2px_#000,_2px_-2px_2px_#000,_-2px_2px_0px_#008aab]" >QUADRAX•ML</span>!
         </h1>
         <p className="text-2xl md:text-4xl text-white mb-8 [text-shadow:2px_2px_2px_#000]">
           Simplicity in complexity
@@ -108,9 +98,9 @@ export default function Home() {
         <h2 className="text-5xl px-4 py-4 text-left text-white [text-shadow:2px_2px_4px_#000]">
           Explore Our Platform
         </h2>
-          <div className="flex items-center justify-center py-1 cursor-pointer hover:scale-105 transition-transform z-10">
+          <div className="flex items-center justify-center items-center py-1 cursor-pointer hover:scale-105 transition-transform z-10">
             {/* Previous Card */}
-            <div id={'ID'} className="absolute left-0 w-[18%] opacity-30 blur-sm transition-all duration-500" >
+            <div className="absolute left-0 w-[18%] opacity-30 blur-sm transition-all duration-500" >
               <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 ${getPatternClass(cardData[getCardIndex(-1)].pattern)}`}>
                 <div className="text-6xl text-center">
                   {cardData[getCardIndex(-1)].doodle}
@@ -122,7 +112,7 @@ export default function Home() {
             </div>
 
             {/* Current Card */}
-            <div id={'ID'} className="w-[60%] h-120 transition-all duration-500 relative z-10">
+            <div className="w-[60%] h-120 transition-all duration-500 relative z-10">
               <div className={`h-full bg-gradient-to-b from-black to-[#005778] rounded-lg p-8 shadow-2xl border border-[#00699a] ${getPatternClass(cardData[currentIndex].pattern)}`}>
                 <div className="text-8xl mb-6 text-center animate-bounce">
                   {cardData[currentIndex].doodle}
@@ -134,9 +124,9 @@ export default function Home() {
                   {cardData[currentIndex].desc}
                 </p>
               </div>
-
+</div>
             {/* Next Card */}
-            <div id={'ID'} className="absolute right-0 w-[18%] h-120 opacity-30 blur-sm transition-all duration-500">
+            <div className="absolute right-0 w-[18%] opacity-30 blur-sm transition-all duration-500">
               <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 ${getPatternClass(cardData[getCardIndex(1)].pattern)}`}>
                 <div className="text-8xl mb-4 text-center">
                   {cardData[getCardIndex(1)].doodle}
@@ -148,20 +138,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Navigation Buttons */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 w-10 transform -translate-y-1/2 bg-black/50 hover:bg-[#00699a] text-white p-3 rounded-full transition-all duration-300 z-20"
-          >
-            <ChevronLeft size={24} />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-[#00699a] text-white p-3 rounded-full transition-all duration-300 z-20"
-          >
-            <ChevronRight size={24} />
-          </button>
-        </div>
+        
 
         {/* Indicators */}
         <div className="flex justify-center mt-8 space-x-2">
