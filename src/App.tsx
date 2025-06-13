@@ -120,7 +120,7 @@ const handleCancel = () => {
           setIsCollapsed={setIsNavCollapsed}
         />
         
-        <div className={`flex-1 transition-all duration-300 ${isNavCollapsed ? 'ml-16' : 'ml-64'} ${isChatbotOpen ? 'mr-80' : 'mr-0'}`}>
+        <div className={`flex-1 transition-all duration-300 ${isNavCollapsed ? 'ml-16' : 'ml-64'} ${isChatbotOpen ? 'mr-70' : 'mr-0'}`}>
           {currentPage === 'home' && <Dashboard />}
           {currentPage === 'workshops' && <Workshop />}
           {currentPage === 'vms' && <VirtualMachines />}

@@ -1,49 +1,58 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
+
 
 const cardData = [
   { 
     ID: 'card',
     title: 'Workshops', 
-    desc: 'Create new workstations, initialize, organize, evaluate, train and deploy ML models for AI development and Automation systems',
+    desc: 'Create new workstations, initialize, organize, evaluate, train and deploy ML models for AI development and Automation systems. Integrate with external applications, resources.' ,
+    desc2: "The Workshop is the heart of the Quadrax_ML ecosystem—your personal R&D lab where you can build, refine, and launch intelligent systems with precision and control. Whether you're a solo developer, a data science team, or an enterprise AI engineer, the Workshop brings all critical functions into one unified interface.",
     doodle: '🔬',
-    pattern: 'workshop'
+    pattern: 'workshop',
+    button: 'Go to Workshops'
   },
   { 
     ID: 'card',
     title: 'Datakits', 
     desc: 'Manage and explore your datasets efficiently with powerful tools and visualizations.',
     doodle: '📊',
-    pattern: 'data'
+    pattern: 'data',
+    button: 'Go to Datakits'
   },
   { 
     ID: 'card',
     title: 'Codesheets', 
     desc: 'Interactive notebooks for data analysis and model training with real-time collaboration.',
     doodle: '📝',
-    pattern: 'code'
+    pattern: 'code',
+    button: 'Go to Codesheets'
   },
   { 
     ID: 'card',
     title: 'Virtual Machines', 
     desc: 'Configure virtual machines and run compute clusters and automation pipelines.',
     doodle: '💻',
-    pattern: 'vm'
+    pattern: 'vm',
+    button: 'Go to VMs'
   },
   { 
     ID: 'card',
     title: 'Models', 
     desc: 'Deploy and manage your machine learning models with advanced monitoring.',
     doodle: '🤖',
-    pattern: 'model'
+    pattern: 'model',
+    button: 'Go to Models'
   }, 
   { 
     ID: 'card',
     title: 'Documentation', 
     desc: 'Learn more about Quadrax•ML with comprehensive guides and tutorials.',
     doodle: '📚',
-    pattern: 'docs'
+    pattern: 'docs',
+    button: 'Learn more'
   }
 ];
+
 
 export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -78,8 +87,10 @@ export default function Home() {
     return patterns[pattern as keyof typeof patterns] || patterns.workshop;
   };
 
+  
+
   return (
-    <div className="bg-gradient-to-b from-[#002445] to-black text-white min-h-screen overflow-hidden">
+    <div className="bg-gradient-to-b from-[#002445] to-black text-white min-h-screen overflow-auto">
       {/* Hero */}
       <section className="text-center py-16 px-8 bg-gradient-to-b from-black to-[#008aab]">
         <h1 className="text-3xl md:text-5xl [font-weight:400] mb-6 text-white [text-shadow:2px_2px_2px_#000]">
@@ -94,46 +105,41 @@ export default function Home() {
       </section>
 
       {/* Slideshow */}
-      <section className="p-0 relative">
+      <section className="p-4 relative">
         <h2 className="text-5xl px-4 py-4 text-left text-white [text-shadow:2px_2px_4px_#000]">
           Explore Our Platform
         </h2>
-          <div className="flex items-center justify-center items-center py-1 cursor-pointer hover:scale-105 transition-transform z-10">
+          <div className="flex items-center justify-center items-center cursor-pointer transition-transform z-10">
             {/* Previous Card */}
-            <div className="absolute left-0 w-[18%] opacity-30 blur-sm transition-all duration-500" >
+            <div className="w-[4%] [height:40vh] opacity-80 [transform:perspective(500px)_rotateY(315deg)] items-center transition-all duration-500" >
               <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 ${getPatternClass(cardData[getCardIndex(-1)].pattern)}`}>
-                <div className="text-6xl text-center">
-                  {cardData[getCardIndex(-1)].doodle}
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2 text-center">
-                  {cardData[getCardIndex(-1)].title}
-                </h3>
               </div>
             </div>
 
             {/* Current Card */}
-            <div className="w-[60%] h-120 transition-all duration-500 relative z-10">
-              <div className={`h-full bg-gradient-to-b from-black to-[#005778] rounded-lg p-8 shadow-2xl border border-[#00699a] ${getPatternClass(cardData[currentIndex].pattern)}`}>
-                <div className="text-8xl mb-6 text-center animate-bounce">
+            <div className="w-[85%] [height:45vh] transition-all duration-500 relative z-10">
+              <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 shadow-2xl border border-[#00699a] ${getPatternClass(cardData[currentIndex].pattern)}`}>
+                <div className=" absolute top-20 right-20 text-8xl mb-6 [filter:opacity(0.3)_saturate(200%)] [transform:perspective(500px)_rotateY(-45deg)_scale(2.5,2)]">
                   {cardData[currentIndex].doodle}
                 </div>
-                <h3 className="text-3xl font-bold text-white mb-4 text-center">
+                <h3 className="text-4xl font-bold text-white mb-4 text-left">
                   {cardData[currentIndex].title}
                 </h3>
-                <p className="text-lg text-white text-center leading-relaxed">
+                <p className="text-xl w-[70%] text-white text-left leading-relaxed">
                   {cardData[currentIndex].desc}
                 </p>
+                <br/>
+                <p className="text-xl w-[70%] text-white text-left leading-relaxed">
+                  {cardData[currentIndex].desc2}
+                </p>
+                <button className="absolute bottom-10 right-10">
+                  <div className={`${getPatternClass(cardData[currentIndex].button)}`}></div>
+                </button>
               </div>
 </div>
             {/* Next Card */}
-            <div className="absolute right-0 w-[18%] opacity-30 blur-sm transition-all duration-500">
+            <div className="w-[4%] items-center [height:40vh] opacity-80 [transform:perspective(500px)_rotateY(45deg)] transition-all duration-500">
               <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 ${getPatternClass(cardData[getCardIndex(1)].pattern)}`}>
-                <div className="text-8xl mb-4 text-center">
-                  {cardData[getCardIndex(1)].doodle}
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2 text-center">
-                  {cardData[getCardIndex(1)].title}
-                </h3>
               </div>
             </div>
           </div>
@@ -149,7 +155,7 @@ export default function Home() {
                 setCurrentIndex(index);
                 setIsAutoPlaying(false);
               }}
-              className={`w-3 h-3 m-0 rounded-full transition-all duration-300 ${
+              className={`w-8 h-1 m-0 [box-shadow:0_0_4px_1px_#00beef] transition-all duration-300 ${
                 index === currentIndex ? 'bg-[#00beef] scale-125' : 'bg-white/30 hover:bg-white/50'
               }`}
             />
