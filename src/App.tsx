@@ -55,7 +55,7 @@ function App() {
   }, [currentPage]);
 
   const navItems = [
-    { id: 'home', label: 'Dashboard', icon: Home },
+    { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'workshops', label: 'Workshops', icon: Terminal },
     { id: 'datakits', label: 'Datakits', icon: FileJson },
     { id: 'notebooks', label: 'Codesheets', icon: FileCode },

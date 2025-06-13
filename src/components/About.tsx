@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { Brain, Zap, Target, Users, Globe, ChevronRight, ExternalLink } from 'lucide-react';
-=======
-import { Brain, Zap, Target, Users, Award, Globe, ChevronRight, ExternalLink } from 'lucide-react';
->>>>>>> a7773730a2bea42e8f237537b3c82055c41a8d5f
 
 function About() {
   const features = [
@@ -29,40 +25,21 @@ function About() {
   ];
 
   const stats = [
-<<<<<<< HEAD
     { label: 'Models Deployed', value: '1,000+' },
     { label: 'Data Scientists', value: '500+' },
     { label: 'Projects Completed', value: '2,500+' },
-=======
     { label: 'Models Deployed', value: '10,000+' },
     { label: 'Data Scientists', value: '5,000+' },
     { label: 'Projects Completed', value: '25,000+' },
->>>>>>> a7773730a2bea42e8f237537b3c82055c41a8d5f
     { label: 'Accuracy Rate', value: '99.2%' }
   ];
 
   const team = [
     {
-<<<<<<< HEAD
       name: 'Mordecai Thulani Makatini',
       role: 'Founder',
       description: 'First AI, Data Science and Machine Learning infastructure development.'
-=======
-      name: 'Dr. Sarah Chen',
-      role: 'Chief AI Officer',
-      description: 'Leading AI research with 15+ years in machine learning and neural networks.'
-    },
-    {
-      name: 'Marcus Rodriguez',
-      role: 'Head of Engineering',
-      description: 'Architecting scalable systems for enterprise-grade ML infrastructure.'
-    },
-    {
-      name: 'Dr. Aisha Patel',
-      role: 'Data Science Lead',
-      description: 'Pioneering advanced analytics and statistical modeling methodologies.'
->>>>>>> a7773730a2bea42e8f237537b3c82055c41a8d5f
-    }
+    }    
   ];
 
   return (
@@ -194,13 +171,7 @@ function About() {
 
       {/* Team Section */}
       <div className="bg-black/80 backdrop-blur-sm p-6 rounded-lg mb-8">
-<<<<<<< HEAD
         <h4 className="text-2xl font-bold text-white mb-6">About the developer</h4>
-        <div className="w-full">
-=======
-        <h4 className="text-2xl font-bold text-white mb-6">Leadership Team</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
->>>>>>> a7773730a2bea42e8f237537b3c82055c41a8d5f
           {team.map((member, index) => (
             <div key={index} className="p-4 bg-gradient-to-b from-[#005778] to-black rounded-lg border border-[#00699a]/30 text-center">
               <div className="w-16 h-16 bg-[#00699a] rounded-full mx-auto mb-4 flex items-center justify-center">
@@ -212,7 +183,6 @@ function About() {
             </div>
           ))}
         </div>
-      </div>
 
       {/* Technology Stack */}
       <div className="bg-black/80 backdrop-blur-sm p-6 rounded-lg">

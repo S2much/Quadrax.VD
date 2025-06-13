@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Upload, Download, Eye, BarChart3, Database, Search, Filter,  Plus, FileSpreadsheet, Image, FileText, Zap, Wrench, Shield, Bolt } from 'lucide-react';
+import { Upload, Download, Eye, BarChart3, Database, Search, Filter,  Plus, FileSpreadsheet,  Zap, Wrench, Shield, Bolt } from 'lucide-react';
 import { fastenersData } from '../data/fasteners';
 import { handToolsData } from '../data/handTools';
 import { ppeData } from '../data/ppe';
@@ -13,7 +13,7 @@ function Datakits() {
   const datasets = [
     {
       id: 1,
-      name: 'Fasteners_Engineering_Dataset',
+      name: 'Bolts_Dataset',
       type: 'JSON',
       size: '1.2 MB',
       rows: '11',
@@ -43,7 +43,7 @@ function Datakits() {
     },
     {
       id: 3,
-      name: 'PPE_Safety_Equipment_Dataset',
+      name: 'PPE_Safety_Dataset',
       type: 'JSON',
       size: '2.1 MB',
       rows: '25+',
@@ -58,7 +58,7 @@ function Datakits() {
     },
     {
       id: 4,
-      name: 'Screws_Fastening_Dataset',
+      name: 'Screws_Dataset',
       type: 'JSON',
       size: '890 KB',
       rows: '18',
@@ -79,16 +79,6 @@ function Datakits() {
       case 'Processing': return 'text-yellow-400 bg-yellow-400/20';
       case 'Error': return 'text-red-400 bg-red-400/20';
       default: return 'text-gray-400 bg-gray-400/20';
-    }
-  };
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'CSV': return FileSpreadsheet;
-      case 'Images': return Image;
-      case 'JSON': return Database;
-      case 'TXT': return FileText;
-      default: return Database;
     }
   };
 
