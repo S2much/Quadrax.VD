@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 
-
 const cardData = [
   { 
     ID: 'card',
@@ -15,6 +14,7 @@ const cardData = [
     ID: 'card',
     title: 'Datakits', 
     desc: 'Manage and explore your datasets efficiently with powerful tools and visualizations.',
+    desc2: "is your data command center in Quadrax_ML—built for data scientists, engineers, and AI developers who need precision, control, and insight into their datasets. Whether you're prepping raw data, building training sets, or performing exploratory analysis, Datakits puts powerful tools at your fingertips. Upload datasets in common formats: .csv, .json, .parquet, .xls, .txt, and more!",
     doodle: '📊',
     pattern: 'data',
     button: 'Go to Datakits'
@@ -23,6 +23,7 @@ const cardData = [
     ID: 'card',
     title: 'Codesheets', 
     desc: 'Interactive notebooks for data analysis and model training with real-time collaboration.',
+    desc2: 'Purposely built for scripting, data analysis, prototyping ML models, and collaborating in real time. They blend the simplicity of notebook-style development with the power of full-script execution and rich outputs. Write and execute Python scripts, shell commands, or SQL queries. Run ML experiments with live feedback. Analyze datasets from Datakits. Share reproducible code with collaborators.',    
     doodle: '📝',
     pattern: 'code',
     button: 'Go to Codesheets'
@@ -30,7 +31,8 @@ const cardData = [
   { 
     ID: 'card',
     title: 'Virtual Machines', 
-    desc: 'Configure virtual machines and run compute clusters and automation pipelines.',
+    desc: 'Configure virtual machines and run compute clusters and automation pipelines. Gives you full control over your compute infrastructure. Easily create, configure, and manage virtual machines that serve as powerful nodes for running your AI models, automating tasks, and executing data pipelines.',
+    desc2: 'Define new VMs with custom specs. RAM, CPU, Disk size OS type (Ubuntu, Arch, CentOS, etc.) GPU passthrough support (if available) VM Templates for Data preprocessing, Model training, Automation agents, and Evaluation sandboxes. Choose between Lightweight containers and Full virtualization via KVM/libvirt',
     doodle: '💻',
     pattern: 'vm',
     button: 'Go to VMs'
@@ -54,7 +56,7 @@ const cardData = [
 ];
 
 
-export default function Home() {
+export default function Dashboard() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
@@ -90,9 +92,9 @@ export default function Home() {
   
 
   return (
-    <div className="bg-gradient-to-b from-[#002445] to-black text-white min-h-screen overflow-auto">
+    <div className=" m-0 text-white overflow-auto">
       {/* Hero */}
-      <section className="text-center py-16 px-8 bg-gradient-to-b from-black to-[#008aab]">
+      <section className="flex flex-col text-center justify-center items-center h-[40vh] py-16 bg-gradient-to-b from-black to-[#008aab]">
         <h1 className="text-3xl md:text-5xl [font-weight:400] mb-6 text-white [text-shadow:2px_2px_2px_#000]">
           Welcome to <span className="font-bold text-white [text-shadow:2px_2px_0px_#008aab,_-2px_-2px_2px_#000,_2px_-2px_2px_#000,_-2px_2px_0px_#008aab]" >QUADRAX•ML</span>!
         </h1>
@@ -105,19 +107,19 @@ export default function Home() {
       </section>
 
       {/* Slideshow */}
-      <section className="p-4 relative">
+      <section className="bg-gradient-to-b from-[#004667] to-black relative">
         <h2 className="text-5xl px-4 py-4 text-left text-white [text-shadow:2px_2px_4px_#000]">
           Explore Our Platform
         </h2>
           <div className="flex items-center justify-center items-center cursor-pointer transition-transform z-10">
             {/* Previous Card */}
-            <div className="w-[4%] [height:40vh] opacity-80 [transform:perspective(500px)_rotateY(315deg)] items-center transition-all duration-500" >
-              <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 ${getPatternClass(cardData[getCardIndex(-1)].pattern)}`}>
+            <div className="w-[2%] m-2 border border-[#00699a] [height:35vh] opacity-80 [transform:perspective(500px)_rotateY(-45deg)] items-center transition-all duration-500" >
+              <div className={`h-full bg-gradient-to-b from-[#005778] to-black p-4 ${getPatternClass(cardData[getCardIndex(-1)].pattern)}`}>
               </div>
             </div>
 
             {/* Current Card */}
-            <div className="w-[85%] [height:45vh] transition-all duration-500 relative z-10">
+            <div className="w-[90%] [height:40vh] transition-all duration-500 relative z-10">
               <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 shadow-2xl border border-[#00699a] ${getPatternClass(cardData[currentIndex].pattern)}`}>
                 <div className=" absolute top-20 right-20 text-8xl mb-6 [filter:opacity(0.3)_saturate(200%)] [transform:perspective(500px)_rotateY(-45deg)_scale(2.5,2)]">
                   {cardData[currentIndex].doodle}
@@ -132,14 +134,13 @@ export default function Home() {
                 <p className="text-xl w-[70%] text-white text-left leading-relaxed">
                   {cardData[currentIndex].desc2}
                 </p>
-                <button className="absolute bottom-10 right-10">
-                  <div className={`${getPatternClass(cardData[currentIndex].button)}`}></div>
+                <button className={`absolute bottom-10 right-10 ${getPatternClass(cardData[currentIndex].button)}`}>
                 </button>
               </div>
 </div>
             {/* Next Card */}
-            <div className="w-[4%] items-center [height:40vh] opacity-80 [transform:perspective(500px)_rotateY(45deg)] transition-all duration-500">
-              <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 ${getPatternClass(cardData[getCardIndex(1)].pattern)}`}>
+            <div className="w-[2%] border border-[#00699a] items-center [height:35vh] opacity-80 [transform:perspective(500px)_rotateY(45deg)] transition-all duration-500">
+              <div className={`h-full bg-gradient-to-b from-[#005778] to-black p-4 ${getPatternClass(cardData[getCardIndex(1)].pattern)}`}>
               </div>
             </div>
           </div>

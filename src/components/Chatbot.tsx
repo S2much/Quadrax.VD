@@ -249,7 +249,7 @@ You can also explore our platform sections:
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed right-0 top-0 [width:30vw] [height:96vh] bg-gradient-to-b from-black via-black to-[#005778] shadow-2xl transition-all duration-300 z-40 border-l border-[#00699a] ${isMinimized ? 'w-16' : 'w-80'}`}>
+    <div className={`fixed right-0 top-0 [width:30vw] [height:96vh] bg-gradient-to-b from-black via-black to-[#005778] shadow-2xl transition-all duration-100 z-40 border-l border-[#00699a] ${isMinimized ? 'w-30' : 'w-70'}`}>
       <div className="flex justify-between items-center p-4 border-b border-[#00699a] bg-black/50">
         {!isMinimized && (
           <h4 className="text-xl text-white font-medium flex items-center gap-2">

@@ -17,7 +17,7 @@ import Register from './components/Register';
 import LoadingSpinner from './components/LoadingSpinner';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
+  const [currentPage, setCurrentPage] = useState('dashboard');
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [isNavCollapsed, setIsNavCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -123,9 +123,8 @@ function App() {
           setIsCollapsed={setIsNavCollapsed}
         />
         
-        <div className={`flex-1 transition-all duration-300 ${isNavCollapsed ? 'ml-16' : 'ml-64'} ${isChatbotOpen ? 'mr-70' : 'mr-0'}`}>
-          {currentPage === 'home' && <Dashboard />}
-          {currentPage === 'home' && <Home />}
+        <div className={`flex-1 transition-all duration-300 ${isNavCollapsed ? 'ml-16' : 'ml-60'} ${isChatbotOpen ? 'mr-80' : 'mr-0'}`}>
+          {currentPage === 'dashboard' && <Dashboard />}
           {currentPage === 'workshops' && <Workshop />}
           {currentPage === 'vms' && <VirtualMachines />}
           {currentPage === 'datakits' && <Datakits />}

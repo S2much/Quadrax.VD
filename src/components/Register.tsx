@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, Building, ArrowLeft, Github, Chrome, Check } from 'lucide-react';
+import Dashboard from './Dashboard';
 
 interface RegisterProps {
   onCancel: () => void;
