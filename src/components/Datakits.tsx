@@ -120,7 +120,7 @@ function Datakits() {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="px-4 py-2 bg-gradient-to-r from-black to-[#005778] border border-[#00699a] text-white rounded-lg focus:outline-none focus:border-[#00beef]"
+            className="px-6 bg-gradient-to-r from-black to-[#005778] border border-[#00699a] text-white rounded-lg focus:outline-none focus:border-[#00beef]"
           >
             <option value="all">All Types</option>
             <option value="csv">CSV</option>
@@ -128,12 +128,12 @@ function Datakits() {
             <option value="txt">Text</option>
           </select>
           
-          <button className="px-4 py-2 bg-[#00699a] hover:bg-[#00beef] text-white rounded-lg transition-colors duration-300 flex items-center gap-2">
+          <button className="px-4 bg-[#00699a] hover:bg-[#00beef] text-white rounded-lg transition-colors duration-300 flex items-center gap-2">
             <Filter size={16} />
             Filter
           </button>
           
-          <button className="px-4 py-2 bg-[#00beef] hover:bg-[#00699a] text-black font-semibold rounded-lg transition-colors duration-300 flex items-center gap-2">
+          <button className="px-16 bg-[#00beef] hover:bg-[#00699a] text-black font-semibold rounded-lg transition-colors duration-300 flex items-left gap-2">
             <Plus size={16} />
             Upload Dataset
           </button>

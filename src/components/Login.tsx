@@ -1,30 +1,44 @@
 import { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, ArrowLeft, Github, Chrome } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowLeft, Github, Chrome, AlertCircle } from 'lucide-react';
 
 interface LoginProps {
   onCancel: () => void;
+  onLogin: (email: string, password: string) => boolean;
 }
 
-function Login({ onCancel }: LoginProps) {
+function Login({ onCancel, onLogin }: LoginProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login attempt:', { email, password, rememberMe });
+    setError('');
+    setIsLoading(true);
+
+    // Simulate loading
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const success = onLogin(email, password);
+    
+    if (!success) {
+      setError('Invalid email or password. Try drax123@example.com with @Pwd123456');
+    }
+    
+    setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#00beef] to-black flex items-center justify-center p-6">
+    <div className="min-h-screen m-0 bg-gradient-to-b from-[#00beef] to-black flex items-center justify-center">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
           <button
             onClick={onCancel}
-            className="absolute top-6 left-6 p-2 text-white hover:bg-white/10 rounded-lg transition-colors duration-300 flex items-center gap-2"
+            className="absolute top-6 left-6 p-2 text-white hover:bg-white/10 rounded-lg transition-colors duration-300"
           >
             <ArrowLeft size={20} />
             <span>Back</span>
@@ -40,6 +54,13 @@ function Login({ onCancel }: LoginProps) {
         <div className="bg-black/80 backdrop-blur-sm rounded-2xl p-8 border border-[#00699a]/30 shadow-2xl">
           <h2 className="text-2xl font-bold text-white mb-6 text-center">Sign In</h2>
           
+          {error && (
+            <div className="mb-4 p-3 bg-red-900/20 border border-red-500/30 rounded-lg flex items-center gap-2">
+              <AlertCircle size={20} className="text-red-400" />
+              <span className="text-red-400 text-sm">{error}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
@@ -98,11 +119,19 @@ function Login({ onCancel }: LoginProps) {
 
             <button
               type="submit"
-              className="w-full py-3 bg-gradient-to-r from-[#00beef] to-[#00699a] hover:from-[#00699a] hover:to-[#00beef] text-black font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+              disabled={isLoading}
+              className="w-full py-3 bg-gradient-to-r from-[#00beef] to-[#00699a] hover:from-[#00699a] hover:to-[#00beef] disabled:from-gray-600 disabled:to-gray-700 text-black disabled:text-gray-400 font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 shadow-lg"
             >
-              Sign In
+              {isLoading ? 'Signing In...' : 'Sign In'}
             </button>
           </form>
+
+          {/* Demo Credentials */}
+          <div className="mt-4 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+            <p className="text-blue-400 text-sm font-medium mb-1">Demo Account:</p>
+            <p className="text-blue-300 text-xs">Email: drax123@example.com</p>
+            <p className="text-blue-300 text-xs">Password: @Pwd123456</p>
+          </div>
 
           {/* Divider */}
           <div className="my-6 flex items-center">

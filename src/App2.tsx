@@ -1,0 +1,234 @@
+import { useState, useEffect } from 'react';
+import { Home, Terminal, FileJson, FileCode, Baseline as Pipeline, Monitor, Brain, BookOpen, Info, Settings as Settings2,Search, HelpCircle, LogIn, LogOut, UserPlus, Bot} from 'lucide-react';
+import Navbar from './components/Navbar';
+import Workshop from './components/Workshop';
+import VirtualMachines from './components/VirtualMachines';
+import HomePage from './components/HomePage';
+import Dashboard from './components/Dashboard';
+import Chatbot from './components/Chatbot';
+import Datakits from './components/Datakits';
+import Codesheets from './components/Codesheets';
+import Pipelines from './components/Pipelines';
+import Models from './components/Models';
+import Documentation from './components/Documentation';
+import About from './components/About';
+import Settings from './components/Settings';
+import Login from './components/Login';
+import Register from './components/Register';
+import LoadingSpinner from './components/LoadingSpinner';
+
+function App2() {
+   const [currentPage, setCurrentPage] = useState('homePage');
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  const [isNavCollapsed, setIsNavCollapsed] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  // Initial loading effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Page transition loading effect
+  useEffect(() => {
+    if (!isLoading) {
+      setPageLoading(true);
+      const timer = setTimeout(() => {
+        setPageLoading(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 800, LoadingSpinner);
+
+      return () => clearTimeout(timer);
+    }
+  }, [pageLoading, isLoading]);
+
+  // Auto scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
+
+  const navItems = [
+    { id: 'homePage', label: 'HomePage', icon: Home },
+    { id: 'workshops', label: 'Workshops', icon: Terminal },
+    { id: 'datakits', label: 'Datakits', icon: FileJson },
+    { id: 'notebooks', label: 'Codesheets', icon: FileCode },
+    { id: 'pipelines', label: 'Pipelines', icon: Pipeline },
+    { id: 'vms', label: 'VMs', icon: Monitor },
+    { id: 'models', label: 'Models', icon: Brain },
+    { id: 'documentation', label: 'Documentation', icon: BookOpen },
+    { id: 'about', label: 'About', icon: Info },
+  ];
+
+  const bottomNavItems = isLoggedIn ? [
+    { id: 'settings', label: 'Settings', icon: Settings2 },
+    { id: 'logout', label: 'Log Out', icon: LogOut },
+  ] : [
+    { id: 'login', label: 'Login', icon: LogIn },
+    { id: 'register', label: 'Register', icon: UserPlus },
+  ];
+
+  const toggleChatbot = () => {
+    setIsChatbotOpen(!isChatbotOpen);
+  };
+
+  const handleCancel = () => {
+    setCurrentPage(isLoggedIn ? 'dashboard' : 'home');
+  };
+
+  const handleLogin = (email: string, password: string) => {
+    // Simple authentication check
+    if (email === 'drax123@example.com' && password === '@Pwd123456') {
+      setIsLoggedIn(true);
+      setUser({ email, userName: 'Drax123' });
+      setCurrentPage('dashboard');
+      return true;
+    }
+    return false;
+  };
+
+  const handleLogout = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    setIsLoggedIn(false);
+    setUser(null);
+    setCurrentPage('home');
+    setShowLogoutConfirm(false);
+    setIsChatbotOpen(false);
+  };
+
+  const handleNavClick = (pageId: string) => {
+    if (pageId === 'logout') {
+      handleLogout();
+    } else {
+      setCurrentPage(pageId);
+    }
+  };
+
+  // Check if current page is auth-related
+  const isAuthPage = currentPage === 'login' || currentPage === 'register';
+  
+  // Disable chatbot for auth pages
+  const isChatbotDisabled = isAuthPage;
+
+  // If on auth pages, render them without navbar/chatbot
+  if (isAuthPage) {
+    return (
+      <div className="min-h-screen">
+        {currentPage === 'login' && (
+          <Login 
+            onCancel={handleCancel} 
+            onLogin={handleLogin}
+          />
+        )}
+        {currentPage === 'register' && (
+          <Register 
+            onCancel={handleCancel}
+            onRegister={() => setCurrentPage('login')}
+          />
+        )}
+      </div>
+    );
+  }
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#00beef] to-black overflow-hidden">
+      <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-b from-black via-black to-[#00699a] h-16 text-white px-4 flex justify-between items-center shadow-lg">
+        <h1 className="text-2xl md:text-4xl text-white [text-shadow:2px_2px_0px_#008aab,_-2px_-2px_2px_#000,_2px_-2px_2px_#000,_-2px_2px_0px_#008aab]">
+        QUADRAX•ML
+        </h1>
+         {/* Search Bar */}
+         <div className="flex mx-8">
+          <div className="relative w-[30vw]">
+            <Search className="absolute right-3 top-8 transform -translate-y-1/2 text-white z-10" size={25} />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-[30vw] relative top-1/4 pl-5 py-2 bg-gradient-to-r from-black to-[#005778] border border-[#00699a] text-white placeholder:text-gray-400 rounded-lg focus:outline-none focus:border-[#00beef]"
+            />
+          </div>
+        
+<button className="relative top-2 p-1 text-white hover:text-[#00beef] transition-colors duration-10">
+            <HelpCircle size={30} />
+          </button>
+          </div>
+
+        <div className="flex items-center gap-4">
+        <button onClick={toggleChatbot} disabled={isChatbotDisabled}
+          className="bg-[#00beef] w-[15vw] text-black px-3 py-2 text-lg md:text-2xl font-bold flex items-center gap-2 hover:bg-[#00a8d6] transition-colors duration-300">
+          <Bot size={28} className="md:w-10 md:h-10" />
+          <span className="hidden md:inline">QUADRAX_AI</span>
+        </button>
+        </div>
+      </header>
+      
+      <main className="flex pt-16 h-screen">
+          <Navbar 
+          navItems={navItems} 
+          bottomNavItems={bottomNavItems}
+          currentPage={currentPage}
+          setCurrentPage={handleNavClick}
+          isCollapsed={isNavCollapsed}
+          setIsCollapsed={setIsNavCollapsed}
+          isLoggedIn={isLoggedIn}
+          />
+        
+        <div className={`flex-1 transition-all duration-300 ${isNavCollapsed ? 'ml-16' : 'ml-64'} ${isChatbotOpen && !isChatbotDisabled ? 'mr-80' : 'mr-0'}`}>
+          {currentPage === 'homePage' && <HomePage onGetStarted={() => setCurrentPage('register')} />}
+          {currentPage === 'dashboard' && <Dashboard />}
+          {currentPage === 'workshops' && <Workshop />}
+          {currentPage === 'vms' && <VirtualMachines />}
+          {currentPage === 'datakits' && <Datakits />}
+          {currentPage === 'notebooks' && <Codesheets />}
+          {currentPage === 'pipelines' && <Pipelines />}
+          {currentPage === 'models' && <Models />}
+          {currentPage === 'documentation' && <Documentation />}
+          {currentPage === 'about' && <About />}
+          {currentPage === 'settings' && <Settings />}
+        </div>
+
+        {!isChatbotDisabled && (
+          <Chatbot 
+            isOpen={isChatbotOpen} 
+            onClose={() => setIsChatbotOpen(false)} 
+          />
+        )}
+      </main>
+ {/* Logout Confirmation Modal */}
+ {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gradient-to-b from-black to-[#005778] p-6 rounded-lg border border-[#00699a] max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold text-white mb-4">Confirm Logout</h3>
+            <p className="text-gray-300 mb-6">Are you sure you want to log out of your account?</p>
+            <div className="flex gap-4">
+              <button
+                onClick={confirmLogout}
+                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-300"
+              >
+                Yes, Log Out
+              </button>
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="flex-1 px-4 py-2 bg-[#00699a] hover:bg-[#00beef] text-white rounded-lg transition-colors duration-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App2;

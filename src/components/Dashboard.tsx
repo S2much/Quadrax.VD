@@ -1,170 +1,341 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react';
+import { BarChart3, TrendingUp, Activity, Database, Brain, Zap, Clock, CheckCircle, AlertTriangle, Users, ArrowUp, ArrowDown, Play, Settings } from 'lucide-react';
 
-const cardData = [
-  { 
-    ID: 'card',
-    title: 'Workshops', 
-    desc: 'Create new workstations, initialize, organize, evaluate, train and deploy ML models for AI development and Automation systems. Integrate with external applications, resources.' ,
-    desc2: "The Workshop is the heart of the Quadrax_ML ecosystem—your personal R&D lab where you can build, refine, and launch intelligent systems with precision and control. Whether you're a solo developer, a data science team, or an enterprise AI engineer, the Workshop brings all critical functions into one unified interface.",
-    doodle: '🔬',
-    pattern: 'workshop',
-    button: 'Go to Workshops'
-  },
-  { 
-    ID: 'card',
-    title: 'Datakits', 
-    desc: 'Manage and explore your datasets efficiently with powerful tools and visualizations.',
-    desc2: "is your data command center in Quadrax_ML—built for data scientists, engineers, and AI developers who need precision, control, and insight into their datasets. Whether you're prepping raw data, building training sets, or performing exploratory analysis, Datakits puts powerful tools at your fingertips. Upload datasets in common formats: .csv, .json, .parquet, .xls, .txt, and more!",
-    doodle: '📊',
-    pattern: 'data',
-    button: 'Go to Datakits'
-  },
-  { 
-    ID: 'card',
-    title: 'Codesheets', 
-    desc: 'Interactive notebooks for data analysis and model training with real-time collaboration.',
-    desc2: 'Purposely built for scripting, data analysis, prototyping ML models, and collaborating in real time. They blend the simplicity of notebook-style development with the power of full-script execution and rich outputs. Write and execute Python scripts, shell commands, or SQL queries. Run ML experiments with live feedback. Analyze datasets from Datakits. Share reproducible code with collaborators.',    
-    doodle: '📝',
-    pattern: 'code',
-    button: 'Go to Codesheets'
-  },
-  { 
-    ID: 'card',
-    title: 'Virtual Machines', 
-    desc: 'Configure virtual machines and run compute clusters and automation pipelines. Gives you full control over your compute infrastructure. Easily create, configure, and manage virtual machines that serve as powerful nodes for running your AI models, automating tasks, and executing data pipelines.',
-    desc2: 'Define new VMs with custom specs. RAM, CPU, Disk size OS type (Ubuntu, Arch, CentOS, etc.) GPU passthrough support (if available) VM Templates for Data preprocessing, Model training, Automation agents, and Evaluation sandboxes. Choose between Lightweight containers and Full virtualization via KVM/libvirt',
-    doodle: '💻',
-    pattern: 'vm',
-    button: 'Go to VMs'
-  },
-  { 
-    ID: 'card',
-    title: 'Models', 
-    desc: 'Deploy and manage your machine learning models with advanced monitoring.',
-    doodle: '🤖',
-    pattern: 'model',
-    button: 'Go to Models'
-  }, 
-  { 
-    ID: 'card',
-    title: 'Documentation', 
-    desc: 'Learn more about Quadrax•ML with comprehensive guides and tutorials.',
-    doodle: '📚',
-    pattern: 'docs',
-    button: 'Learn more'
-  }
-];
+function Dashboard() {
+  const [timeRange, setTimeRange] = useState('7d');
 
+  // Mock data for the quadro-ml-v_2 model
+  const modelMetrics = {
+    accuracy: 94.7,
+    precision: 95.2,
+    recall: 94.1,
+    f1Score: 94.6,
+    latency: 120,
+    throughput: 1250,
+    uptime: 99.8
+  };
 
-export default function Dashboard() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const recentActivity = [
+    { time: '2 min ago', action: 'Model inference completed', status: 'success', count: 1247 },
+    { time: '15 min ago', action: 'Data pipeline executed', status: 'success', count: 1 },
+    { time: '1 hour ago', action: 'Training job started', status: 'running', count: 1 },
+    { time: '3 hours ago', action: 'Dataset uploaded', status: 'success', count: 1 },
+    { time: '6 hours ago', action: 'Model deployed', status: 'success', count: 1 }
+  ];
 
-  useEffect(() => {
-    if (!isAutoPlaying) {
-      return;
+  const performanceData = [
+    { time: '00:00', accuracy: 94.2, latency: 125 },
+    { time: '04:00', accuracy: 94.5, latency: 118 },
+    { time: '08:00', accuracy: 94.7, latency: 120 },
+    { time: '12:00', accuracy: 94.8, latency: 115 },
+    { time: '16:00', accuracy: 94.6, latency: 122 },
+    { time: '20:00', accuracy: 94.7, latency: 120 }
+  ];
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'success': return <CheckCircle size={16} className="text-green-400" />;
+      case 'running': return <Clock size={16} className="text-yellow-400 animate-spin" />;
+      case 'warning': return <AlertTriangle size={16} className="text-yellow-400" />;
+      default: return <CheckCircle size={16} className="text-gray-400" />;
     }
-    
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % cardData.length);
-    }, 8000);
-
-    return () => clearInterval(interval);
-  }, [isAutoPlaying]);
-
-
-  const getCardIndex = (offset: number) => {
-    return (currentIndex + offset + cardData.length) % cardData.length;
   };
-
-  const getPatternClass = (pattern: string) => {
-    const patterns = {
-      workshop: 'bg-[radial-gradient(circle_at_20%_50%,_rgba(0,190,239,0.1)_0%,_transparent_50%),_radial-gradient(circle_at_80%_20%,_rgba(0,105,154,0.1)_0%,_transparent_50%)]',
-      data: 'bg-[radial-gradient(circle_at_30%_40%,_rgba(0,190,239,0.1)_0%,_transparent_50%),_linear-gradient(45deg,_rgba(0,105,154,0.05)_25%,_transparent_25%)]',
-      code: 'bg-[repeating-linear-gradient(45deg,_rgba(0,190,239,0.05)_0px,_rgba(0,190,239,0.05)_2px,_transparent_2px,_transparent_10px)]',
-      vm: 'bg-[radial-gradient(ellipse_at_center,_rgba(0,190,239,0.1)_0%,_transparent_70%)]',
-      model: 'bg-[conic-gradient(from_0deg_at_50%_50%,_rgba(0,190,239,0.1)_0deg,_transparent_60deg,_rgba(0,105,154,0.1)_120deg,_transparent_180deg)]',
-      docs: 'bg-[linear-gradient(90deg,_rgba(0,190,239,0.05)_50%,_transparent_50%),_linear-gradient(0deg,_rgba(0,105,154,0.05)_50%,_transparent_50%)]'
-    };
-    return patterns[pattern as keyof typeof patterns] || patterns.workshop;
-  };
-
-  
 
   return (
-    <div className=" m-0 text-white overflow-auto">
-      {/* Hero */}
-      <section className="flex flex-col text-center justify-center items-center h-[40vh] py-16 bg-gradient-to-b from-black to-[#008aab]">
-        <h1 className="text-3xl md:text-5xl [font-weight:400] mb-6 text-white [text-shadow:2px_2px_2px_#000]">
-          Welcome to <span className="font-bold text-white [text-shadow:2px_2px_0px_#008aab,_-2px_-2px_2px_#000,_2px_-2px_2px_#000,_-2px_2px_0px_#008aab]" >QUADRAX•ML</span>!
-        </h1>
-        <p className="text-2xl md:text-4xl text-white mb-8 [text-shadow:2px_2px_2px_#000]">
-          Simplicity in complexity
-        </p>
-        <button className="bg-black hover:bg-[#00699a] text-[#00beef] text-xl md:text-3xl font-bold py-3 px-8 border-4 border-[#00beef] rounded-lg transition-all duration-300 hover:scale-105 [text-shadow:1px_1px_2px_rgba(0,190,239,0.5)]">
-          Get Started
-        </button>
-      </section>
+    <section className="p-6 min-h-screen">
+      <div className="text-white mb-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-3xl font-bold text-white [text-shadow:2px_2px_2px_#000] bg-black/30 p-4 rounded-lg">
+              Dashboard
+            </h2>
+            <h3 className="text-white text-xl mt-2 ml-4">Welcome back, Dr. Alex Chen</h3>
+          </div>
+          <div className="flex gap-2">
+            {['1d', '7d', '30d', '90d'].map((range) => (
+              <button
+                key={range}
+                onClick={() => setTimeRange(range)}
+                className={`px-3 py-2 rounded-lg transition-colors duration-300 ${
+                  timeRange === range ? 'bg-[#00699a] text-white' : 'bg-black/50 text-gray-300 hover:bg-[#005778]'
+                }`}
+              >
+                {range}
+              </button>
+            ))}
+          </div>
+        </div>
+        <hr className="border-none bg-[#00beef] h-[2px] w-full my-4" />
+      </div>
 
-      {/* Slideshow */}
-      <section className="bg-gradient-to-b from-[#004667] to-black relative">
-        <h2 className="text-5xl px-4 py-4 text-left text-white [text-shadow:2px_2px_4px_#000]">
-          Explore Our Platform
-        </h2>
-          <div className="flex items-center justify-center items-center cursor-pointer transition-transform z-10">
-            {/* Previous Card */}
-            <div className="w-[2%] m-2 border border-[#00699a] [height:35vh] opacity-80 [transform:perspective(500px)_rotateY(-45deg)] items-center transition-all duration-500" >
-              <div className={`h-full bg-gradient-to-b from-[#005778] to-black p-4 ${getPatternClass(cardData[getCardIndex(-1)].pattern)}`}>
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-gradient-to-b from-black to-[#005778] p-6 rounded-lg border border-[#00699a]/30">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-2 bg-[#00beef]/20 rounded-lg">
+              <Brain className="w-6 h-6 text-[#00beef]" />
+            </div>
+            <div className="flex items-center text-green-400 text-sm">
+              <ArrowUp size={16} />
+              <span>+2.3%</span>
+            </div>
+          </div>
+          <div className="text-2xl font-bold text-white mb-1">{modelMetrics.accuracy}%</div>
+          <div className="text-gray-300 text-sm">Model Accuracy</div>
+        </div>
+
+        <div className="bg-gradient-to-b from-black to-[#005778] p-6 rounded-lg border border-[#00699a]/30">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-2 bg-[#00beef]/20 rounded-lg">
+              <Zap className="w-6 h-6 text-[#00beef]" />
+            </div>
+            <div className="flex items-center text-green-400 text-sm">
+              <ArrowDown size={16} />
+              <span>-5ms</span>
+            </div>
+          </div>
+          <div className="text-2xl font-bold text-white mb-1">{modelMetrics.latency}ms</div>
+          <div className="text-gray-300 text-sm">Avg Latency</div>
+        </div>
+
+        <div className="bg-gradient-to-b from-black to-[#005778] p-6 rounded-lg border border-[#00699a]/30">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-2 bg-[#00beef]/20 rounded-lg">
+              <Activity className="w-6 h-6 text-[#00beef]" />
+            </div>
+            <div className="flex items-center text-green-400 text-sm">
+              <ArrowUp size={16} />
+              <span>+12%</span>
+            </div>
+          </div>
+          <div className="text-2xl font-bold text-white mb-1">{modelMetrics.throughput.toLocaleString()}</div>
+          <div className="text-gray-300 text-sm">Requests/hour</div>
+        </div>
+
+        <div className="bg-gradient-to-b from-black to-[#005778] p-6 rounded-lg border border-[#00699a]/30">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-2 bg-[#00beef]/20 rounded-lg">
+              <CheckCircle className="w-6 h-6 text-[#00beef]" />
+            </div>
+            <div className="flex items-center text-green-400 text-sm">
+              <ArrowUp size={16} />
+              <span>+0.1%</span>
+            </div>
+          </div>
+          <div className="text-2xl font-bold text-white mb-1">{modelMetrics.uptime}%</div>
+          <div className="text-gray-300 text-sm">Uptime</div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+        {/* Model Performance Chart */}
+        <div className="xl:col-span-2 bg-black/80 backdrop-blur-sm p-6 rounded-lg">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-bold text-white">quadro-ml-v_2 Performance</h3>
+            <div className="flex gap-2">
+              <button className="p-2 bg-[#00699a] hover:bg-[#00beef] text-white rounded transition-colors duration-300">
+                <Play size={16} />
+              </button>
+              <button className="p-2 bg-black/50 hover:bg-[#005778] text-white rounded border border-[#00699a] transition-colors duration-300">
+                <Settings size={16} />
+              </button>
+            </div>
+          </div>
+          
+          {/* Simple Chart Visualization */}
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between text-sm text-gray-300 mb-2">
+                <span>Accuracy Trend</span>
+                <span>{modelMetrics.accuracy}%</span>
+              </div>
+              <div className="h-2 bg-gray-700 rounded-full">
+                <div 
+                  className="h-2 bg-gradient-to-r from-[#00beef] to-[#00699a] rounded-full transition-all duration-1000"
+                  style={{ width: `${modelMetrics.accuracy}%` }}
+                ></div>
               </div>
             </div>
-
-            {/* Current Card */}
-            <div className="w-[90%] [height:40vh] transition-all duration-500 relative z-10">
-              <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 shadow-2xl border border-[#00699a] ${getPatternClass(cardData[currentIndex].pattern)}`}>
-                <div className=" absolute top-20 right-20 text-8xl mb-6 [filter:opacity(0.3)_saturate(200%)] [transform:perspective(500px)_rotateY(-45deg)_scale(2.5,2)]">
-                  {cardData[currentIndex].doodle}
-                </div>
-                <h3 className="text-4xl font-bold text-white mb-4 text-left">
-                  {cardData[currentIndex].title}
-                </h3>
-                <p className="text-xl w-[70%] text-white text-left leading-relaxed">
-                  {cardData[currentIndex].desc}
-                </p>
-                <br/>
-                <p className="text-xl w-[70%] text-white text-left leading-relaxed">
-                  {cardData[currentIndex].desc2}
-                </p>
-                <button className={`absolute bottom-10 right-10 ${getPatternClass(cardData[currentIndex].button)}`}>
-                </button>
+            
+            <div>
+              <div className="flex justify-between text-sm text-gray-300 mb-2">
+                <span>Precision</span>
+                <span>{modelMetrics.precision}%</span>
               </div>
-</div>
-            {/* Next Card */}
-            <div className="w-[2%] border border-[#00699a] items-center [height:35vh] opacity-80 [transform:perspective(500px)_rotateY(45deg)] transition-all duration-500">
-              <div className={`h-full bg-gradient-to-b from-[#005778] to-black p-4 ${getPatternClass(cardData[getCardIndex(1)].pattern)}`}>
+              <div className="h-2 bg-gray-700 rounded-full">
+                <div 
+                  className="h-2 bg-gradient-to-r from-green-400 to-green-600 rounded-full transition-all duration-1000"
+                  style={{ width: `${modelMetrics.precision}%` }}
+                ></div>
+              </div>
+            </div>
+            
+            <div>
+              <div className="flex justify-between text-sm text-gray-300 mb-2">
+                <span>Recall</span>
+                <span>{modelMetrics.recall}%</span>
+              </div>
+              <div className="h-2 bg-gray-700 rounded-full">
+                <div 
+                  className="h-2 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-1000"
+                  style={{ width: `${modelMetrics.recall}%` }}
+                ></div>
+              </div>
+            </div>
+            
+            <div>
+              <div className="flex justify-between text-sm text-gray-300 mb-2">
+                <span>F1 Score</span>
+                <span>{modelMetrics.f1Score}%</span>
+              </div>
+              <div className="h-2 bg-gray-700 rounded-full">
+                <div 
+                  className="h-2 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full transition-all duration-1000"
+                  style={{ width: `${modelMetrics.f1Score}%` }}
+                ></div>
               </div>
             </div>
           </div>
 
-        
-
-        {/* Indicators */}
-        <div className="flex justify-center mt-8 space-x-2">
-          {cardData.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                setCurrentIndex(index);
-                setIsAutoPlaying(false);
-              }}
-              className={`w-8 h-1 m-0 [box-shadow:0_0_4px_1px_#00beef] transition-all duration-300 ${
-                index === currentIndex ? 'bg-[#00beef] scale-125' : 'bg-white/30 hover:bg-white/50'
-              }`}
-            />
-          ))}
+          {/* Performance Timeline */}
+          <div className="mt-6">
+            <h4 className="text-lg font-semibold text-white mb-4">24-Hour Performance</h4>
+            <div className="grid grid-cols-6 gap-4">
+              {performanceData.map((point, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-xs text-gray-400 mb-2">{point.time}</div>
+                  <div className="h-16 bg-gray-700 rounded relative">
+                    <div 
+                      className="absolute bottom-0 w-full bg-gradient-to-t from-[#00beef] to-[#00699a] rounded transition-all duration-500"
+                      style={{ height: `${(point.accuracy / 100) * 100}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-xs text-white mt-2">{point.accuracy}%</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-      </section>
-      
-    </div>
+        {/* Recent Activity */}
+        <div className="bg-black/80 backdrop-blur-sm p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-white mb-6">Recent Activity</h3>
+          <div className="space-y-4">
+            {recentActivity.map((activity, index) => (
+              <div key={index} className="flex items-start gap-3 p-3 bg-gradient-to-r from-black to-[#005778] rounded-lg border border-[#00699a]/30">
+                {getStatusIcon(activity.status)}
+                <div className="flex-1">
+                  <div className="text-white text-sm">{activity.action}</div>
+                  <div className="text-gray-400 text-xs">{activity.time}</div>
+                </div>
+                {activity.count > 1 && (
+                  <div className="text-[#00beef] text-xs bg-[#00699a]/20 px-2 py-1 rounded-full">
+                    {activity.count}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Resource Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-black/80 backdrop-blur-sm p-6 rounded-lg">
+          <div className="flex items-center gap-3 mb-4">
+            <Database className="w-6 h-6 text-[#00beef]" />
+            <h3 className="text-lg font-bold text-white">Datakits</h3>
+          </div>
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-gray-300">Active Datasets</span>
+              <span className="text-[#00beef]">4</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-300">Total Size</span>
+              <span className="text-[#00beef]">8.1 GB</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-300">Quality Score</span>
+              <span className="text-[#00beef]">95%</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-black/80 backdrop-blur-sm p-6 rounded-lg">
+          <div className="flex items-center gap-3 mb-4">
+            <BarChart3 className="w-6 h-6 text-[#00beef]" />
+            <h3 className="text-lg font-bold text-white">Pipelines</h3>
+          </div>
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-gray-300">Running</span>
+              <span className="text-green-400">2</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-300">Scheduled</span>
+              <span className="text-blue-400">1</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-300">Success Rate</span>
+              <span className="text-[#00beef]">94%</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-black/80 backdrop-blur-sm p-6 rounded-lg">
+          <div className="flex items-center gap-3 mb-4">
+            <Users className="w-6 h-6 text-[#00beef]" />
+            <h3 className="text-lg font-bold text-white">Collaboration</h3>
+          </div>
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-gray-300">Team Members</span>
+              <span className="text-[#00beef]">8</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-300">Shared Projects</span>
+              <span className="text-[#00beef]">12</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-300">Active Sessions</span>
+              <span className="text-green-400">3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-black/80 backdrop-blur-sm p-6 rounded-lg">
+        <h3 className="text-xl font-bold text-white mb-6">Quick Actions</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <button className="bg-gradient-to-b from-[#005778] to-black p-4 rounded-lg border border-[#00699a] hover:border-[#00beef] transition-all duration-300 group text-left">
+            <Brain className="w-8 h-8 text-[#00beef] mb-3 group-hover:scale-110 transition-transform duration-300" />
+            <h4 className="text-white font-semibold mb-2">Train New Model</h4>
+            <p className="text-gray-300 text-sm">Start training a new ML model</p>
+          </button>
+          
+          <button className="bg-gradient-to-b from-[#005778] to-black p-4 rounded-lg border border-[#00699a] hover:border-[#00beef] transition-all duration-300 group text-left">
+            <Database className="w-8 h-8 text-[#00beef] mb-3 group-hover:scale-110 transition-transform duration-300" />
+            <h4 className="text-white font-semibold mb-2">Upload Dataset</h4>
+            <p className="text-gray-300 text-sm">Add new data to your collection</p>
+          </button>
+          
+          <button className="bg-gradient-to-b from-[#005778] to-black p-4 rounded-lg border border-[#00699a] hover:border-[#00beef] transition-all duration-300 group text-left">
+            <Activity className="w-8 h-8 text-[#00beef] mb-3 group-hover:scale-110 transition-transform duration-300" />
+            <h4 className="text-white font-semibold mb-2">Create Pipeline</h4>
+            <p className="text-gray-300 text-sm">Build automated workflows</p>
+          </button>
+          
+          <button className="bg-gradient-to-b from-[#005778] to-black p-4 rounded-lg border border-[#00699a] hover:border-[#00beef] transition-all duration-300 group text-left">
+            <TrendingUp className="w-8 h-8 text-[#00beef] mb-3 group-hover:scale-110 transition-transform duration-300" />
+            <h4 className="text-white font-semibold mb-2">View Analytics</h4>
+            <p className="text-gray-300 text-sm">Analyze model performance</p>
+          </button>
+        </div>
+      </div>
+    </section>
   );
 }
+
+export default Dashboard;

@@ -1,15 +1,13 @@
-
 @import url("https://fonts.googleapis.com/css2?family=Exo+2:wght@100;200;300;400;500;600;800;900&display=swap");
 
-
 body {
-  background: linear-gradient(#002445, #000);
+  background: linear-gradient(#00adde, #000);
   margin: 0;
 }
 
 * {
+    font-family: 'Exo 2';
   box-sizing: border-box;
-  font-family: 'Exo 2';
 }
 header {
     background: linear-gradient(#000, #000, #00699a);
@@ -22,7 +20,6 @@ header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    z-index: 100;
 }
 h1 {
     font-size: 2.5rem;
@@ -33,10 +30,30 @@ h1 {
 nav {
     height: 90vh;
     background: #000;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     position: relative;
     left: 0;
     width: 20vw;
+
+}
+button {
+    border: none;
+    color: #fff;
+    font-size: 1.2rem;
+    background: transparent;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+    align-items: center;
+}
+#AI {
+    width: 20%;
+    font-size: 2.1rem;
+    color: #00beef;
+    font-weight: 700;
 }
 hr {
     border: none;
@@ -99,14 +116,7 @@ h2 {
 }
 main {
     display: flex;
-    height: auto;
-    overflow: auto;
-    
-}
-::-webkit-scrollbar {
-    appearance: none;
-    width: 5px;
-    z-index: 1001774835735000;
+    height: 90vh;
 }
 #explore {
     color: #fff;
@@ -127,6 +137,12 @@ main {
     color: #0cf;
     font-size: 2.5rem;
 }
+#card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin: 20px;
+}
 #card {
     background: linear-gradient(#000, #000, #004667);
     color: #fff;
@@ -137,8 +153,6 @@ main {
     justify-content: space-between;
     outline: 1px solid #000;
     outline-offset: 15px;
-    padding: 10px;
-    height: 60vh;
 }
 #card-title {
     font-size: 1.6rem;
@@ -147,24 +161,4 @@ main {
 #card-description {
     font-size: 1.2rem;
     margin-bottom: 0;
-}
-#loader1 {
-    background: #00000077;
-    border: 15px dotted transparent;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin: auto;
-    animation: spin2 2s infinite ease;
-    box-shadow: 0 4px 4px #fff;
-}
-
-
-@keyframes spin2 {
-    0% {
-        rotate: 0deg;
-    }
-    100% {
-        rotate: 360deg;
-    }
 }
