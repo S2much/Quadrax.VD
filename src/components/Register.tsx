@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, Building, ArrowLeft, Github, Chrome, Check } from 'lucide-react';
-//import Dashboard from './Dashboard';
 
 interface RegisterProps {
   onCancel: () => void;
@@ -67,7 +66,7 @@ function Register({ onCancel }: RegisterProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#00beef] to-black flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-b from-[#00beef] to-black flex items-center justify-center p-6 custom-scrollbar">
       <div className="w-full max-w-2xl">
         {/* Header */}
         <div className="text-center mb-8">

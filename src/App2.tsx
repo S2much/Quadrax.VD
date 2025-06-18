@@ -20,13 +20,15 @@ import LoadingSpinner from './components/LoadingSpinner';
 function App2() {
    const [currentPage, setCurrentPage] = useState('homePage');
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-  const [isNavCollapsed, setIsNavCollapsed] = useState(false);
+  const [isNavCollapsed, setIsNavCollapsed] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [pageLoading, setPageLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [chatbotWidth, setChatbotWidth] = useState(30); // Width in vw
+  const [isChatbotDetached, setIsChatbotDetached] = useState(false);
 
   // Initial loading effect
   useEffect(() => {
@@ -80,7 +82,7 @@ function App2() {
   };
 
   const handleCancel = () => {
-    setCurrentPage(isLoggedIn ? 'dashboard' : 'home');
+    setCurrentPage('homePage');
   };
 
   const handleLogin = (email: string, password: string) => {
@@ -101,7 +103,7 @@ function App2() {
   const confirmLogout = () => {
     setIsLoggedIn(false);
     setUser(null);
-    setCurrentPage('home');
+    setCurrentPage('homePage');
     setShowLogoutConfirm(false);
     setIsChatbotOpen(false);
   };
@@ -139,6 +141,9 @@ function App2() {
       </div>
     );
   }
+
+  const chatbotMargin = isChatbotOpen && !isChatbotDisabled && !isChatbotDetached ? `${chatbotWidth}vw` : '0';
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#00beef] to-black overflow-hidden">
       <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-b from-black via-black to-[#00699a] h-16 text-white px-4 flex justify-between items-center shadow-lg">
@@ -183,7 +188,10 @@ function App2() {
           isLoggedIn={isLoggedIn}
           />
         
-        <div className={`flex-1 transition-all duration-300 ${isNavCollapsed ? 'ml-16' : 'ml-64'} ${isChatbotOpen && !isChatbotDisabled ? 'mr-80' : 'mr-0'}`}>
+        <div 
+          className={`flex-1 transition-all duration-300 ${isNavCollapsed ? 'ml-16' : 'ml-64'}`}
+          style={{ marginRight: chatbotMargin }}
+        >
           {currentPage === 'homePage' && <HomePage onGetStarted={() => setCurrentPage('register')} />}
           {currentPage === 'dashboard' && <Dashboard />}
           {currentPage === 'workshops' && <Workshop />}
@@ -200,7 +208,11 @@ function App2() {
         {!isChatbotDisabled && (
           <Chatbot 
             isOpen={isChatbotOpen} 
-            onClose={() => setIsChatbotOpen(false)} 
+            onClose={() => setIsChatbotOpen(false)}
+            width={chatbotWidth}
+            setWidth={setChatbotWidth}
+            isDetached={isChatbotDetached}
+            setIsDetached={setIsChatbotDetached}
           />
         )}
       </main>

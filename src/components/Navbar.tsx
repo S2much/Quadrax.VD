@@ -1,4 +1,5 @@
 import { LucideIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
 
 interface NavItem {
   id: string;
@@ -17,19 +18,27 @@ interface NavbarProps {
 }
 
 function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isCollapsed, setIsCollapsed, isLoggedIn }: NavbarProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
   // Filter nav items based on login status
   const filteredNavItems = isLoggedIn 
     ? navItems.filter(item => item.id !== 'homePage')
     : navItems.filter(item => !['dashboard', 'workshops', 'datakits', 'notebooks', 'pipelines', 'vms', 'models'].includes(item.id));
 
+  const shouldExpand = isHovered || !isCollapsed;
+
   return (
-    <nav className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-black flex flex-col transition-all duration-10 z-40 ${isCollapsed ? 'w-16' : 'w-64'}`}>
+    <nav 
+      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-black flex flex-col transition-all duration-300 z-40 ${shouldExpand ? 'w-64' : 'w-16'}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="flex justify-end p-2">
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-white hover:bg-[#00699a] p-1 rounded transition-colors duration-10"
+          className="text-white hover:bg-[#00699a] p-1 rounded transition-colors duration-300"
         >
-          {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+          {shouldExpand ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
         </button>
       </div>
 
@@ -43,11 +52,11 @@ function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isColla
           >
             <button
               onClick={() => setCurrentPage(item.id)}
-              className={`w-full p-1 flex items-center text-white ${isCollapsed ? 'justify-center' : 'gap-3'}`}
-              title={isCollapsed ? item.label : ''}
+              className={`w-full p-3 flex items-center text-white ${shouldExpand ? 'gap-3' : 'justify-center'}`}
+              title={!shouldExpand ? item.label : ''}
             >
               <item.icon size={20} />
-              {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+              {shouldExpand && <span className="text-sm font-medium">{item.label}</span>}
             </button>
           </li>
         ))}
@@ -62,11 +71,11 @@ function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isColla
             >
               <button
                 onClick={() => setCurrentPage(item.id)}
-                className={`w-full p-3 flex items-center text-white ${isCollapsed ? 'justify-center' : 'gap-3'}`}
-                title={isCollapsed ? item.label : ''}
+                className={`w-full p-3 flex items-center text-white ${shouldExpand ? 'gap-3' : 'justify-center'}`}
+                title={!shouldExpand ? item.label : ''}
               >
                 <item.icon size={20} />
-                {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+                {shouldExpand && <span className="text-sm font-medium">{item.label}</span>}
               </button>
             </li>
           ))}
