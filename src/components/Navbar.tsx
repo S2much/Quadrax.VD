@@ -1,4 +1,4 @@
-import { DivideIcon as LucideIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LucideIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 interface NavItem {
@@ -22,8 +22,8 @@ function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isColla
 
   // Filter nav items based on login status
   const filteredNavItems = isLoggedIn 
-    ? navItems.filter(item => item.id !== 'homePage')
-    : navItems.filter(item => !['dashboard', 'workshops', 'datakits', 'notebooks', 'pipelines', 'vms', 'models'].includes(item.id));
+    ? navItems // Show all items when logged in
+    : navItems.filter(item => !['workshops', 'datakits', 'notebooks', 'pipelines', 'vms', 'models'].includes(item.id)); // Hide protected items when not logged in
 
   const shouldExpand = isHovered && isCollapsed;
   const navWidth = shouldExpand ? 'w-64' : (isCollapsed ? 'w-16' : 'w-52'); // Reduced from w-64 to w-52

@@ -142,9 +142,8 @@ function App2() {
     );
   }
 
-  // Calculate chatbot margin only for non-HomePage
+  // Calculate chatbot margin for all pages
   const getChatbotMargin = () => {
-    if (currentPage === 'homePage') return 0; // HomePage should never have chatbot margin
     return isChatbotOpen && !isChatbotDisabled && !isChatbotDetached ? chatbotWidth : 0;
   };
 
@@ -182,23 +181,21 @@ function App2() {
       </header>
       
       <main className="flex pt-16 h-screen">
-        {/* Only show navbar for non-HomePage */}
-        {currentPage !== 'homePage' && (
-          <Navbar 
-            navItems={navItems} 
-            bottomNavItems={bottomNavItems}
-            currentPage={currentPage}
-            setCurrentPage={handleNavClick}
-            isCollapsed={isNavCollapsed}
-            setIsCollapsed={setIsNavCollapsed}
-            isLoggedIn={isLoggedIn}
-          />
-        )}
+        {/* Navbar is now visible on all pages */}
+        <Navbar 
+          navItems={navItems} 
+          bottomNavItems={bottomNavItems}
+          currentPage={currentPage}
+          setCurrentPage={handleNavClick}
+          isCollapsed={isNavCollapsed}
+          setIsCollapsed={setIsNavCollapsed}
+          isLoggedIn={isLoggedIn}
+        />
         
         <div 
           className="flex-1 transition-all duration-300 overflow-hidden"
           style={{ 
-            marginLeft: currentPage === 'homePage' ? '0px' : (isNavCollapsed ? '16px' : '52px'),
+            marginLeft: isNavCollapsed ? '64px' : '208px', // 16px = w-16, 52px = w-52
             marginRight: `${getChatbotMargin()}vw`
           }}
         >
@@ -217,7 +214,7 @@ function App2() {
           </div>
         </div>
 
-        {!isChatbotDisabled && currentPage !== 'homePage' && (
+        {!isChatbotDisabled && (
           <Chatbot 
             isOpen={isChatbotOpen} 
             onClose={() => setIsChatbotOpen(false)}
