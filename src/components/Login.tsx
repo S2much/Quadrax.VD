@@ -32,13 +32,13 @@ function Login({ onCancel, onLogin }: LoginProps) {
   };
 
   return (
-    <div className="min-h-screen m-0 bg-gradient-to-b from-[#00beef] to-black flex items-center justify-center">
+    <div className="min-h-screen m-0 bg-gradient-to-b from-[#00beef] to-black flex items-center justify-center custom-scrollbar">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 relative">
           <button
             onClick={onCancel}
-            className="absolute top-6 left-6 p-2 text-white hover:bg-white/10 rounded-lg transition-colors duration-300"
+            className="absolute top-0 left-0 p-2 text-white hover:bg-white/10 rounded-lg transition-colors duration-300 flex items-center gap-2"
           >
             <ArrowLeft size={20} />
             <span>Back</span>

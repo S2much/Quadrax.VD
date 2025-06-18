@@ -1,4 +1,5 @@
-import { LucideIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { DivideIcon as LucideIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
 
 interface NavItem {
   id: string;
@@ -17,23 +18,32 @@ interface NavbarProps {
 }
 
 function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isCollapsed, setIsCollapsed, isLoggedIn }: NavbarProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
   // Filter nav items based on login status
   const filteredNavItems = isLoggedIn 
-    ? navItems.filter(item => item.id !== 'homePage')
-    : navItems.filter(item => !['dashboard', 'workshops', 'datakits', 'notebooks', 'pipelines', 'vms', 'models'].includes(item.id));
+    ? navItems // Show all items when logged in
+    : navItems.filter(item => !['workshops', 'datakits', 'notebooks', 'pipelines', 'vms', 'models'].includes(item.id)); // Hide protected items when not logged in
+
+  const shouldExpand = isHovered && isCollapsed;
+  const navWidth = shouldExpand ? 'w-64' : (isCollapsed ? 'w-16' : 'w-52'); // Reduced from w-64 to w-52
 
   return (
-    <nav className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-black flex flex-col transition-all duration-10 z-40 ${isCollapsed ? 'w-16' : 'w-64'}`}>
+    <nav 
+      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-black flex flex-col transition-all duration-300 z-40 ${navWidth}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="flex justify-end p-2">
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-white hover:bg-[#00699a] p-1 rounded transition-colors duration-10"
+          className="text-white hover:bg-[#00699a] p-1 rounded transition-colors duration-300"
         >
-          {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+          {(shouldExpand || !isCollapsed) ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
         </button>
       </div>
 
-      <ul className="list-none flex flex-col flex-1">
+      <ul className="list-none flex flex-col flex-1 overflow-hidden">
         {filteredNavItems.map((item) => (
           <li 
             key={item.id}
@@ -43,11 +53,11 @@ function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isColla
           >
             <button
               onClick={() => setCurrentPage(item.id)}
-              className={`w-full p-1 flex items-center text-white ${isCollapsed ? 'justify-center' : 'gap-3'}`}
-              title={isCollapsed ? item.label : ''}
+              className={`w-full p-3 flex items-center text-white text-base ${(shouldExpand || !isCollapsed) ? 'gap-3' : 'justify-center'}`} // Increased from text-sm to text-base
+              title={(isCollapsed && !shouldExpand) ? item.label : ''}
             >
-              <item.icon size={20} />
-              {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+              <item.icon size={22} /> {/* Increased from 20 to 22 */}
+              {(shouldExpand || !isCollapsed) && <span className="font-medium whitespace-nowrap overflow-hidden text-ellipsis">{item.label}</span>}
             </button>
           </li>
         ))}
@@ -62,11 +72,11 @@ function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isColla
             >
               <button
                 onClick={() => setCurrentPage(item.id)}
-                className={`w-full p-3 flex items-center text-white ${isCollapsed ? 'justify-center' : 'gap-3'}`}
-                title={isCollapsed ? item.label : ''}
+                className={`w-full p-3 flex items-center text-white text-base ${(shouldExpand || !isCollapsed) ? 'gap-3' : 'justify-center'}`} // Increased from text-sm to text-base
+                title={(isCollapsed && !shouldExpand) ? item.label : ''}
               >
-                <item.icon size={20} />
-                {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+                <item.icon size={22} /> {/* Increased from 20 to 22 */}
+                {(shouldExpand || !isCollapsed) && <span className="font-medium whitespace-nowrap overflow-hidden text-ellipsis">{item.label}</span>}
               </button>
             </li>
           ))}

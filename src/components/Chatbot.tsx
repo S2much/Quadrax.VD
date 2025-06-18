@@ -1,10 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, X, Minimize2, Bot, User, Loader2 } from 'lucide-react';
-//import chatBotAI from './Openai'
+import { Send, X, Minimize2, Bot, User, Loader2, Maximize2, ExternalLink } from 'lucide-react';
 
 interface ChatbotProps {
   isOpen: boolean;
   onClose: () => void;
+  width: number;
+  setWidth: (width: number) => void;
+  isDetached: boolean;
+  setIsDetached: (detached: boolean) => void;
 }
 
 interface Message {
@@ -14,7 +17,7 @@ interface Message {
   timestamp: Date;
 }
 
-function Chatbot({ isOpen, onClose }: ChatbotProps) {
+function Chatbot({ isOpen, onClose, width, setWidth, isDetached, setIsDetached }: ChatbotProps) {
   const [aiPrompt, setAiPrompt] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -26,7 +29,9 @@ function Chatbot({ isOpen, onClose }: ChatbotProps) {
     }
   ]);
   const [isTyping, setIsTyping] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const resizeRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -35,6 +40,31 @@ function Chatbot({ isOpen, onClose }: ChatbotProps) {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Handle resize functionality
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing || isDetached) return;
+      
+      const newWidth = ((window.innerWidth - e.clientX) / window.innerWidth) * 100;
+      const clampedWidth = Math.max(20, Math.min(50, newWidth));
+      setWidth(clampedWidth);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, setWidth, isDetached]);
 
   // Simulated AI responses based on keywords
   const generateAIResponse = (userInput: string): string => {
@@ -212,7 +242,6 @@ You can also explore our platform sections:
 • Visit Pipelines for workflow automation`;
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!aiPrompt.trim()) return;
@@ -246,18 +275,62 @@ You can also explore our platform sections:
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  const handleDetach = () => {
+    setIsDetached(!isDetached);
+  };
+
   if (!isOpen) return null;
 
+  const chatbotStyle = isDetached 
+    ? {
+        position: 'fixed' as const,
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '600px',
+        height: '500px',
+        zIndex: 50,
+        borderRadius: '12px',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+      }
+    : {
+        position: 'fixed' as const,
+        right: 0,
+        top: 0,
+        width: `${width}vw`,
+        height: '96vh',
+        zIndex: 40
+      };
+
   return (
-    <div className={`fixed right-0 top-0 [width:30vw] [height:96vh] bg-gradient-to-b from-black via-black to-[#005778] shadow-2xl transition-all duration-100 z-40 border-l border-[#00699a] ${isMinimized ? 'w-30' : 'w-70'}`}>
+    <div 
+      className={`bg-gradient-to-b from-black via-black to-[#005778] shadow-2xl transition-all duration-300 border-l border-[#00699a] ${isMinimized ? 'w-30' : 'w-70'}`}
+      style={chatbotStyle}
+    >
+      {/* Resize handle for attached mode */}
+      {!isDetached && (
+        <div
+          ref={resizeRef}
+          className="absolute left-0 top-0 w-1 h-full cursor-col-resize bg-[#00699a] opacity-0 hover:opacity-100 transition-opacity duration-200"
+          onMouseDown={() => setIsResizing(true)}
+        />
+      )}
+
       <div className="flex justify-between items-center p-4 border-b border-[#00699a] bg-black/50">
         {!isMinimized && (
           <h4 className="text-xl text-white font-medium flex items-center gap-2">
-            <Bot className="text-[#00beef]\" size={24} />
+            <Bot className="text-[#00beef]" size={24} />
             QUADRAX AI
           </h4>
         )}
         <div className="flex gap-2">
+          <button
+            onClick={handleDetach}
+            className="text-white hover:bg-[#00699a] p-1 rounded transition-colors duration-300"
+            title={isDetached ? 'Attach' : 'Detach'}
+          >
+            {isDetached ? <Maximize2 size={16} /> : <ExternalLink size={16} />}
+          </button>
           <button
             onClick={() => setIsMinimized(!isMinimized)}
             className="text-white hover:bg-[#00699a] p-1 rounded transition-colors duration-300"
@@ -278,7 +351,7 @@ You can also explore our platform sections:
       {!isMinimized && (
         <div className="flex flex-col h-full">
           {/* Messages Area */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-4">
+          <div className="flex-1 p-4 overflow-y-auto space-y-4 custom-scrollbar">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -334,13 +407,13 @@ You can also explore our platform sections:
           </div>
 
           {/* Input Form */}
-          <form onSubmit={handleSubmit} className=" h-40 border-t border-[#00699a] bg-black/30">
+          <form onSubmit={handleSubmit} className="h-40 border-t border-[#00699a] bg-black/30">
             <div className="flex gap-2">
               <textarea 
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
                 placeholder="Ask me anything about ML, data science, AI..."
-                className="flex-1 bg-gradient-to-b from-black via-black to-[#005778] h-35 border border-[#00699a] text-white placeholder:text-gray-400 placeholder:opacity-80 p-3 rounded-m resize-none focus:outline-none focus:border-[#00beef] focus:ring-2 focus:ring-[#00beef]/20 transition-all duration-300"
+                className="flex-1 bg-gradient-to-b from-black via-black to-[#005778] h-35 border border-[#00699a] text-white placeholder:text-gray-400 placeholder:opacity-80 p-3 rounded-m resize-none focus:outline-none focus:border-[#00beef] focus:ring-2 focus:ring-[#00beef]/20 transition-all duration-300 custom-scrollbar"
                 rows={2}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
