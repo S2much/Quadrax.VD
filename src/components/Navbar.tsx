@@ -1,4 +1,4 @@
-import { LucideIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { DivideIcon as LucideIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 interface NavItem {
