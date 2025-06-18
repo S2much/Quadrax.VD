@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Terminal, Database, FileCode, Monitor, Brain, BookOpen } from 'lucide-react';
 
 const cardData = [
