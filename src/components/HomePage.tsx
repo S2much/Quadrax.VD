@@ -93,26 +93,26 @@ export default function HomePage({ onGetStarted }: HomeProps) {
   };
 
   return (
-    <div className="m-0 text-white overflow-auto custom-scrollbar">
+    <div className="m-0 text-white h-full overflow-y-auto custom-scrollbar">
       {/* Hero */}
-      <section className="flex flex-col text-center justify-center items-center h-[40vh] py-16 bg-gradient-to-b from-black to-[#008aab]">
-        <h1 className="text-3xl md:text-5xl [font-weight:400] mb-6 text-white [text-shadow:2px_2px_2px_#000]">
+      <section className="flex flex-col text-center justify-center items-center h-[40vh] py-12 bg-gradient-to-b from-black to-[#008aab]"> {/* Reduced py-16 to py-12 */}
+        <h1 className="text-4xl md:text-6xl [font-weight:400] mb-6 text-white [text-shadow:2px_2px_2px_#000]"> {/* Increased from text-3xl md:text-5xl to text-4xl md:text-6xl */}
           Welcome to <span className="font-bold text-white [text-shadow:2px_2px_0px_#008aab,_-2px_-2px_2px_#000,_2px_-2px_2px_#000,_-2px_2px_0px_#008aab]" >QUADRAX•ML</span>!
         </h1>
-        <p className="text-2xl md:text-4xl text-white mb-8 [text-shadow:2px_2px_2px_#000]">
+        <p className="text-3xl md:text-5xl text-white mb-8 [text-shadow:2px_2px_2px_#000]"> {/* Increased from text-2xl md:text-4xl to text-3xl md:text-5xl */}
           Simplicity in complexity
         </p>
-        <button className="flex justify-center items-center bg-black w-[20vw] hover:bg-[#00699a] text-[#00beef] text-xl md:text-3xl text-center font-bold py-3 px-8 border-4 border-[#00beef] rounded-lg transition-all duration-300 hover:scale-105 [text-shadow:1px_1px_2px_rgba(0,190,239,0.5)]" onClick={onGetStarted}>
+        <button className="flex justify-center items-center bg-black w-[16vw] hover:bg-[#00699a] text-[#00beef] text-xl md:text-2xl text-center font-bold py-3 px-6 border-4 border-[#00beef] rounded-lg transition-all duration-300 hover:scale-105 [text-shadow:1px_1px_2px_rgba(0,190,239,0.5)]" onClick={onGetStarted}> {/* Reduced from w-[20vw] to w-[16vw], text-3xl to text-2xl, px-8 to px-6 */}
           Get Started
         </button>
       </section>
 
       {/* Slideshow */}
-      <section className="bg-gradient-to-b from-[#004667] to-black relative">
-        <h2 className="text-5xl px-4 py-4 text-left text-white [text-shadow:2px_2px_4px_#000]">
+      <section className="bg-gradient-to-b from-[#004667] to-black relative pb-8">
+        <h2 className="text-6xl px-4 py-4 text-left text-white [text-shadow:2px_2px_4px_#000]"> {/* Increased from text-5xl to text-6xl */}
           Explore Our Platform
         </h2>
-        <div className="flex items-center justify-center cursor-pointer transition-transform z-10">
+        <div className="flex items-center justify-center cursor-pointer transition-transform z-10 px-4">
           {/* Previous Card */}
           <div className="w-[2%] m-2 border border-[#00699a] [height:35vh] opacity-80 [transform:perspective(500px)_rotateY(-45deg)] items-center transition-all duration-500">
             <div className={`h-full bg-gradient-to-b from-[#005778] to-black p-4 ${getPatternClass(cardData[getCardIndex(-1)].pattern)}`}>
@@ -120,20 +120,20 @@ export default function HomePage({ onGetStarted }: HomeProps) {
           </div>
 
           {/* Current Card */}
-          <div className="w-[90%] [height:40vh] transition-all duration-500 relative z-10 overflow-hidden">
-            <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-4 shadow-2xl border border-[#00699a] ${getPatternClass(cardData[currentIndex].pattern)} relative`}>
-              <div className="absolute top-20 right-20 text-8xl mb-6 [filter:opacity(0.3)_saturate(200%)] [transform:perspective(500px)_rotateY(-45deg)_scale(2.5,2)]">
+          <div className="w-[88%] [height:40vh] transition-all duration-500 relative z-10 overflow-hidden"> {/* Reduced from w-[90%] to w-[88%] */}
+            <div className={`h-full bg-gradient-to-b from-black to-[#005778] p-6 shadow-2xl border border-[#00699a] ${getPatternClass(cardData[currentIndex].pattern)} relative`}> {/* Increased p-4 to p-6 */}
+              <div className="absolute top-16 right-16 text-8xl mb-6 [filter:opacity(0.3)_saturate(200%)] [transform:perspective(500px)_rotateY(-45deg)_scale(2.5,2)]"> {/* Reduced top-20 right-20 to top-16 right-16 */}
                 {React.createElement(cardData[currentIndex].icon, { 
                   size: 120, 
                   className: "text-[#00beef]" 
                 })}
               </div>
-              <h3 className="text-4xl font-bold text-white mb-4 text-left">
+              <h3 className="text-5xl font-bold text-white mb-4 text-left"> {/* Increased from text-4xl to text-5xl */}
                 {cardData[currentIndex].title}
               </h3>
-              <div className="relative h-[60%] overflow-hidden">
+              <div className="relative h-[55%] overflow-hidden"> {/* Reduced from h-[60%] to h-[55%] */}
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black opacity-20 pointer-events-none z-10"></div>
-                <div className="text-xl w-[80%] text-white text-left leading-relaxed">
+                <div className="text-2xl w-[75%] text-white text-left leading-relaxed"> {/* Increased from text-xl to text-2xl, reduced w-[80%] to w-[75%] */}
                   <p className="mb-4">{cardData[currentIndex].desc}</p>
                   <p>{cardData[currentIndex].desc2}</p>
                 </div>

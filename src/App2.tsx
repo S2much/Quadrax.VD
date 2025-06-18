@@ -142,7 +142,14 @@ function App2() {
     );
   }
 
-  const chatbotMargin = isChatbotOpen && !isChatbotDisabled && !isChatbotDetached ? `${chatbotWidth}vw` : '0';
+  // Calculate margins based on navbar and chatbot state
+  const getNavbarWidth = () => {
+    return isNavCollapsed ? 16 : 52; // Reduced from 64 to 52
+  };
+
+  const getChatbotMargin = () => {
+    return isChatbotOpen && !isChatbotDisabled && !isChatbotDetached ? chatbotWidth : 0;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#00beef] to-black overflow-hidden">
@@ -152,14 +159,14 @@ function App2() {
         </h1>
          {/* Search Bar */}
          <div className="flex mx-8">
-          <div className="relative w-[30vw]">
+          <div className="relative w-[24vw]"> {/* Reduced from 30vw to 24vw */}
             <Search className="absolute right-3 top-8 transform -translate-y-1/2 text-white z-10" size={25} />
             <input
               type="text"
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-[30vw] relative top-1/4 pl-5 py-2 bg-gradient-to-r from-black to-[#005778] border border-[#00699a] text-white placeholder:text-gray-400 rounded-lg focus:outline-none focus:border-[#00beef]"
+              className="w-[24vw] relative top-1/4 pl-5 py-2 bg-gradient-to-r from-black to-[#005778] border border-[#00699a] text-white placeholder:text-gray-400 rounded-lg focus:outline-none focus:border-[#00beef]" // Reduced from 30vw to 24vw
             />
           </div>
         
@@ -170,8 +177,8 @@ function App2() {
 
         <div className="flex items-center gap-4">
         <button onClick={toggleChatbot} disabled={isChatbotDisabled}
-          className="bg-[#00beef] w-[15vw] text-black px-3 py-2 text-lg md:text-2xl font-bold flex items-center gap-2 hover:bg-[#00a8d6] transition-colors duration-300">
-          <Bot size={28} className="md:w-10 md:h-10" />
+          className="bg-[#00beef] w-[12vw] text-black px-3 py-2 text-lg md:text-xl font-bold flex items-center gap-2 hover:bg-[#00a8d6] transition-colors duration-300"> {/* Reduced from 15vw to 12vw and text-2xl to text-xl */}
+          <Bot size={26} className="md:w-8 md:h-8" /> {/* Reduced from 28 to 26 and from w-10 h-10 to w-8 h-8 */}
           <span className="hidden md:inline">QUADRAX_AI</span>
         </button>
         </div>
@@ -189,20 +196,25 @@ function App2() {
           />
         
         <div 
-          className={`flex-1 transition-all duration-300 ${isNavCollapsed ? 'ml-16' : 'ml-64'}`}
-          style={{ marginRight: chatbotMargin }}
+          className="flex-1 transition-all duration-300 overflow-hidden"
+          style={{ 
+            marginLeft: `${getNavbarWidth()}px`,
+            marginRight: `${getChatbotMargin()}vw`
+          }}
         >
-          {currentPage === 'homePage' && <HomePage onGetStarted={() => setCurrentPage('register')} />}
-          {currentPage === 'dashboard' && <Dashboard />}
-          {currentPage === 'workshops' && <Workshop />}
-          {currentPage === 'vms' && <VirtualMachines />}
-          {currentPage === 'datakits' && <Datakits />}
-          {currentPage === 'notebooks' && <Codesheets />}
-          {currentPage === 'pipelines' && <Pipelines />}
-          {currentPage === 'models' && <Models />}
-          {currentPage === 'documentation' && <Documentation />}
-          {currentPage === 'about' && <About />}
-          {currentPage === 'settings' && <Settings />}
+          <div className="h-full overflow-y-auto custom-scrollbar">
+            {currentPage === 'homePage' && <HomePage onGetStarted={() => setCurrentPage('register')} />}
+            {currentPage === 'dashboard' && <Dashboard />}
+            {currentPage === 'workshops' && <Workshop />}
+            {currentPage === 'vms' && <VirtualMachines />}
+            {currentPage === 'datakits' && <Datakits />}
+            {currentPage === 'notebooks' && <Codesheets />}
+            {currentPage === 'pipelines' && <Pipelines />}
+            {currentPage === 'models' && <Models />}
+            {currentPage === 'documentation' && <Documentation />}
+            {currentPage === 'about' && <About />}
+            {currentPage === 'settings' && <Settings />}
+          </div>
         </div>
 
         {!isChatbotDisabled && (
