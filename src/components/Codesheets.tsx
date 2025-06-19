@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Play, Save, Share2, Plus, Code, FileText, BarChart3, Brain, Clock, Users, Star, GitBranch, Terminal as TerminalIcon } from 'lucide-react';
 import Terminal from './Terminal';
+import CodeEditor from './CodeEditor';
 
 function Codesheets() {
   const [selectedNotebook, setSelectedNotebook] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [terminalShell, setTerminalShell] = useState<'bash' | 'powershell'>('bash');
 
   const notebooks = [
@@ -107,6 +109,30 @@ function Codesheets() {
     setIsTerminalOpen(true);
   };
 
+  // If terminal or editor is open, show minimal layout
+  if (isTerminalOpen || isEditorOpen) {
+    return (
+      <>
+        {isEditorOpen && (
+          <CodeEditor 
+            isOpen={isEditorOpen}
+            onClose={() => setIsEditorOpen(false)}
+            context="codesheets"
+            workingDirectory="/notebooks"
+          />
+        )}
+        
+        <Terminal 
+          isOpen={isTerminalOpen}
+          onClose={() => setIsTerminalOpen(false)}
+          shell={terminalShell}
+          workingDirectory="/notebooks"
+          context="codesheets"
+        />
+      </>
+    );
+  }
+
   return (
     <section className="p-6 min-h-screen">
       <div className="text-white mb-6">
@@ -128,20 +154,20 @@ function Codesheets() {
             Import
           </button>
           
-          {/* CLI Access Buttons */}
+          {/* Development Tools */}
+          <button 
+            onClick={() => setIsEditorOpen(true)}
+            className="px-4 bg-[#005778] hover:bg-[#00699a] text-white rounded-lg transition-colors duration-300 flex items-center gap-2"
+          >
+            <Code size={16} />
+            Open Editor
+          </button>
           <button 
             onClick={() => openTerminal('bash')}
             className="px-4 bg-[#005778] hover:bg-[#00699a] text-white rounded-lg transition-colors duration-300 flex items-center gap-2"
           >
             <TerminalIcon size={16} />
-            Bash
-          </button>
-          <button 
-            onClick={() => openTerminal('powershell')}
-            className="px-4 bg-[#005778] hover:bg-[#00699a] text-white rounded-lg transition-colors duration-300 flex items-center gap-2"
-          >
-            <TerminalIcon size={16} />
-            PowerShell
+            Open Terminal
           </button>
         </div>
         
@@ -178,7 +204,7 @@ function Codesheets() {
             <span className="text-gray-300 block">Execute Python script</span>
           </div>
           <div>
-            <span className="text-[#00beef] font-mono">pip install &lt;package&gt;</span>
+            <span className="text-[#00beef] font-mono">pip install <package></span>
             <span className="text-gray-300 block">Install Python packages</span>
           </div>
           <div>
@@ -314,14 +340,6 @@ function Codesheets() {
           ))}
         </div>
       </div>
-
-      <Terminal 
-        isOpen={isTerminalOpen}
-        onClose={() => setIsTerminalOpen(false)}
-        shell={terminalShell}
-        workingDirectory="/notebooks"
-        context="codesheets"
-      />
     </section>
   );
 }

@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { Play, Pause, Square, Settings, Plus, GitBranch, Clock, CheckCircle, XCircle, AlertTriangle, Zap, Database, Brain, Upload, Terminal as TerminalIcon } from 'lucide-react';
+import { Play, Pause, Square, Settings, Plus, GitBranch, Clock, CheckCircle, XCircle, AlertTriangle, Zap, Database, Brain, Upload, Terminal as TerminalIcon, Code } from 'lucide-react';
 import Terminal from './Terminal';
+import CodeEditor from './CodeEditor';
 
 function Pipelines() {
   const [selectedPipeline, setSelectedPipeline] = useState<number | null>(null);
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [terminalShell, setTerminalShell] = useState<'bash' | 'powershell'>('bash');
 
   const pipelines = [
@@ -126,6 +128,30 @@ function Pipelines() {
     setIsTerminalOpen(true);
   };
 
+  // If terminal or editor is open, show minimal layout
+  if (isTerminalOpen || isEditorOpen) {
+    return (
+      <>
+        {isEditorOpen && (
+          <CodeEditor 
+            isOpen={isEditorOpen}
+            onClose={() => setIsEditorOpen(false)}
+            context="pipelines"
+            workingDirectory="/pipelines"
+          />
+        )}
+        
+        <Terminal 
+          isOpen={isTerminalOpen}
+          onClose={() => setIsTerminalOpen(false)}
+          shell={terminalShell}
+          workingDirectory="/pipelines"
+          context="pipelines"
+        />
+      </>
+    );
+  }
+
   return (
     <section className="p-6 min-h-screen">
       <div className="text-white mb-6">
@@ -147,20 +173,20 @@ function Pipelines() {
             Templates
           </button>
           
-          {/* CLI Access Buttons */}
+          {/* Development Tools */}
+          <button 
+            onClick={() => setIsEditorOpen(true)}
+            className="px-4 py-2 bg-[#005778] hover:bg-[#00699a] text-white rounded-lg transition-colors duration-300 flex items-center gap-2"
+          >
+            <Code size={16} />
+            Open Editor
+          </button>
           <button 
             onClick={() => openTerminal('bash')}
             className="px-4 py-2 bg-[#005778] hover:bg-[#00699a] text-white rounded-lg transition-colors duration-300 flex items-center gap-2"
           >
             <TerminalIcon size={16} />
-            Bash
-          </button>
-          <button 
-            onClick={() => openTerminal('powershell')}
-            className="px-4 py-2 bg-[#005778] hover:bg-[#00699a] text-white rounded-lg transition-colors duration-300 flex items-center gap-2"
-          >
-            <TerminalIcon size={16} />
-            PowerShell
+            Open Terminal
           </button>
         </div>
         
@@ -185,7 +211,7 @@ function Pipelines() {
         <h5 className="text-white font-semibold mb-3">Pipeline CLI Commands</h5>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
           <div>
-            <span className="text-[#00beef] font-mono">pipeline run &lt;name&gt;</span>
+            <span className="text-[#00beef] font-mono">pipeline run <name></span>
             <span className="text-gray-300 block">Execute pipeline</span>
           </div>
           <div>
@@ -193,11 +219,11 @@ function Pipelines() {
             <span className="text-gray-300 block">Check pipeline status</span>
           </div>
           <div>
-            <span className="text-[#00beef] font-mono">pipeline logs &lt;name&gt;</span>
+            <span className="text-[#00beef] font-mono">pipeline logs <name></span>
             <span className="text-gray-300 block">View pipeline logs</span>
           </div>
           <div>
-            <span className="text-[#00beef] font-mono">pipeline stop &lt;name&gt;</span>
+            <span className="text-[#00beef] font-mono">pipeline stop <name></span>
             <span className="text-gray-300 block">Stop running pipeline</span>
           </div>
         </div>
@@ -346,14 +372,6 @@ function Pipelines() {
           </div>
         </div>
       </div>
-
-      <Terminal 
-        isOpen={isTerminalOpen}
-        onClose={() => setIsTerminalOpen(false)}
-        shell={terminalShell}
-        workingDirectory="/pipelines"
-        context="pipelines"
-      />
     </section>
   );
 }

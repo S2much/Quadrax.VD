@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Terminal as TerminalIcon, X, Minimize2, Maximize2, Copy, Download, Settings, Power } from 'lucide-react';
+import { Terminal as TerminalIcon, X, Minimize2, Maximize2, Copy, Download, Settings, Power, ChevronUp, ChevronDown } from 'lucide-react';
 
 interface TerminalProps {
   isOpen: boolean;
@@ -16,22 +16,61 @@ interface CommandHistory {
   exitCode: number;
 }
 
-function Terminal({ isOpen, onClose, shell, workingDirectory = '~', context = 'general' }: TerminalProps) {
+function Terminal({ isOpen, onClose, shell: initialShell, workingDirectory = '~', context = 'general' }: TerminalProps) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [currentCommand, setCurrentCommand] = useState('');
   const [commandHistory, setCommandHistory] = useState<CommandHistory[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isConnected, setIsConnected] = useState(true);
+  const [shell, setShell] = useState<'bash' | 'powershell'>(initialShell);
+  const [terminalHeight, setTerminalHeight] = useState(300);
+  const [isResizing, setIsResizing] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const resizeRef = useRef<HTMLDivElement>(null);
 
   const prompt = shell === 'bash' 
     ? `user@quadrax-ml:${workingDirectory}$ `
     : `PS ${workingDirectory}> `;
 
+  // Handle resize functionality
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+      
+      const newHeight = window.innerHeight - e.clientY;
+      const clampedHeight = Math.max(200, Math.min(600, newHeight));
+      setTerminalHeight(clampedHeight);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
+
   // Simulated command execution
   const executeCommand = (command: string): { output: string; exitCode: number } => {
     const cmd = command.trim().toLowerCase();
+    
+    // Shell switching commands
+    if (cmd === 'bash' && shell === 'powershell') {
+      setShell('bash');
+      return { output: 'Switched to Bash shell', exitCode: 0 };
+    }
+    if (cmd === 'powershell' && shell === 'bash') {
+      setShell('powershell');
+      return { output: 'Switched to PowerShell', exitCode: 0 };
+    }
     
     // Context-specific commands
     if (context === 'workshop') {
@@ -39,6 +78,7 @@ function Terminal({ isOpen, onClose, shell, workingDirectory = '~', context = 'g
         if (cmd.includes('init')) return { output: 'Initializing new workstation...\nWorkstation "quadrax-ml-v3" created successfully.', exitCode: 0 };
         if (cmd.includes('list')) return { output: 'Active workstations:\n- quadrax-ml-v_2 (active)\n- data-processing-env (stopped)', exitCode: 0 };
         if (cmd.includes('start')) return { output: 'Starting workstation environment...', exitCode: 0 };
+        if (cmd.includes('stop')) return { output: 'Stopping workstation environment...', exitCode: 0 };
       }
     }
     
@@ -47,6 +87,7 @@ function Terminal({ isOpen, onClose, shell, workingDirectory = '~', context = 'g
         if (cmd.includes('upload')) return { output: 'Uploading dataset to DataKits...\nUpload completed: dataset_v1.csv (1.2MB)', exitCode: 0 };
         if (cmd.includes('validate')) return { output: 'Validating dataset...\n✓ Schema validation passed\n✓ Data quality check: 96%', exitCode: 0 };
         if (cmd.includes('transform')) return { output: 'Applying data transformations...\nTransformation pipeline completed.', exitCode: 0 };
+        if (cmd.includes('export')) return { output: 'Exporting dataset...\nExport completed: processed_data.csv', exitCode: 0 };
       }
     }
 
@@ -55,6 +96,7 @@ function Terminal({ isOpen, onClose, shell, workingDirectory = '~', context = 'g
         if (cmd.includes('deploy')) return { output: 'Deploying model to production...\nModel deployed successfully at endpoint: /api/v1/predict', exitCode: 0 };
         if (cmd.includes('train')) return { output: 'Starting model training...\nEpoch 1/10: loss=0.4521, accuracy=0.8234', exitCode: 0 };
         if (cmd.includes('evaluate')) return { output: 'Model evaluation results:\nAccuracy: 94.7%\nPrecision: 95.2%\nRecall: 94.1%', exitCode: 0 };
+        if (cmd.includes('logs')) return { output: 'Model logs:\n[INFO] Model loaded successfully\n[INFO] Inference completed in 120ms', exitCode: 0 };
       }
     }
 
@@ -62,6 +104,21 @@ function Terminal({ isOpen, onClose, shell, workingDirectory = '~', context = 'g
       if (cmd.startsWith('pipeline')) {
         if (cmd.includes('run')) return { output: 'Executing pipeline...\n[1/5] Data ingestion: ✓\n[2/5] Data processing: ✓\n[3/5] Model training: running...', exitCode: 0 };
         if (cmd.includes('status')) return { output: 'Pipeline Status:\n- customer-analysis: Running (67%)\n- fraud-detection: Completed\n- image-classification: Failed', exitCode: 0 };
+        if (cmd.includes('logs')) return { output: 'Pipeline logs:\n[2024-01-15 10:30:15] Pipeline started\n[2024-01-15 10:31:20] Data validation passed', exitCode: 0 };
+        if (cmd.includes('stop')) return { output: 'Stopping pipeline execution...', exitCode: 0 };
+      }
+    }
+
+    if (context === 'codesheets') {
+      if (cmd.startsWith('jupyter')) {
+        return { output: 'Starting Jupyter notebook server...\nServer running at: http://localhost:8888', exitCode: 0 };
+      }
+      if (cmd.startsWith('python')) {
+        return { output: 'Python 3.9.7 (default, Sep 16 2021, 16:59:28)\nExecuting script...', exitCode: 0 };
+      }
+      if (cmd.startsWith('pip install')) {
+        const package = cmd.split(' ')[2] || 'package';
+        return { output: `Installing ${package}...\nSuccessfully installed ${package}`, exitCode: 0 };
       }
     }
 
@@ -93,7 +150,8 @@ function Terminal({ isOpen, onClose, shell, workingDirectory = '~', context = 'g
       case 'help':
         return { 
           output: `Available commands:
-${context === 'workshop' ? '- quadrax init/list/start - Workstation management\n' : ''}${context === 'datakits' ? '- data upload/validate/transform - Dataset operations\n' : ''}${context === 'models' ? '- model deploy/train/evaluate - Model operations\n' : ''}${context === 'pipelines' ? '- pipeline run/status - Pipeline management\n' : ''}- ls/dir - List directory contents
+- bash/powershell - Switch shell environment
+${context === 'workshop' ? '- quadrax init/list/start/stop - Workstation management\n' : ''}${context === 'datakits' ? '- data upload/validate/transform/export - Dataset operations\n' : ''}${context === 'models' ? '- model deploy/train/evaluate/logs - Model operations\n' : ''}${context === 'pipelines' ? '- pipeline run/status/logs/stop - Pipeline management\n' : ''}${context === 'codesheets' ? '- jupyter notebook - Start Jupyter server\n- python <script> - Execute Python script\n- pip install <package> - Install packages\n' : ''}- ls/dir - List directory contents
 - pwd - Show current directory
 - whoami - Show current user
 - date - Show current date/time
@@ -200,15 +258,45 @@ ${context === 'workshop' ? '- quadrax init/list/start - Workstation management\n
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 w-[800px] h-[500px] bg-black border border-[#00699a] rounded-lg shadow-2xl z-50 flex flex-col">
+    <div 
+      className="fixed bottom-0 left-0 right-0 bg-black border-t border-[#00699a] shadow-2xl z-50 flex flex-col"
+      style={{ height: isMinimized ? '40px' : `${terminalHeight}px` }}
+    >
+      {/* Resize Handle */}
+      <div
+        ref={resizeRef}
+        className="absolute top-0 left-0 right-0 h-1 cursor-row-resize bg-[#00699a] opacity-0 hover:opacity-100 transition-opacity duration-200"
+        onMouseDown={() => setIsResizing(true)}
+      />
+
       {/* Terminal Header */}
-      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-black to-[#005778] border-b border-[#00699a] rounded-t-lg">
+      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-black to-[#005778] border-b border-[#00699a]">
         <div className="flex items-center gap-3">
           <TerminalIcon size={20} className="text-[#00beef]" />
           <span className="text-white font-medium">
-            {shell === 'bash' ? 'Bash Terminal' : 'PowerShell'} - {context}
+            Terminal - {context}
           </span>
           <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`}></div>
+          
+          {/* Shell Selector */}
+          <div className="flex gap-1 ml-4">
+            <button
+              onClick={() => setShell('bash')}
+              className={`px-3 py-1 text-xs rounded transition-colors duration-300 ${
+                shell === 'bash' ? 'bg-[#00beef] text-black' : 'bg-gray-600 text-white hover:bg-gray-500'
+              }`}
+            >
+              Bash
+            </button>
+            <button
+              onClick={() => setShell('powershell')}
+              className={`px-3 py-1 text-xs rounded transition-colors duration-300 ${
+                shell === 'powershell' ? 'bg-[#00beef] text-black' : 'bg-gray-600 text-white hover:bg-gray-500'
+              }`}
+            >
+              PowerShell
+            </button>
+          </div>
         </div>
         
         <div className="flex items-center gap-2">
@@ -238,7 +326,7 @@ ${context === 'workshop' ? '- quadrax init/list/start - Workstation management\n
             className="p-1 text-gray-400 hover:text-white transition-colors duration-300"
             title={isMinimized ? 'Restore' : 'Minimize'}
           >
-            {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
+            {isMinimized ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
           <button
             onClick={onClose}
@@ -260,7 +348,7 @@ ${context === 'workshop' ? '- quadrax init/list/start - Workstation management\n
             <div className="mb-2 text-[#00beef]">
               QUADRAX•ML {shell === 'bash' ? 'Bash' : 'PowerShell'} Terminal v1.0
               <br />
-              Type 'help' for available commands.
+              Type 'help' for available commands. Use 'bash' or 'powershell' to switch shells.
               <br />
             </div>
             
@@ -297,7 +385,7 @@ ${context === 'workshop' ? '- quadrax init/list/start - Workstation management\n
           {/* Terminal Footer */}
           <div className="px-4 py-2 bg-gradient-to-r from-[#005778] to-black border-t border-[#00699a] text-xs text-gray-400 flex justify-between items-center">
             <span>Working Directory: {workingDirectory}</span>
-            <span>Shell: {shell} | Context: {context}</span>
+            <span>Shell: {shell} | Context: {context} | Height: {terminalHeight}px</span>
           </div>
         </>
       )}

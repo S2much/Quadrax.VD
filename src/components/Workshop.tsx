@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Plus, Terminal as TerminalIcon, Code, Play, Settings, Database, Brain } from 'lucide-react';
 import Terminal from './Terminal';
+import CodeEditor from './CodeEditor';
 
 function Workshop() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [terminalShell, setTerminalShell] = useState<'bash' | 'powershell'>('bash');
 
   const workstations = [
@@ -41,6 +43,30 @@ function Workshop() {
     }
   };
 
+  // If terminal or editor is open, show minimal layout
+  if (isTerminalOpen || isEditorOpen) {
+    return (
+      <>
+        {isEditorOpen && (
+          <CodeEditor 
+            isOpen={isEditorOpen}
+            onClose={() => setIsEditorOpen(false)}
+            context="workshop"
+            workingDirectory="/workspace"
+          />
+        )}
+        
+        <Terminal 
+          isOpen={isTerminalOpen}
+          onClose={() => setIsTerminalOpen(false)}
+          shell={terminalShell}
+          workingDirectory="/workspace"
+          context="workshop"
+        />
+      </>
+    );
+  }
+
   return (
     <section className="p-6 min-h-screen">
       <div className="text-white mb-6">
@@ -56,19 +82,19 @@ function Workshop() {
             Workstations
           </h4>
           
-          {/* CLI Access Buttons */}
+          {/* Development Tools */}
           <div className="flex gap-2">
+            <button 
+              onClick={() => setIsEditorOpen(true)}
+              className="text-[#00beef] border-2 border-[#00beef] px-4 py-2 rounded bg-black/50 flex items-center gap-2 hover:bg-[#00699a] hover:text-white transition-all duration-300"
+            >
+              <Code size={20} /> Open Editor
+            </button>
             <button 
               onClick={() => openTerminal('bash')}
               className="text-[#00beef] border-2 border-[#00beef] px-4 py-2 rounded bg-black/50 flex items-center gap-2 hover:bg-[#00699a] hover:text-white transition-all duration-300"
             >
-              <TerminalIcon size={20} /> Bash
-            </button>
-            <button 
-              onClick={() => openTerminal('powershell')}
-              className="text-[#00beef] border-2 border-[#00beef] px-4 py-2 rounded bg-black/50 flex items-center gap-2 hover:bg-[#00699a] hover:text-white transition-all duration-300"
-            >
-              <TerminalIcon size={20} /> PowerShell
+              <TerminalIcon size={20} /> Open Terminal
             </button>
           </div>
           
@@ -78,12 +104,6 @@ function Workshop() {
             </button>
             <button className="text-white border border-[#00699a] px-4 py-2 bg-black/50 rounded hover:bg-[#00699a] transition-colors duration-300">
               Export
-            </button>
-          </div>
-          
-          <div className="flex gap-2">
-            <button className="text-[#00beef] border-2 border-[#00beef] px-4 py-2 rounded bg-black/50 flex items-center gap-2 hover:bg-[#00699a] hover:text-white transition-all duration-300">
-              <Code size={20} /> VSCode
             </button>
           </div>
         </div>
@@ -101,11 +121,11 @@ function Workshop() {
               <span className="text-gray-300 ml-2">- List all workstations</span>
             </div>
             <div>
-              <span className="text-[#00beef] font-mono">quadrax start &lt;name&gt;</span>
+              <span className="text-[#00beef] font-mono">quadrax start <name></span>
               <span className="text-gray-300 ml-2">- Start workstation</span>
             </div>
             <div>
-              <span className="text-[#00beef] font-mono">quadrax stop &lt;name&gt;</span>
+              <span className="text-[#00beef] font-mono">quadrax stop <name></span>
               <span className="text-gray-300 ml-2">- Stop workstation</span>
             </div>
           </div>
@@ -160,7 +180,16 @@ function Workshop() {
                         <button className="p-1 bg-black/50 hover:bg-[#005778] text-white rounded border border-[#00699a] transition-colors duration-300">
                           <Settings size={14} />
                         </button>
-                        <button className="p-1 bg-[#00beef] hover:bg-[#00699a] text-black rounded transition-colors duration-300">
+                        <button 
+                          onClick={() => setIsEditorOpen(true)}
+                          className="p-1 bg-[#00beef] hover:bg-[#00699a] text-black rounded transition-colors duration-300"
+                        >
+                          <Code size={14} />
+                        </button>
+                        <button 
+                          onClick={() => openTerminal('bash')}
+                          className="p-1 bg-[#00beef] hover:bg-[#00699a] text-black rounded transition-colors duration-300"
+                        >
                           <TerminalIcon size={14} />
                         </button>
                       </div>
@@ -277,24 +306,16 @@ function Workshop() {
               <div className="bg-gradient-to-b from-[#005778] to-black p-4 rounded-lg border border-[#00699a]/30">
                 <div className="flex items-center gap-3 mb-3">
                   <TerminalIcon className="text-[#00beef]" size={24} />
-                  <h5 className="text-white font-semibold">CLI Access</h5>
+                  <h5 className="text-white font-semibold">Development Tools</h5>
                 </div>
                 <p className="text-gray-300 text-sm">
-                  Full terminal access with Bash and PowerShell for advanced operations and automation.
+                  Integrated code editor and terminal access with Bash and PowerShell for advanced operations.
                 </p>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <Terminal 
-        isOpen={isTerminalOpen}
-        onClose={() => setIsTerminalOpen(false)}
-        shell={terminalShell}
-        workingDirectory="/workspace"
-        context="workshop"
-      />
     </section>
   );
 }
