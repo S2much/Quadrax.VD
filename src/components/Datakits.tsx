@@ -1,14 +1,17 @@
 import { useState } from 'react';
-import { Upload, Download, Eye, BarChart3, Database, Search, Filter,  Plus, FileSpreadsheet,  Zap, Wrench, Shield, Bolt } from 'lucide-react';
+import { Upload, Download, Eye, BarChart3, Database, Search, Filter, Plus, FileSpreadsheet, Zap, Wrench, Shield, Bolt, Terminal as TerminalIcon } from 'lucide-react';
 import { fastenersData } from '../data/fasteners';
 import { handToolsData } from '../data/handTools';
 import { ppeData } from '../data/ppe';
 import { screwsData } from '../data/screws';
+import Terminal from './Terminal';
 
 function Datakits() {
   const [selectedDataset, setSelectedDataset] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [terminalShell, setTerminalShell] = useState<'bash' | 'powershell'>('bash');
 
   const datasets = [
     {
@@ -92,6 +95,11 @@ function Datakits() {
 
   const selectedDatasetData = selectedDataset ? datasets.find(d => d.id === selectedDataset) : null;
 
+  const openTerminal = (shell: 'bash' | 'powershell') => {
+    setTerminalShell(shell);
+    setIsTerminalOpen(true);
+  };
+
   return (
     <section className="p-6 min-h-screen">
       <div className="text-white mb-6">
@@ -133,10 +141,49 @@ function Datakits() {
             Filter
           </button>
           
+          {/* CLI Access Buttons */}
+          <button 
+            onClick={() => openTerminal('bash')}
+            className="px-4 bg-[#005778] hover:bg-[#00699a] text-white rounded-lg transition-colors duration-300 flex items-center gap-2"
+          >
+            <TerminalIcon size={16} />
+            Bash
+          </button>
+          <button 
+            onClick={() => openTerminal('powershell')}
+            className="px-4 bg-[#005778] hover:bg-[#00699a] text-white rounded-lg transition-colors duration-300 flex items-center gap-2"
+          >
+            <TerminalIcon size={16} />
+            PowerShell
+          </button>
+          
           <button className="px-16 bg-[#00beef] hover:bg-[#00699a] text-black font-semibold rounded-lg transition-colors duration-300 flex items-left gap-2">
             <Plus size={16} />
             Upload Dataset
           </button>
+        </div>
+      </div>
+
+      {/* CLI Command Examples */}
+      <div className="bg-gradient-to-b from-[#005778] to-black p-4 rounded-lg mb-6 border border-[#00699a]/30">
+        <h5 className="text-white font-semibold mb-3">Data CLI Commands</h5>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+          <div>
+            <span className="text-[#00beef] font-mono">data upload &lt;file&gt;</span>
+            <span className="text-gray-300 block">Upload dataset to DataKits</span>
+          </div>
+          <div>
+            <span className="text-[#00beef] font-mono">data validate &lt;dataset&gt;</span>
+            <span className="text-gray-300 block">Validate data quality</span>
+          </div>
+          <div>
+            <span className="text-[#00beef] font-mono">data transform &lt;dataset&gt;</span>
+            <span className="text-gray-300 block">Apply transformations</span>
+          </div>
+          <div>
+            <span className="text-[#00beef] font-mono">data export &lt;dataset&gt;</span>
+            <span className="text-gray-300 block">Export processed data</span>
+          </div>
         </div>
       </div>
 
@@ -307,6 +354,14 @@ function Datakits() {
           </button>
         </div>
       </div>
+
+      <Terminal 
+        isOpen={isTerminalOpen}
+        onClose={() => setIsTerminalOpen(false)}
+        shell={terminalShell}
+        workingDirectory="/datakits"
+        context="datakits"
+      />
     </section>
   );
 }

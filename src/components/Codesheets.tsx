@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { Play, Save, Share2, Plus, Code, FileText, BarChart3, Brain, Clock, Users, Star, GitBranch } from 'lucide-react';
+import { Play, Save, Share2, Plus, Code, FileText, BarChart3, Brain, Clock, Users, Star, GitBranch, Terminal as TerminalIcon } from 'lucide-react';
+import Terminal from './Terminal';
 
 function Codesheets() {
   const [selectedNotebook, setSelectedNotebook] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [terminalShell, setTerminalShell] = useState<'bash' | 'powershell'>('bash');
 
   const notebooks = [
     {
@@ -99,6 +102,11 @@ function Codesheets() {
     { name: 'Time Series', icon: Clock, description: 'Forecasting template' }
   ];
 
+  const openTerminal = (shell: 'bash' | 'powershell') => {
+    setTerminalShell(shell);
+    setIsTerminalOpen(true);
+  };
+
   return (
     <section className="p-6 min-h-screen">
       <div className="text-white mb-6">
@@ -119,6 +127,22 @@ function Codesheets() {
             <FileText size={16} />
             Import
           </button>
+          
+          {/* CLI Access Buttons */}
+          <button 
+            onClick={() => openTerminal('bash')}
+            className="px-4 bg-[#005778] hover:bg-[#00699a] text-white rounded-lg transition-colors duration-300 flex items-center gap-2"
+          >
+            <TerminalIcon size={16} />
+            Bash
+          </button>
+          <button 
+            onClick={() => openTerminal('powershell')}
+            className="px-4 bg-[#005778] hover:bg-[#00699a] text-white rounded-lg transition-colors duration-300 flex items-center gap-2"
+          >
+            <TerminalIcon size={16} />
+            PowerShell
+          </button>
         </div>
         
         <div className="flex gap-2">
@@ -138,6 +162,29 @@ function Codesheets() {
           >
             List
           </button>
+        </div>
+      </div>
+
+      {/* CLI Command Examples */}
+      <div className="bg-gradient-to-b from-[#005778] to-black p-4 rounded-lg mb-6 border border-[#00699a]/30">
+        <h5 className="text-white font-semibold mb-3">Notebook CLI Commands</h5>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+          <div>
+            <span className="text-[#00beef] font-mono">jupyter notebook</span>
+            <span className="text-gray-300 block">Start Jupyter server</span>
+          </div>
+          <div>
+            <span className="text-[#00beef] font-mono">python script.py</span>
+            <span className="text-gray-300 block">Execute Python script</span>
+          </div>
+          <div>
+            <span className="text-[#00beef] font-mono">pip install &lt;package&gt;</span>
+            <span className="text-gray-300 block">Install Python packages</span>
+          </div>
+          <div>
+            <span className="text-[#00beef] font-mono">git commit -m "message"</span>
+            <span className="text-gray-300 block">Version control</span>
+          </div>
         </div>
       </div>
 
@@ -267,6 +314,14 @@ function Codesheets() {
           ))}
         </div>
       </div>
+
+      <Terminal 
+        isOpen={isTerminalOpen}
+        onClose={() => setIsTerminalOpen(false)}
+        shell={terminalShell}
+        workingDirectory="/notebooks"
+        context="codesheets"
+      />
     </section>
   );
 }

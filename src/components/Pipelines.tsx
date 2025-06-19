@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Play, Pause, Square, Settings, Plus, GitBranch, Clock, CheckCircle, XCircle, AlertCircle, Zap, Database, Brain, Upload } from 'lucide-react';
+import { Play, Pause, Square, Settings, Plus, GitBranch, Clock, CheckCircle, XCircle, AlertTriangle, Zap, Database, Brain, Upload, Terminal as TerminalIcon } from 'lucide-react';
+import Terminal from './Terminal';
 
 function Pipelines() {
   const [selectedPipeline, setSelectedPipeline] = useState<number | null>(null);
-   useState<'overview' | 'logs' | 'metrics'>('overview');
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [terminalShell, setTerminalShell] = useState<'bash' | 'powershell'>('bash');
 
   const pipelines = [
     {
@@ -97,8 +99,8 @@ function Pipelines() {
       case 'completed': return <CheckCircle size={16} className="text-green-400" />;
       case 'running': return <Clock size={16} className="text-yellow-400 animate-spin" />;
       case 'failed': return <XCircle size={16} className="text-red-400" />;
-      case 'pending': return <AlertCircle size={16} className="text-gray-400" />;
-      default: return <AlertCircle size={16} className="text-gray-400" />;
+      case 'pending': return <AlertTriangle size={16} className="text-gray-400" />;
+      default: return <AlertTriangle size={16} className="text-gray-400" />;
     }
   };
 
@@ -118,6 +120,11 @@ function Pipelines() {
     { name: 'Real-time Inference', icon: Zap, description: 'Streaming pipeline' },
     { name: 'Batch Processing', icon: Upload, description: 'Batch job template' }
   ];
+
+  const openTerminal = (shell: 'bash' | 'powershell') => {
+    setTerminalShell(shell);
+    setIsTerminalOpen(true);
+  };
 
   return (
     <section className="p-6 min-h-screen">
@@ -139,6 +146,22 @@ function Pipelines() {
             <GitBranch size={16} />
             Templates
           </button>
+          
+          {/* CLI Access Buttons */}
+          <button 
+            onClick={() => openTerminal('bash')}
+            className="px-4 py-2 bg-[#005778] hover:bg-[#00699a] text-white rounded-lg transition-colors duration-300 flex items-center gap-2"
+          >
+            <TerminalIcon size={16} />
+            Bash
+          </button>
+          <button 
+            onClick={() => openTerminal('powershell')}
+            className="px-4 py-2 bg-[#005778] hover:bg-[#00699a] text-white rounded-lg transition-colors duration-300 flex items-center gap-2"
+          >
+            <TerminalIcon size={16} />
+            PowerShell
+          </button>
         </div>
         
         <div className="flex gap-2">
@@ -154,6 +177,29 @@ function Pipelines() {
             <Square size={16} />
             Stop All
           </button>
+        </div>
+      </div>
+
+      {/* CLI Command Examples */}
+      <div className="bg-gradient-to-b from-[#005778] to-black p-4 rounded-lg mb-6 border border-[#00699a]/30">
+        <h5 className="text-white font-semibold mb-3">Pipeline CLI Commands</h5>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+          <div>
+            <span className="text-[#00beef] font-mono">pipeline run &lt;name&gt;</span>
+            <span className="text-gray-300 block">Execute pipeline</span>
+          </div>
+          <div>
+            <span className="text-[#00beef] font-mono">pipeline status</span>
+            <span className="text-gray-300 block">Check pipeline status</span>
+          </div>
+          <div>
+            <span className="text-[#00beef] font-mono">pipeline logs &lt;name&gt;</span>
+            <span className="text-gray-300 block">View pipeline logs</span>
+          </div>
+          <div>
+            <span className="text-[#00beef] font-mono">pipeline stop &lt;name&gt;</span>
+            <span className="text-gray-300 block">Stop running pipeline</span>
+          </div>
         </div>
       </div>
 
@@ -300,6 +346,14 @@ function Pipelines() {
           </div>
         </div>
       </div>
+
+      <Terminal 
+        isOpen={isTerminalOpen}
+        onClose={() => setIsTerminalOpen(false)}
+        shell={terminalShell}
+        workingDirectory="/pipelines"
+        context="pipelines"
+      />
     </section>
   );
 }
