@@ -211,7 +211,7 @@ function Pipelines() {
         <h5 className="text-white font-semibold mb-3">Pipeline CLI Commands</h5>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
           <div>
-            <span className="text-[#00beef] font-mono">pipeline run <name></span>
+            <span className="text-[#00beef] font-mono">pipeline run {'<name>'}</span>
             <span className="text-gray-300 block">Execute pipeline</span>
           </div>
           <div>
@@ -219,11 +219,11 @@ function Pipelines() {
             <span className="text-gray-300 block">Check pipeline status</span>
           </div>
           <div>
-            <span className="text-[#00beef] font-mono">pipeline logs <name></span>
+            <span className="text-[#00beef] font-mono">pipeline logs {'<name>'}</span>
             <span className="text-gray-300 block">View pipeline logs</span>
           </div>
           <div>
-            <span className="text-[#00beef] font-mono">pipeline stop <name></span>
+            <span className="text-[#00beef] font-mono">pipeline stop {'<name>'}</span>
             <span className="text-gray-300 block">Stop running pipeline</span>
           </div>
         </div>
