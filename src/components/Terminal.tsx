@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Terminal as TerminalIcon, X, Minimize2, Maximize2, Copy, Download, Settings, Power, ChevronUp, ChevronDown } from 'lucide-react';
+import { Terminal as TerminalIcon, X, Minimize2, Copy, Download, Power, ChevronUp, ChevronDown } from 'lucide-react';
 
 interface TerminalProps {
   isOpen: boolean;
@@ -27,7 +27,6 @@ function Terminal({ isOpen, onClose, shell: initialShell, workingDirectory = '~'
   const [isResizing, setIsResizing] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const resizeRef = useRef<HTMLDivElement>(null);
 
   const prompt = shell === 'bash' 
     ? `user@quadrax-ml:${workingDirectory}$ `
@@ -264,7 +263,6 @@ ${context === 'workshop' ? '- quadrax init/list/start/stop - Workstation managem
     >
       {/* Resize Handle */}
       <div
-        ref={resizeRef}
         className="absolute top-0 left-0 right-0 h-1 cursor-row-resize bg-[#00699a] opacity-0 hover:opacity-100 transition-opacity duration-200"
         onMouseDown={() => setIsResizing(true)}
       />
