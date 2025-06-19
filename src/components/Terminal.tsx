@@ -117,8 +117,8 @@ function Terminal({ isOpen, onClose, shell: initialShell, workingDirectory = '~'
         return { output: 'Python 3.9.7 (default, Sep 16 2021, 16:59:28)\nExecuting script...', exitCode: 0 };
       }
       if (cmd.startsWith('pip install')) {
-        const package = cmd.split(' ')[2] || 'package';
-        return { output: `Installing ${package}...\nSuccessfully installed ${package}`, exitCode: 0 };
+        const packageName = cmd.split(' ')[2] || 'package';
+        return { output: `Installing ${packageName}...\nSuccessfully installed ${packageName}`, exitCode: 0 };
       }
     }
 
