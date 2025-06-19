@@ -220,19 +220,19 @@ function Models() {
         <h5 className="text-white font-semibold mb-3">Model CLI Commands</h5>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
           <div>
-            <span className="text-[#00beef] font-mono">model deploy <name></span>
+            <span className="text-[#00beef] font-mono">model deploy <name></name></span>
             <span className="text-gray-300 block">Deploy model to production</span>
           </div>
           <div>
-            <span className="text-[#00beef] font-mono">model train <config></span>
+            <span className="text-[#00beef] font-mono">model train <config></config></span>
             <span className="text-gray-300 block">Start model training</span>
           </div>
           <div>
-            <span className="text-[#00beef] font-mono">model evaluate <name></span>
+            <span className="text-[#00beef] font-mono">model evaluate <name></name></span>
             <span className="text-gray-300 block">Evaluate model performance</span>
           </div>
           <div>
-            <span className="text-[#00beef] font-mono">model logs <name></span>
+            <span className="text-[#00beef] font-mono">model logs <name></name></span>
             <span className="text-gray-300 block">View model logs</span>
           </div>
         </div>
