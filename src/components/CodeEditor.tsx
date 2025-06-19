@@ -160,7 +160,7 @@ function CodeEditor({ isOpen, onClose, context, workingDirectory = '~' }: CodeEd
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black z-40 flex">
+    <div className="relative inset-0 bg-black z-40 flex">
       {/* Sidebar - 20vw */}
       <div className={`${sidebarCollapsed ? 'w-12' : 'w-[20vw]'} bg-gradient-to-b from-black to-[#005778] border-r border-[#00699a] flex flex-col transition-all duration-300`}>
         {/* Sidebar Header */}
