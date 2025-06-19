@@ -121,18 +121,18 @@ function Workshop() {
               <span className="text-gray-300 ml-2">- List all workstations</span>
             </div>
             <div>
-              <span className="text-[#00beef] font-mono">quadrax start <name></span>
+              <span className="text-[#00beef] font-mono">quadrax start &lt;name&gt;</span>
               <span className="text-gray-300 ml-2">- Start workstation</span>
             </div>
             <div>
-              <span className="text-[#00beef] font-mono">quadrax stop <name></span>
+              <span className="text-[#00beef] font-mono">quadrax stop &lt;name&gt;</span>
               <span className="text-gray-300 ml-2">- Stop workstation</span>
             </div>
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <ul id="ws-options" className="flex-row gap-2 p-1 mb-4">
+          <ul id="ws-options" className="flex flex-row gap-2 p-1 mb-4">
             {['Edit', 'Train', 'Evaluate', 'Extract', 'Delete', 'Start', 'Stop', 'Configure'].map((action) => (
               <li key={action} className="px-4 py-2 border border-[#00beef] rounded-lg text-white hover:bg-[#00699a] cursor-pointer transition-colors duration-300">
                 {action}

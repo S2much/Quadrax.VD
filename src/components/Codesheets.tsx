@@ -204,7 +204,7 @@ function Codesheets() {
             <span className="text-gray-300 block">Execute Python script</span>
           </div>
           <div>
-            <span className="text-[#00beef] font-mono">pip install <package></span>
+            <span className="text-[#00beef] font-mono">pip install package</span>
             <span className="text-gray-300 block">Install Python packages</span>
           </div>
           <div>
