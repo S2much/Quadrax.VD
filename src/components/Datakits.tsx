@@ -195,19 +195,19 @@ function Datakits() {
         <h5 className="text-white font-semibold mb-3">Data CLI Commands</h5>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
           <div>
-            <span className="text-[#00beef] font-mono">data upload <file></span>
+            <span className="text-[#00beef] font-mono">data upload {`<file>`}</span>
             <span className="text-gray-300 block">Upload dataset to DataKits</span>
           </div>
           <div>
-            <span className="text-[#00beef] font-mono">data validate <dataset></span>
+            <span className="text-[#00beef] font-mono">data validate {`<dataset>`}</span>
             <span className="text-gray-300 block">Validate data quality</span>
           </div>
           <div>
-            <span className="text-[#00beef] font-mono">data transform <dataset></span>
+            <span className="text-[#00beef] font-mono">data transform {`<dataset>`}</span>
             <span className="text-gray-300 block">Apply transformations</span>
           </div>
           <div>
-            <span className="text-[#00beef] font-mono">data export <dataset></span>
+            <span className="text-[#00beef] font-mono">data export {`<dataset>`}</span>
             <span className="text-gray-300 block">Export processed data</span>
           </div>
         </div>
