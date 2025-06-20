@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, X, Minimize2, Bot, User, Loader2, Maximize2, ExternalLink } from 'lucide-react';
+import OpenAI from "openai";
 
 interface ChatbotProps {
   isOpen: boolean;
@@ -17,6 +18,12 @@ interface Message {
   sender: 'user' | 'bot';
   timestamp: Date;
 }
+
+// OpenAI configuration
+const openai = new OpenAI({
+  baseURL: 'https://api.deepseek.com',
+  apiKey: 'sk-b35f72184b45489683f238411f5c3cd3'
+});
 
 function Chatbot({ isOpen, onClose, width, setWidth, isDetached, setIsDetached, onOpenNewWorkstation }: ChatbotProps) {
   const [aiPrompt, setAiPrompt] = useState('');
@@ -67,26 +74,26 @@ function Chatbot({ isOpen, onClose, width, setWidth, isDetached, setIsDetached, 
     };
   }, [isResizing, setWidth, isDetached]);
 
-  // Enhanced AI responses for empty state guidance
-  const generateAIResponse = (userInput: string): string => {
-    const input = userInput.toLowerCase();
-    
-    // Workstation creation keywords
-    const workstationKeywords = ['create', 'start', 'make', 'initialize', 'init', 'new', 'setup'];
-    const workstationTerms = ['workstation', 'workspace', 'environment', 'env'];
-    
-    const hasWorkstationKeyword = workstationKeywords.some(keyword => input.includes(keyword));
-    const hasWorkstationTerm = workstationTerms.some(term => input.includes(term));
-    
-    if (hasWorkstationKeyword && hasWorkstationTerm) {
-      // Trigger workstation creation modal
-      setTimeout(() => {
-        if (onOpenNewWorkstation) {
-          onOpenNewWorkstation();
-        }
-      }, 1500);
+  // Generate AI response using OpenAI
+  const generateAIResponse = async (userInput: string): Promise<string> => {
+    try {
+      // Check for workstation creation keywords
+      const workstationKeywords = ['create', 'start', 'make', 'initialize', 'init', 'new', 'setup'];
+      const workstationTerms = ['workstation', 'workspace', 'environment', 'env'];
       
-      return `🚀 **Workstation Creation Initiated**
+      const input = userInput.toLowerCase();
+      const hasWorkstationKeyword = workstationKeywords.some(keyword => input.includes(keyword));
+      const hasWorkstationTerm = workstationTerms.some(term => input.includes(term));
+      
+      if (hasWorkstationKeyword && hasWorkstationTerm) {
+        // Trigger workstation creation modal
+        setTimeout(() => {
+          if (onOpenNewWorkstation) {
+            onOpenNewWorkstation();
+          }
+        }, 1500);
+        
+        return `🚀 **Workstation Creation Initiated**
 
 I'll help you create your first workstation! Opening the workstation initialization interface...
 
@@ -103,8 +110,48 @@ The initialization wizard will guide you through:
 - AI-powered optimization suggestions
 
 Let's get your first workstation up and running! 🎯`;
-    }
+      }
 
+      // Use OpenAI for general responses
+      const completion = await openai.chat.completions.create({
+        messages: [
+          { 
+            role: "system", 
+            content: `You are QUADRAX AI, an intelligent assistant for the QUADRAX•ML platform. You help users with machine learning workflows, data science, model training, and automation.
+
+Key platform components:
+- **Workshops**: Development workstations and environments
+- **DataKits**: Data management and processing
+- **Codesheets**: Interactive development environments (like Jupyter notebooks)
+- **Pipelines**: Automation workflows for ML processes
+- **Models**: AI model training and deployment
+- **Virtual Machines**: Compute resources
+
+Provide helpful, technical guidance while being concise and actionable. When users ask about creating workstations, datasets, models, etc., guide them to the appropriate platform sections. Always maintain the QUADRAX•ML branding and context.` 
+          },
+          { 
+            role: "user", 
+            content: userInput 
+          }
+        ],
+        model: "deepseek-chat",
+        max_tokens: 800,
+        temperature: 0.7,
+      });
+
+      return completion.choices[0]?.message?.content || "I apologize, but I couldn't generate a response. Please try again.";
+    } catch (error) {
+      console.error('OpenAI API Error:', error);
+      
+      // Fallback to local responses if API fails
+      return generateFallbackResponse(userInput);
+    }
+  };
+
+  // Fallback responses when API is unavailable
+  const generateFallbackResponse = (userInput: string): string => {
+    const input = userInput.toLowerCase();
+    
     // DataKit creation
     if (input.includes('datakit') || input.includes('dataset') || input.includes('upload data')) {
       return `📊 **DataKit Creation Guide**
@@ -124,12 +171,6 @@ DataKits are your data management solution in QUADRAX•ML. Here's how to get st
 • Text files and logs
 • Database connections
 • Cloud storage integration
-
-**Features:**
-• Automatic data quality assessment
-• Schema validation and profiling
-• Data transformation pipelines
-• Version control for datasets
 
 Would you like me to guide you through creating your first DataKit?`;
     }
@@ -156,128 +197,10 @@ Codesheets provide interactive development environments for data analysis and ML
 • Version control and sharing
 • Direct DataKit integration
 
-**Quick Templates Available:**
-• **Data Exploration**: Basic EDA workflows
-• **ML Classification**: End-to-end classification pipelines
-• **Deep Learning**: Neural network development
-• **Time Series**: Forecasting and analysis
-
 Ready to start your first interactive analysis session?`;
     }
 
-    // Pipeline creation
-    if (input.includes('pipeline') || input.includes('automation') || input.includes('workflow')) {
-      return `⚙️ **Pipeline Automation Setup**
-
-Pipelines automate your ML workflows from data to deployment:
-
-**Pipeline Types:**
-• **Data Processing**: ETL and data transformation
-• **Model Training**: Automated ML training workflows
-• **Real-time Inference**: Streaming data processing
-• **Batch Processing**: Scheduled data jobs
-
-**Creating Your First Pipeline:**
-1. Visit the **Pipelines** section
-2. Select **"Create Pipeline"**
-3. Choose a template or build custom
-4. Configure stages and dependencies
-5. Set up scheduling and monitoring
-
-**Pipeline Stages:**
-- Data ingestion and validation
-- Preprocessing and feature engineering
-- Model training and evaluation
-- Testing and deployment
-- Monitoring and alerting
-
-**Scheduling Options:**
-• Manual execution
-• Time-based (cron schedules)
-• Event-driven triggers
-• Data availability triggers
-
-Would you like to set up your first automation pipeline?`;
-    }
-
-    // Model training/deployment
-    if (input.includes('model') || input.includes('training') || input.includes('ai') || input.includes('ml')) {
-      return `🤖 **AI Model Development & Deployment**
-
-QUADRAX•ML provides comprehensive model lifecycle management:
-
-**Model Development:**
-• **Training**: Use built-in algorithms or custom models
-• **Evaluation**: Comprehensive performance metrics
-• **Optimization**: Automated hyperparameter tuning
-• **Validation**: Cross-validation and testing frameworks
-
-**Supported Frameworks:**
-• TensorFlow & Keras
-• PyTorch
-• Scikit-learn
-• XGBoost & LightGBM
-• Hugging Face Transformers
-
-**Model Templates:**
-• **Classification**: Multi-class and binary classification
-• **Regression**: Linear and non-linear regression
-• **NLP**: Text analysis and language models
-• **Computer Vision**: Image recognition and analysis
-
-**Deployment Options:**
-• REST API endpoints
-• Batch processing
-• Real-time streaming
-• Edge deployment
-
-**Getting Started:**
-1. Go to **Models** section
-2. Choose **"Train New Model"** or **"Deploy Existing"**
-3. Select your framework and template
-4. Configure training parameters
-5. Monitor training progress
-
-Ready to build your first AI model?`;
-    }
-
-    // General help or getting started
-    if (input.includes('help') || input.includes('start') || input.includes('begin') || input.includes('guide')) {
-      return `🎯 **Getting Started with QUADRAX•ML**
-
-Welcome! Here's your step-by-step guide to get started:
-
-**1. Create Your First Workstation** 🏗️
-- Say "create workstation" to initialize your development environment
-- Choose from Data Science, ML, or Engineering configurations
-
-**2. Set Up Data Management** 📊
-- Create a DataKit to upload and manage your datasets
-- Automatic quality assessment and preprocessing
-
-**3. Start Development** 💻
-- Launch a Codesheet for interactive analysis
-- Choose from pre-built templates or start from scratch
-
-**4. Automate Workflows** ⚙️
-- Build Pipelines to automate your ML processes
-- From data ingestion to model deployment
-
-**5. Deploy Models** 🚀
-- Train and deploy AI models with built-in frameworks
-- Monitor performance and scale automatically
-
-**Quick Commands:**
-• "create workstation" - Initialize development environment
-• "upload dataset" - Start with data management
-• "new codesheet" - Begin interactive development
-• "setup pipeline" - Automate workflows
-• "train model" - Start AI development
-
-What would you like to start with first?`;
-    }
-
-    // Default response for unrecognized queries
+    // Default response
     return `I understand you're asking about "${userInput}". Let me help you get started with QUADRAX•ML!
 
 🚀 **Quick Start Options:**
@@ -299,8 +222,6 @@ What would you like to start with first?`;
 • **Pipelines**: Workflow automation
 • **Models**: AI model training and deployment
 
-Since you're just getting started, I recommend beginning with **"create workstation"** to set up your first development environment.
-
 What would you like to explore first?`;
   };
 
@@ -319,18 +240,31 @@ What would you like to explore first?`;
     setAiPrompt('');
     setIsTyping(true);
 
-    // Simulate AI thinking time
-    setTimeout(() => {
-      const aiResponse: Message = {
+    try {
+      const aiResponse = await generateAIResponse(aiPrompt);
+      
+      const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: generateAIResponse(aiPrompt),
+        content: aiResponse,
         sender: 'bot',
         timestamp: new Date()
       };
 
-      setMessages(prev => [...prev, aiResponse]);
+      setMessages(prev => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Error generating AI response:', error);
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: "I'm experiencing technical difficulties. Please try again in a moment.",
+        sender: 'bot',
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500 + Math.random() * 1000); // Random delay between 1.5-2.5 seconds
+    }
   };
 
   const formatTime = (date: Date) => {
@@ -498,7 +432,7 @@ What would you like to explore first?`;
               </button>
             </div>
             <div className="text-xs text-gray-400 mt-2 text-center">
-              Press Enter to send, Shift+Enter for new line • Try: "create workstation" or "help"
+              Press Enter to send, Shift+Enter for new line • Powered by QUADRAX AI
             </div>
           </form>
         </div>
