@@ -22,7 +22,8 @@ interface Message {
 // OpenAI configuration
 const openai = new OpenAI({
   baseURL: 'https://api.deepseek.com',
-  apiKey: 'sk-b35f72184b45489683f238411f5c3cd3'
+  apiKey: 'sk-b35f72184b45489683f238411f5c3cd3',
+  dangerouslyAllowBrowser: true
 });
 
 function Chatbot({ isOpen, onClose, width, setWidth, isDetached, setIsDetached, onOpenNewWorkstation }: ChatbotProps) {
