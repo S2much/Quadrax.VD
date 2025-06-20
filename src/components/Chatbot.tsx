@@ -24,7 +24,7 @@ function Chatbot({ isOpen, onClose, width, setWidth, isDetached, setIsDetached, 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hello! I'm QUADRAX AI, your intelligent assistant for machine learning and data science. I can help you with:\n\n• Model training and optimization\n• Data analysis and preprocessing\n• Pipeline configuration\n• Best practices and troubleshooting\n• Code generation and debugging\n• **Workstation management** - I can help you create, start, or initialize workstations!\n\nHow can I assist you today?",
+      content: "Hello! I'm QUADRAX AI, your intelligent assistant for machine learning and data science. I can help you with:\n\n• **Getting started** - Setting up your first workstation\n• **Data management** - Creating and managing DataKits\n• **Development** - Setting up Codesheets for interactive analysis\n• **Automation** - Configuring pipelines for ML workflows\n• **Model deployment** - Training and deploying AI models\n• **Best practices** - ML guidance and troubleshooting\n\n**Quick Start Commands:**\n• Say \"create workstation\" to initialize your first development environment\n• Say \"upload dataset\" to start with data management\n• Say \"new codesheet\" to begin interactive development\n\nHow can I help you get started with QUADRAX•ML?",
       sender: 'bot',
       timestamp: new Date()
     }
@@ -67,7 +67,7 @@ function Chatbot({ isOpen, onClose, width, setWidth, isDetached, setIsDetached, 
     };
   }, [isResizing, setWidth, isDetached]);
 
-  // Enhanced AI responses with workstation creation capability
+  // Enhanced AI responses for empty state guidance
   const generateAIResponse = (userInput: string): string => {
     const input = userInput.toLowerCase();
     
@@ -88,198 +88,220 @@ function Chatbot({ isOpen, onClose, width, setWidth, isDetached, setIsDetached, 
       
       return `🚀 **Workstation Creation Initiated**
 
-I'll help you create a new workstation! Opening the workstation initialization interface...
+I'll help you create your first workstation! Opening the workstation initialization interface...
 
 **What you can configure:**
-• **Name**: Choose a unique identifier (letters, numbers, hyphens, underscores only)
-• **Function**: Development, Training, Processing, Inference, Automation, or Custom
-• **Nature**: Data Science, Data Engineering, Machine Learning, AI, Automation
-• **Description**: Detailed purpose and requirements for AI analysis
+• **Name**: Choose a unique identifier for your environment
+• **Function**: Development, Training, Processing, Inference, or Automation
+• **Nature**: Data Science, Data Engineering, Machine Learning, AI
+• **Description**: Detailed purpose for AI-powered recommendations
 
-The initialization wizard will guide you through each step. You'll be able to:
-- Set up custom resource allocation
-- Choose pre-configured ML frameworks
-- Define your specific use case
-- Get AI-powered recommendations
+The initialization wizard will guide you through:
+- Custom resource allocation
+- Pre-configured ML frameworks
+- Development environment setup
+- AI-powered optimization suggestions
 
-Let's get your new workstation up and running! 🎯`;
+Let's get your first workstation up and running! 🎯`;
     }
 
-    // Model-related queries
-    if (input.includes('model') || input.includes('training') || input.includes('ml')) {
-      return `Great question about machine learning models! Here are some key recommendations:
+    // DataKit creation
+    if (input.includes('datakit') || input.includes('dataset') || input.includes('upload data')) {
+      return `📊 **DataKit Creation Guide**
 
-🤖 Model Selection: Consider your data type and problem complexity. For structured data, try Random Forest or XGBoost. For unstructured data, neural networks work well.
+DataKits are your data management solution in QUADRAX•ML. Here's how to get started:
 
-📊 Training Tips:
-• Split your data: 70% training, 15% validation, 15% test
-• Use cross-validation for robust evaluation
-• Monitor for overfitting with validation curves
+**Creating Your First DataKit:**
+1. Navigate to the **Datakits** section
+2. Click **"Create DataKit"** 
+3. Upload your dataset (CSV, JSON, Parquet, Excel, etc.)
+4. Configure data validation and quality checks
+5. Set up automated preprocessing pipelines
 
-🔧 Optimization: Start with hyperparameter tuning using grid search or Bayesian optimization.
+**Supported Formats:**
+• CSV, JSON, Parquet files
+• Excel spreadsheets (.xlsx, .xls)
+• Text files and logs
+• Database connections
+• Cloud storage integration
 
-Would you like me to help you with a specific model type or training challenge?`;
+**Features:**
+• Automatic data quality assessment
+• Schema validation and profiling
+• Data transformation pipelines
+• Version control for datasets
+
+Would you like me to guide you through creating your first DataKit?`;
     }
 
-    // Data-related queries
-    if (input.includes('data') || input.includes('dataset') || input.includes('preprocessing')) {
-      return `Data is the foundation of great ML! Here's how to handle it effectively:
+    // Codesheet creation
+    if (input.includes('codesheet') || input.includes('notebook') || input.includes('development')) {
+      return `💻 **Codesheet Development Environment**
 
-📈 Data Quality:
-• Check for missing values and outliers
-• Ensure consistent formatting
-• Validate data types and ranges
+Codesheets provide interactive development environments for data analysis and ML experimentation:
 
-🔄 Preprocessing Steps:
-1. Handle missing data (imputation/removal)
-2. Encode categorical variables
-3. Scale/normalize numerical features
-4. Feature engineering for better performance
+**Getting Started:**
+1. Go to the **Codesheets** section
+2. Click **"New Codesheet"**
+3. Choose from templates:
+   - Data Exploration
+   - ML Classification
+   - Deep Learning
+   - Time Series Analysis
 
-📊 **Exploratory Analysis**: Use our Datakits section to visualize distributions, correlations, and patterns.
+**Features:**
+• Interactive Python/R execution
+• Real-time collaboration
+• Integrated data visualization
+• Version control and sharing
+• Direct DataKit integration
 
-What specific data challenges are you facing?`;
+**Quick Templates Available:**
+• **Data Exploration**: Basic EDA workflows
+• **ML Classification**: End-to-end classification pipelines
+• **Deep Learning**: Neural network development
+• **Time Series**: Forecasting and analysis
+
+Ready to start your first interactive analysis session?`;
     }
 
-    // Pipeline-related queries
-    if (input.includes('pipeline') || input.includes('workflow') || input.includes('automation')) {
-      return `Pipelines are essential for scalable ML workflows! Here's how to build effective ones:
+    // Pipeline creation
+    if (input.includes('pipeline') || input.includes('automation') || input.includes('workflow')) {
+      return `⚙️ **Pipeline Automation Setup**
 
-⚙️ Pipeline Components:
-• Data ingestion and validation
-• Preprocessing and feature engineering
-• Model training and evaluation
-• Deployment and monitoring
+Pipelines automate your ML workflows from data to deployment:
 
-🔄 Best Practices:
-• Use version control for data and models
-• Implement automated testing
-• Set up monitoring and alerting
-• Enable rollback capabilities
+**Pipeline Types:**
+• **Data Processing**: ETL and data transformation
+• **Model Training**: Automated ML training workflows
+• **Real-time Inference**: Streaming data processing
+• **Batch Processing**: Scheduled data jobs
 
-🚀 QUADRAX Features: Check out our Pipelines section for pre-built templates and visual workflow builders.
+**Creating Your First Pipeline:**
+1. Visit the **Pipelines** section
+2. Select **"Create Pipeline"**
+3. Choose a template or build custom
+4. Configure stages and dependencies
+5. Set up scheduling and monitoring
 
-Need help designing a specific pipeline?`;
+**Pipeline Stages:**
+- Data ingestion and validation
+- Preprocessing and feature engineering
+- Model training and evaluation
+- Testing and deployment
+- Monitoring and alerting
+
+**Scheduling Options:**
+• Manual execution
+• Time-based (cron schedules)
+• Event-driven triggers
+• Data availability triggers
+
+Would you like to set up your first automation pipeline?`;
     }
 
-    // Code-related queries
-    if (input.includes('code') || input.includes('python') || input.includes('script') || input.includes('programming')) {
-      return `I'd be happy to help with your coding needs! Here are some quick tips:
+    // Model training/deployment
+    if (input.includes('model') || input.includes('training') || input.includes('ai') || input.includes('ml')) {
+      return `🤖 **AI Model Development & Deployment**
 
-💻 Python Best Practices:
-• Use virtual environments for dependency management
-• Follow PEP 8 style guidelines
-• Write docstrings and comments
-• Implement error handling
+QUADRAX•ML provides comprehensive model lifecycle management:
 
-📝 ML Code Structure:
-\`\`\`python
-# Example model training structure
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+**Model Development:**
+• **Training**: Use built-in algorithms or custom models
+• **Evaluation**: Comprehensive performance metrics
+• **Optimization**: Automated hyperparameter tuning
+• **Validation**: Cross-validation and testing frameworks
 
-# Load and split data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+**Supported Frameworks:**
+• TensorFlow & Keras
+• PyTorch
+• Scikit-learn
+• XGBoost & LightGBM
+• Hugging Face Transformers
 
-# Train model
-model = RandomForestClassifier(n_estimators=100)
-model.fit(X_train, y_train)
+**Model Templates:**
+• **Classification**: Multi-class and binary classification
+• **Regression**: Linear and non-linear regression
+• **NLP**: Text analysis and language models
+• **Computer Vision**: Image recognition and analysis
 
-# Evaluate
-accuracy = model.score(X_test, y_test)
-\`\`\`
+**Deployment Options:**
+• REST API endpoints
+• Batch processing
+• Real-time streaming
+• Edge deployment
 
-What specific coding challenge can I help you with?`;
+**Getting Started:**
+1. Go to **Models** section
+2. Choose **"Train New Model"** or **"Deploy Existing"**
+3. Select your framework and template
+4. Configure training parameters
+5. Monitor training progress
+
+Ready to build your first AI model?`;
     }
 
-    // Performance and optimization
-    if (input.includes('performance') || input.includes('optimize') || input.includes('slow') || input.includes('speed')) {
-      return `Performance optimization is crucial for production ML systems! Here are key strategies:
+    // General help or getting started
+    if (input.includes('help') || input.includes('start') || input.includes('begin') || input.includes('guide')) {
+      return `🎯 **Getting Started with QUADRAX•ML**
 
-⚡ Model Performance:
-• Use feature selection to reduce dimensionality
-• Try ensemble methods for better accuracy
-• Consider model compression techniques
-• Implement early stopping during training
+Welcome! Here's your step-by-step guide to get started:
 
-🚀 System Performance:
-• Utilize GPU acceleration for deep learning
-• Implement batch processing for inference
-• Use caching for frequently accessed data
-• Consider distributed computing for large datasets
+**1. Create Your First Workstation** 🏗️
+- Say "create workstation" to initialize your development environment
+- Choose from Data Science, ML, or Engineering configurations
 
-📊 Monitoring: Set up performance dashboards to track:
-• Model accuracy over time
-• Inference latency
-• Resource utilization
-• Data drift detection
+**2. Set Up Data Management** 📊
+- Create a DataKit to upload and manage your datasets
+- Automatic quality assessment and preprocessing
 
-What performance bottlenecks are you experiencing?`;
-    }
+**3. Start Development** 💻
+- Launch a Codesheet for interactive analysis
+- Choose from pre-built templates or start from scratch
 
-    // Error handling and debugging
-    if (input.includes('error') || input.includes('bug') || input.includes('problem') || input.includes('issue')) {
-      return `Debugging ML systems can be tricky! Here's a systematic approach:
+**4. Automate Workflows** ⚙️
+- Build Pipelines to automate your ML processes
+- From data ingestion to model deployment
 
-🔍 Common Issues:
-• Data leakage: Check for future information in features
-• Overfitting: Validate on unseen data
-• Underfitting: Increase model complexity or features
-• Data quality: Verify data consistency and completeness
+**5. Deploy Models** 🚀
+- Train and deploy AI models with built-in frameworks
+- Monitor performance and scale automatically
 
-🛠️ Debugging Steps:
-1. Check data shapes and types
-2. Validate preprocessing steps
-3. Monitor training metrics
-4. Test with smaller datasets
-5. Use logging and visualization
+**Quick Commands:**
+• "create workstation" - Initialize development environment
+• "upload dataset" - Start with data management
+• "new codesheet" - Begin interactive development
+• "setup pipeline" - Automate workflows
+• "train model" - Start AI development
 
-📋 QUADRAX Tools: Use our Codesheets for interactive debugging and our monitoring dashboards for real-time insights.
-
-Can you describe the specific error or issue you're encountering?`;
-    }
-
-    // General help or greetings
-    if (input.includes('hello') || input.includes('hi') || input.includes('help') || input.includes('start')) {
-      return `Hello! Welcome to QUADRAX•ML! I'm here to help you succeed with your machine learning projects.
-
-🎯 Popular Topics:
-• Getting started with ML workflows
-• Data preprocessing and analysis
-• Model selection and training
-• Pipeline automation
-• Performance optimization
-• **Workstation creation and management**
-
-🔧 Platform Features:
-• Workshops: Organize your ML projects
-• Datakits: Manage and explore datasets
-• Codesheets: Interactive notebooks
-• Models: Deploy and monitor ML models
-• Pipelines: Automate your workflows
-
-💡 **Quick Tip**: Try saying "create a new workstation" to get started with a new development environment!
-
-What would you like to explore first?`;
+What would you like to start with first?`;
     }
 
     // Default response for unrecognized queries
-    return `I understand you're asking about "${userInput}". While I may not have a specific answer for that exact query, I can help you with:
+    return `I understand you're asking about "${userInput}". Let me help you get started with QUADRAX•ML!
 
-🤖 Machine Learning: Model selection, training, and optimization
-📊 Data Science: Analysis, preprocessing, and visualization  
-⚙️ MLOps: Pipeline automation and deployment
-💻 Development: Code assistance and best practices
-🚀 **Workstation Management**: Create, configure, and manage development environments
+🚀 **Quick Start Options:**
 
-Could you provide more details about what you're trying to accomplish? I'm here to help guide you through any ML challenges you're facing!
+**For Beginners:**
+• Say **"create workstation"** to set up your first development environment
+• Say **"upload dataset"** to start with data management
+• Say **"help"** for a complete getting started guide
 
-You can also explore our platform sections:
-• Use Datakits for data management
-• Try Codesheets for interactive analysis
-• Check Models for deployment options
-• Visit Pipelines for workflow automation
-• **Say "initialize workstation" to create a new development environment**`;
+**For Development:**
+• **"new codesheet"** - Interactive development environment
+• **"setup pipeline"** - Automate your workflows
+• **"train model"** - AI model development
+
+**Platform Sections:**
+• **Workshop**: Manage development workstations
+• **DataKits**: Upload and manage datasets
+• **Codesheets**: Interactive development environments
+• **Pipelines**: Workflow automation
+• **Models**: AI model training and deployment
+
+Since you're just getting started, I recommend beginning with **"create workstation"** to set up your first development environment.
+
+What would you like to explore first?`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -452,7 +474,7 @@ You can also explore our platform sections:
               <textarea 
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="Ask me anything about ML, data science, AI, or say 'create workstation'..."
+                placeholder="Ask me anything about ML, data science, or say 'create workstation' to get started..."
                 className="flex-1 bg-gradient-to-b from-black via-black to-[#005778] h-35 border border-[#00699a] text-white placeholder:text-gray-400 placeholder:opacity-80 p-3 rounded-m resize-none focus:outline-none focus:border-[#00beef] focus:ring-2 focus:ring-[#00beef]/20 transition-all duration-300 custom-scrollbar"
                 rows={2}
                 onKeyDown={(e) => {
@@ -476,7 +498,7 @@ You can also explore our platform sections:
               </button>
             </div>
             <div className="text-xs text-gray-400 mt-2 text-center">
-              Press Enter to send, Shift+Enter for new line • Try: "create a new workstation"
+              Press Enter to send, Shift+Enter for new line • Try: "create workstation" or "help"
             </div>
           </form>
         </div>

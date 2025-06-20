@@ -17,27 +17,6 @@ function Workshop() {
   const [isNewWorkstationOpen, setIsNewWorkstationOpen] = useState(false);
   const [terminalShell, setTerminalShell] = useState<'bash' | 'powershell'>('bash');
 
-  const workstations = [
-    {
-      id: 1,
-      name: 'quadro-ml-v_2',
-      dateCreated: '17/06/2025',
-      age: '253ds',
-      status: 'Active',
-      description: 'Main ML development environment with TensorFlow and PyTorch',
-      resources: { cpu: '8 cores', memory: '32GB', storage: '500GB' }
-    },
-    {
-      id: 2,
-      name: 'data-processing-env',
-      dateCreated: '15/06/2025',
-      age: '255ds',
-      status: 'Stopped',
-      description: 'Dedicated environment for large-scale data processing',
-      resources: { cpu: '16 cores', memory: '64GB', storage: '1TB' }
-    }
-  ];
-
   const openTerminal = (shell: 'bash' | 'powershell') => {
     setTerminalShell(shell);
     setIsTerminalOpen(true);
@@ -50,15 +29,6 @@ function Workshop() {
     
     // You could add the new workstation to your state here
     // setWorkstations(prev => [...prev, newWorkstation]);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Active': return 'text-green-400 bg-green-400/20';
-      case 'Stopped': return 'text-red-400 bg-red-400/20';
-      case 'Starting': return 'text-yellow-400 bg-yellow-400/20';
-      default: return 'text-gray-400 bg-gray-400/20';
-    }
   };
 
   return (
@@ -127,86 +97,53 @@ function Workshop() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <ul id="ws-options" className="flex flex-row gap-2 p-1 mb-4">
-              {['Edit', 'Train', 'Evaluate', 'Extract', 'Delete', 'Start', 'Stop', 'Configure'].map((action) => (
-                <li key={action} className="px-4 py-2 border border-[#00beef] rounded-lg text-white hover:bg-[#00699a] cursor-pointer transition-colors duration-300">
-                  {action}
-                </li>
-              ))}
-            </ul>
+          {/* Empty State */}
+          <div className="text-center py-16">
+            <TerminalIcon size={64} className="mx-auto text-gray-400 mb-6" />
+            <h3 className="text-2xl font-bold text-white mb-4">No Workstations Yet</h3>
+            <p className="text-gray-300 mb-8 text-lg">
+              Create your first workstation to start developing, training models, or processing data.
+            </p>
+            
+            <button
+              onClick={() => setIsNewWorkstationOpen(true)}
+              className="px-8 py-4 bg-[#00beef] hover:bg-[#00699a] text-black font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 mx-auto"
+            >
+              <Plus size={20} />
+              Initialize First Workstation
+            </button>
+          </div>
 
-            <div className="bg-black/50 rounded-lg overflow-hidden">
-              <table className="w-full text-left">
-                <thead>
-                  <tr>
-                    <th className="p-3 bg-[#004667] text-white">#</th>
-                    <th className="p-3 bg-[#004667] text-white">Name</th>
-                    <th className="p-3 bg-[#004667] text-white">Description</th>
-                    <th className="p-3 bg-[#004667] text-white">Resources</th>
-                    <th className="p-3 bg-[#004667] text-white">Date Created</th>
-                    <th className="p-3 bg-[#004667] text-white">Age</th>
-                    <th className="p-3 bg-[#004667] text-white">Status</th>
-                    <th className="p-3 bg-[#004667] text-white">Actions</th>
+          {/* Empty Table Structure */}
+          <div className="bg-black/50 rounded-lg overflow-hidden mt-8">
+            <table className="w-full text-left">
+              <thead>
+                <tr>
+                  <th className="p-3 bg-[#004667] text-white">#</th>
+                  <th className="p-3 bg-[#004667] text-white">Name</th>
+                  <th className="p-3 bg-[#004667] text-white">Description</th>
+                  <th className="p-3 bg-[#004667] text-white">Resources</th>
+                  <th className="p-3 bg-[#004667] text-white">Date Created</th>
+                  <th className="p-3 bg-[#004667] text-white">Age</th>
+                  <th className="p-3 bg-[#004667] text-white">Status</th>
+                  <th className="p-3 bg-[#004667] text-white">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...Array(5)].map((_, i) => (
+                  <tr key={`empty-${i}`} className="opacity-30">
+                    <td className="p-3 text-gray-400">---</td>
+                    <td className="p-3 text-gray-400">---</td>
+                    <td className="p-3 text-gray-400">---</td>
+                    <td className="p-3 text-gray-400">---</td>
+                    <td className="p-3 text-gray-400">---</td>
+                    <td className="p-3 text-gray-400">---</td>
+                    <td className="p-3 text-gray-400">---</td>
+                    <td className="p-3 text-gray-400">---</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {workstations.map(ws => (
-                    <tr key={ws.id} className="hover:bg-[#00699a]/20 transition-colors duration-300">
-                      <td className="p-3 text-white">{ws.id}</td>
-                      <td className="p-3 text-white font-medium">{ws.name}</td>
-                      <td className="p-3 text-gray-300 text-sm">{ws.description}</td>
-                      <td className="p-3 text-gray-300 text-sm">
-                        <div>{ws.resources.cpu}</div>
-                        <div>{ws.resources.memory}</div>
-                        <div>{ws.resources.storage}</div>
-                      </td>
-                      <td className="p-3 text-white">{ws.dateCreated}</td>
-                      <td className="p-3 text-white">{ws.age}</td>
-                      <td className="p-3">
-                        <span className={`px-2 py-1 rounded-full text-sm ${getStatusColor(ws.status)}`}>
-                          {ws.status}
-                        </span>
-                      </td>
-                      <td className="p-3">
-                        <div className="flex gap-1">
-                          <button className="p-1 bg-[#00699a] hover:bg-[#00beef] text-white rounded transition-colors duration-300">
-                            <Play size={14} />
-                          </button>
-                          <button className="p-1 bg-black/50 hover:bg-[#005778] text-white rounded border border-[#00699a] transition-colors duration-300">
-                            <Settings size={14} />
-                          </button>
-                          <button 
-                            onClick={() => setIsEditorOpen(true)}
-                            className="p-1 bg-[#00beef] hover:bg-[#00699a] text-black rounded transition-colors duration-300"
-                          >
-                            <Code size={14} />
-                          </button>
-                          <button 
-                            onClick={() => openTerminal('bash')}
-                            className="p-1 bg-[#00beef] hover:bg-[#00699a] text-black rounded transition-colors duration-300"
-                          >
-                            <TerminalIcon size={14} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                  {[...Array(2)].map((_, i) => (
-                    <tr key={`empty-${i}`} className="opacity-50">
-                      <td className="p-3 text-gray-400">---</td>
-                      <td className="p-3 text-gray-400">---</td>
-                      <td className="p-3 text-gray-400">---</td>
-                      <td className="p-3 text-gray-400">---</td>
-                      <td className="p-3 text-gray-400">---</td>
-                      <td className="p-3 text-gray-400">---</td>
-                      <td className="p-3 text-gray-400">---</td>
-                      <td className="p-3 text-gray-400">---</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
 
           <div className="bg-gradient-to-b from-black via-black to-[#005778] mt-8 p-6 rounded-lg">
