@@ -3,7 +3,7 @@ import { Upload, Download, Eye, BarChart3, Database, Search, Filter, Plus, FileS
 import Terminal from './Terminal';
 import CodeEditor from './CodeEditor';
 
-function Datakits() {
+export default function Datakits() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
@@ -173,5 +173,3 @@ function Datakits() {
     </>
   );
 }
-
-export default Datakits;
