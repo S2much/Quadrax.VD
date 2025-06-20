@@ -4,7 +4,7 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
         baseURL: 'https://api.deepseek.com',
-        apiKey: '<DeepSeek API Key>'
+        apiKey: 'sk-b35f72184b45489683f238411f5c3cd3'
 });
 
 async function main() {
