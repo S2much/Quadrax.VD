@@ -7,6 +7,7 @@ interface TerminalProps {
   shell: 'bash' | 'powershell';
   workingDirectory?: string;
   context?: string;
+  onOpenNewWorkstation?: () => void;
 }
 
 interface CommandHistory {
@@ -16,7 +17,7 @@ interface CommandHistory {
   exitCode: number;
 }
 
-function Terminal({ isOpen, onClose, shell: initialShell, workingDirectory = '~', context = 'general' }: TerminalProps) {
+function Terminal({ isOpen, onClose, shell: initialShell, workingDirectory = '~', context = 'general', onOpenNewWorkstation }: TerminalProps) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [currentCommand, setCurrentCommand] = useState('');
   const [commandHistory, setCommandHistory] = useState<CommandHistory[]>([]);
@@ -71,10 +72,20 @@ function Terminal({ isOpen, onClose, shell: initialShell, workingDirectory = '~'
       return { output: 'Switched to PowerShell', exitCode: 0 };
     }
     
+    // Workstation initialization commands
+    if (cmd === 'quadrax init' || cmd === 'quadrax initialize' || cmd.includes('init workstation') || cmd.includes('create workstation')) {
+      // Trigger workstation creation modal
+      setTimeout(() => {
+        if (onOpenNewWorkstation) {
+          onOpenNewWorkstation();
+        }
+      }, 1000);
+      return { output: 'Initializing workstation creation interface...\nOpening workstation configuration wizard...', exitCode: 0 };
+    }
+    
     // Context-specific commands
     if (context === 'workshop') {
       if (cmd.startsWith('quadrax')) {
-        if (cmd.includes('init')) return { output: 'Initializing new workstation...\nWorkstation "quadrax-ml-v3" created successfully.', exitCode: 0 };
         if (cmd.includes('list')) return { output: 'Active workstations:\n- quadrax-ml-v_2 (active)\n- data-processing-env (stopped)', exitCode: 0 };
         if (cmd.includes('start')) return { output: 'Starting workstation environment...', exitCode: 0 };
         if (cmd.includes('stop')) return { output: 'Stopping workstation environment...', exitCode: 0 };
@@ -150,7 +161,8 @@ function Terminal({ isOpen, onClose, shell: initialShell, workingDirectory = '~'
         return { 
           output: `Available commands:
 - bash/powershell - Switch shell environment
-${context === 'workshop' ? '- quadrax init/list/start/stop - Workstation management\n' : ''}${context === 'datakits' ? '- data upload/validate/transform/export - Dataset operations\n' : ''}${context === 'models' ? '- model deploy/train/evaluate/logs - Model operations\n' : ''}${context === 'pipelines' ? '- pipeline run/status/logs/stop - Pipeline management\n' : ''}${context === 'codesheets' ? '- jupyter notebook - Start Jupyter server\n- python <script> - Execute Python script\n- pip install <package> - Install packages\n' : ''}- ls/dir - List directory contents
+- quadrax init - Initialize new workstation
+${context === 'workshop' ? '- quadrax list/start/stop - Workstation management\n' : ''}${context === 'datakits' ? '- data upload/validate/transform/export - Dataset operations\n' : ''}${context === 'models' ? '- model deploy/train/evaluate/logs - Model operations\n' : ''}${context === 'pipelines' ? '- pipeline run/status/logs/stop - Pipeline management\n' : ''}${context === 'codesheets' ? '- jupyter notebook - Start Jupyter server\n- python <script> - Execute Python script\n- pip install <package> - Install packages\n' : ''}- ls/dir - List directory contents
 - pwd - Show current directory
 - whoami - Show current user
 - date - Show current date/time
@@ -347,6 +359,8 @@ ${context === 'workshop' ? '- quadrax init/list/start/stop - Workstation managem
               QUADRAX•ML {shell === 'bash' ? 'Bash' : 'PowerShell'} Terminal v1.0
               <br />
               Type 'help' for available commands. Use 'bash' or 'powershell' to switch shells.
+              <br />
+              Try 'quadrax init' to initialize a new workstation.
               <br />
             </div>
             

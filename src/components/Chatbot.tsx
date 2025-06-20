@@ -8,6 +8,7 @@ interface ChatbotProps {
   setWidth: (width: number) => void;
   isDetached: boolean;
   setIsDetached: (detached: boolean) => void;
+  onOpenNewWorkstation?: () => void;
 }
 
 interface Message {
@@ -17,13 +18,13 @@ interface Message {
   timestamp: Date;
 }
 
-function Chatbot({ isOpen, onClose, width, setWidth, isDetached, setIsDetached }: ChatbotProps) {
+function Chatbot({ isOpen, onClose, width, setWidth, isDetached, setIsDetached, onOpenNewWorkstation }: ChatbotProps) {
   const [aiPrompt, setAiPrompt] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hello! I'm QUADRAX AI, your intelligent assistant for machine learning and data science. I can help you with:\n\n• Model training and optimization\n• Data analysis and preprocessing\n• Pipeline configuration\n• Best practices and troubleshooting\n• Code generation and debugging\n\nHow can I assist you today?",
+      content: "Hello! I'm QUADRAX AI, your intelligent assistant for machine learning and data science. I can help you with:\n\n• Model training and optimization\n• Data analysis and preprocessing\n• Pipeline configuration\n• Best practices and troubleshooting\n• Code generation and debugging\n• **Workstation management** - I can help you create, start, or initialize workstations!\n\nHow can I assist you today?",
       sender: 'bot',
       timestamp: new Date()
     }
@@ -66,10 +67,44 @@ function Chatbot({ isOpen, onClose, width, setWidth, isDetached, setIsDetached }
     };
   }, [isResizing, setWidth, isDetached]);
 
-  // Simulated AI responses based on keywords
+  // Enhanced AI responses with workstation creation capability
   const generateAIResponse = (userInput: string): string => {
     const input = userInput.toLowerCase();
     
+    // Workstation creation keywords
+    const workstationKeywords = ['create', 'start', 'make', 'initialize', 'init', 'new', 'setup'];
+    const workstationTerms = ['workstation', 'workspace', 'environment', 'env'];
+    
+    const hasWorkstationKeyword = workstationKeywords.some(keyword => input.includes(keyword));
+    const hasWorkstationTerm = workstationTerms.some(term => input.includes(term));
+    
+    if (hasWorkstationKeyword && hasWorkstationTerm) {
+      // Trigger workstation creation modal
+      setTimeout(() => {
+        if (onOpenNewWorkstation) {
+          onOpenNewWorkstation();
+        }
+      }, 1500);
+      
+      return `🚀 **Workstation Creation Initiated**
+
+I'll help you create a new workstation! Opening the workstation initialization interface...
+
+**What you can configure:**
+• **Name**: Choose a unique identifier (letters, numbers, hyphens, underscores only)
+• **Function**: Development, Training, Processing, Inference, Automation, or Custom
+• **Nature**: Data Science, Data Engineering, Machine Learning, AI, Automation
+• **Description**: Detailed purpose and requirements for AI analysis
+
+The initialization wizard will guide you through each step. You'll be able to:
+- Set up custom resource allocation
+- Choose pre-configured ML frameworks
+- Define your specific use case
+- Get AI-powered recommendations
+
+Let's get your new workstation up and running! 🎯`;
+    }
+
     // Model-related queries
     if (input.includes('model') || input.includes('training') || input.includes('ml')) {
       return `Great question about machine learning models! Here are some key recommendations:
@@ -214,6 +249,7 @@ Can you describe the specific error or issue you're encountering?`;
 • Model selection and training
 • Pipeline automation
 • Performance optimization
+• **Workstation creation and management**
 
 🔧 Platform Features:
 • Workshops: Organize your ML projects
@@ -221,6 +257,8 @@ Can you describe the specific error or issue you're encountering?`;
 • Codesheets: Interactive notebooks
 • Models: Deploy and monitor ML models
 • Pipelines: Automate your workflows
+
+💡 **Quick Tip**: Try saying "create a new workstation" to get started with a new development environment!
 
 What would you like to explore first?`;
     }
@@ -232,6 +270,7 @@ What would you like to explore first?`;
 📊 Data Science: Analysis, preprocessing, and visualization  
 ⚙️ MLOps: Pipeline automation and deployment
 💻 Development: Code assistance and best practices
+🚀 **Workstation Management**: Create, configure, and manage development environments
 
 Could you provide more details about what you're trying to accomplish? I'm here to help guide you through any ML challenges you're facing!
 
@@ -239,7 +278,8 @@ You can also explore our platform sections:
 • Use Datakits for data management
 • Try Codesheets for interactive analysis
 • Check Models for deployment options
-• Visit Pipelines for workflow automation`;
+• Visit Pipelines for workflow automation
+• **Say "initialize workstation" to create a new development environment**`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -412,7 +452,7 @@ You can also explore our platform sections:
               <textarea 
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="Ask me anything about ML, data science, AI..."
+                placeholder="Ask me anything about ML, data science, AI, or say 'create workstation'..."
                 className="flex-1 bg-gradient-to-b from-black via-black to-[#005778] h-35 border border-[#00699a] text-white placeholder:text-gray-400 placeholder:opacity-80 p-3 rounded-m resize-none focus:outline-none focus:border-[#00beef] focus:ring-2 focus:ring-[#00beef]/20 transition-all duration-300 custom-scrollbar"
                 rows={2}
                 onKeyDown={(e) => {
@@ -436,7 +476,7 @@ You can also explore our platform sections:
               </button>
             </div>
             <div className="text-xs text-gray-400 mt-2 text-center">
-              Press Enter to send, Shift+Enter for new line
+              Press Enter to send, Shift+Enter for new line • Try: "create a new workstation"
             </div>
           </form>
         </div>

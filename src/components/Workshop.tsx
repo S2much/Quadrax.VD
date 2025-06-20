@@ -2,10 +2,19 @@ import { useState } from 'react';
 import { Plus, Terminal as TerminalIcon, Code, Play, Settings, Database, Brain } from 'lucide-react';
 import Terminal from './Terminal';
 import CodeEditor from './CodeEditor';
+import NewWorkstationModal from './NewWorkstationModal';
+
+interface WorkstationData {
+  name: string;
+  function: string;
+  nature: string[];
+  description: string;
+}
 
 function Workshop() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isNewWorkstationOpen, setIsNewWorkstationOpen] = useState(false);
   const [terminalShell, setTerminalShell] = useState<'bash' | 'powershell'>('bash');
 
   const workstations = [
@@ -32,6 +41,15 @@ function Workshop() {
   const openTerminal = (shell: 'bash' | 'powershell') => {
     setTerminalShell(shell);
     setIsTerminalOpen(true);
+  };
+
+  const handleCreateWorkstation = (workstationData: WorkstationData) => {
+    console.log('Creating workstation:', workstationData);
+    // Here you would typically send the data to your backend
+    // For now, we'll just log it and show a success message
+    
+    // You could add the new workstation to your state here
+    // setWorkstations(prev => [...prev, newWorkstation]);
   };
 
   const getStatusColor = (status: string) => {
@@ -197,68 +215,29 @@ function Workshop() {
             </h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <form className="bg-gradient-to-b from-[#005778] via-black to-black border border-[#00beef] rounded-lg p-6">
+              <div className="bg-gradient-to-b from-[#005778] via-black to-black border border-[#00beef] rounded-lg p-6">
                 <div className="text-center mb-4">
                   <button 
                     type="button"
-                    className="w-20 h-20 text-4xl font-medium text-white border-2 border-[#00beef] bg-black rounded-lg hover:bg-[#00699a] transition-all duration-300 flex items-center justify-center"
+                    onClick={() => setIsNewWorkstationOpen(true)}
+                    className="w-20 h-20 text-4xl font-medium text-white border-2 border-[#00beef] bg-black rounded-lg hover:bg-[#00699a] transition-all duration-300 flex items-center justify-center group"
                   >
-                    <Plus />
+                    <Plus className="group-hover:scale-110 transition-transform duration-300" />
                   </button>
                 </div>
                 
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-white text-sm font-medium mb-2">Workstation Name</label>
-                    <input 
-                      type="text" 
-                      placeholder="e.g., ml-training-env"
-                      className="w-full px-3 py-2 bg-black border border-[#00699a] text-white rounded focus:outline-none focus:border-[#00beef]"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-white text-sm font-medium mb-2">Template</label>
-                    <select className="w-full px-3 py-2 bg-black border border-[#00699a] text-white rounded focus:outline-none focus:border-[#00beef]">
-                      <option>ML Development</option>
-                      <option>Data Processing</option>
-                      <option>Deep Learning</option>
-                      <option>Custom</option>
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-white text-sm font-medium mb-2">Resources</label>
-                    <div className="grid grid-cols-3 gap-2">
-                      <select className="px-2 py-1 bg-black border border-[#00699a] text-white rounded text-sm">
-                        <option>2 CPU</option>
-                        <option>4 CPU</option>
-                        <option>8 CPU</option>
-                        <option>16 CPU</option>
-                      </select>
-                      <select className="px-2 py-1 bg-black border border-[#00699a] text-white rounded text-sm">
-                        <option>8GB RAM</option>
-                        <option>16GB RAM</option>
-                        <option>32GB RAM</option>
-                        <option>64GB RAM</option>
-                      </select>
-                      <select className="px-2 py-1 bg-black border border-[#00699a] text-white rounded text-sm">
-                        <option>100GB</option>
-                        <option>250GB</option>
-                        <option>500GB</option>
-                        <option>1TB</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <button 
-                    type="submit"
-                    className="w-full py-2 bg-[#00beef] hover:bg-[#00699a] text-black font-semibold rounded transition-colors duration-300"
+                <div className="text-center">
+                  <button
+                    onClick={() => setIsNewWorkstationOpen(true)}
+                    className="w-full py-3 bg-[#00beef] hover:bg-[#00699a] text-black font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
                   >
-                    Create Workstation
+                    Initialize Workstation
                   </button>
+                  <p className="text-gray-300 text-sm mt-2">
+                    Create a new development environment with custom configuration
+                  </p>
                 </div>
-              </form>
+              </div>
 
               <div className="space-y-4">
                 <div className="bg-gradient-to-b from-[#005778] to-black p-4 rounded-lg border border-[#00699a]/30">
@@ -296,7 +275,14 @@ function Workshop() {
         </div>
       </section>
 
-      {/* Editor and Terminal Overlays */}
+      {/* Modals and Overlays */}
+      <NewWorkstationModal
+        isOpen={isNewWorkstationOpen}
+        onClose={() => setIsNewWorkstationOpen(false)}
+        onCreateWorkstation={handleCreateWorkstation}
+        triggerSource="workshop"
+      />
+
       {isEditorOpen && (
         <CodeEditor 
           isOpen={isEditorOpen}

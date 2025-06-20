@@ -16,6 +16,14 @@ import Settings from './components/Settings';
 import Login from './components/Login';
 import Register from './components/Register';
 import LoadingSpinner from './components/LoadingSpinner';
+import NewWorkstationModal from './components/NewWorkstationModal';
+
+interface WorkstationData {
+  name: string;
+  function: string;
+  nature: string[];
+  description: string;
+}
 
 function App2() {
    const [currentPage, setCurrentPage] = useState('homePage');
@@ -29,6 +37,8 @@ function App2() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [chatbotWidth, setChatbotWidth] = useState(30); // Width in vw
   const [isChatbotDetached, setIsChatbotDetached] = useState(false);
+  const [isNewWorkstationOpen, setIsNewWorkstationOpen] = useState(false);
+  const [workstationTriggerSource, setWorkstationTriggerSource] = useState<'workshop' | 'chatbot' | 'cli'>('workshop');
 
   // Initial loading effect
   useEffect(() => {
@@ -114,6 +124,25 @@ function App2() {
     } else {
       setCurrentPage(pageId);
     }
+  };
+
+  const handleOpenNewWorkstation = (source: 'workshop' | 'chatbot' | 'cli' = 'chatbot') => {
+    if (!isLoggedIn) {
+      // If not logged in, the chatbot should handle this case
+      return;
+    }
+    setWorkstationTriggerSource(source);
+    setIsNewWorkstationOpen(true);
+  };
+
+  const handleCreateWorkstation = (workstationData: WorkstationData) => {
+    console.log('Creating workstation:', workstationData);
+    // Here you would typically send the data to your backend
+    // For now, we'll just log it and show a success message
+    
+    // You could add the new workstation to your state here
+    // and redirect to the workshops page to see it
+    setCurrentPage('workshops');
   };
 
   // Check if current page is auth-related
@@ -222,9 +251,19 @@ function App2() {
             setWidth={setChatbotWidth}
             isDetached={isChatbotDetached}
             setIsDetached={setIsChatbotDetached}
+            onOpenNewWorkstation={() => handleOpenNewWorkstation('chatbot')}
           />
         )}
       </main>
+
+      {/* New Workstation Modal */}
+      <NewWorkstationModal
+        isOpen={isNewWorkstationOpen}
+        onClose={() => setIsNewWorkstationOpen(false)}
+        onCreateWorkstation={handleCreateWorkstation}
+        triggerSource={workstationTriggerSource}
+      />
+
  {/* Logout Confirmation Modal */}
  {showLogoutConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
