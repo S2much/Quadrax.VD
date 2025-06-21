@@ -1,4 +1,137 @@
-how to get started:
+import React, { useState, useRef, useEffect } from 'react';
+import { Bot, User, Send, X, Minimize2, Maximize2, ExternalLink, Loader2 } from 'lucide-react';
+
+interface Message {
+  id: string;
+  content: string;
+  sender: 'user' | 'bot';
+  timestamp: Date;
+}
+
+interface ChatbotProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function Chatbot({ isOpen, onClose }: ChatbotProps) {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      content: `Welcome to QUADRAX•ML! 🚀
+
+I'm your AI assistant, ready to help you with machine learning, data science, and platform navigation.
+
+**Quick Start:**
+• Say **"create workstation"** to set up your development environment
+• Say **"upload dataset"** to manage your data
+• Say **"help"** for detailed guidance
+
+What would you like to explore today?`,
+      sender: 'bot',
+      timestamp: new Date()
+    }
+  ]);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [isDetached, setIsDetached] = useState(false);
+  const [width, setWidth] = useState(30);
+  const [isResizing, setIsResizing] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const resizeRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+      const newWidth = Math.max(20, Math.min(60, ((window.innerWidth - e.clientX) / window.innerWidth) * 100));
+      setWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
+
+  const generateAIResponse = async (userInput: string): Promise<string> => {
+    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+
+    const input = userInput.toLowerCase();
+
+    // Workstation creation
+    if (input.includes('create workstation') || input.includes('workstation') || input.includes('development environment')) {
+      return `🛠️ **Creating Your Development Workstation**
+
+Let's set up your personalized ML development environment:
+
+**Step 1: Choose Your Configuration**
+• **Basic**: Python 3.11, Jupyter, pandas, scikit-learn
+• **Advanced**: + TensorFlow, PyTorch, CUDA support
+• **Custom**: Specify your requirements
+
+**Step 2: Resource Allocation**
+• CPU: 2-16 cores
+• RAM: 4-64 GB
+• GPU: Optional (Tesla T4, V100, A100)
+• Storage: 10-500 GB
+
+**Step 3: Environment Setup**
+• Pre-installed libraries and frameworks
+• Integrated development tools
+• Direct DataKit connections
+
+Would you like to proceed with the **Basic** configuration, or do you need something more specific?`;
+    }
+
+    // Help and getting started
+    if (input.includes('help') || input.includes('getting started') || input.includes('guide')) {
+      return `📚 **QUADRAX•ML Complete Guide**
+
+**Platform Overview:**
+QUADRAX•ML is your comprehensive machine learning platform for data management, model development, and deployment.
+
+**Main Sections:**
+• **Workshop**: Create and manage development workstations
+• **DataKits**: Upload, validate, and manage datasets
+• **Codesheets**: Interactive Jupyter-like development environment
+• **Pipelines**: Automate workflows and model training
+• **Models**: Deploy and monitor ML models
+
+**Getting Started:**
+1. **Create Workstation** - Set up your development environment
+2. **Upload Dataset** - Import your data for analysis
+3. **Start Coding** - Use Codesheets for interactive development
+4. **Build Pipeline** - Automate your ML workflow
+5. **Deploy Model** - Put your model into production
+
+**Need Specific Help?**
+• Say **"create workstation"** for development setup
+• Say **"upload dataset"** for data management
+• Say **"new codesheet"** for interactive coding
+
+What would you like to focus on first?`;
+    }
+
+    // Dataset upload and management
+    if (input.includes('upload') || input.includes('dataset') || input.includes('data')) {
+      return `📊 **DataKit Management System**
+
+DataKits are your centralized data management solution with built-in validation, versioning, and quality checks.
+
+**How to get started:**
 
 **Creating Your First DataKit:**
 1. Navigate to the **Datakits** section
