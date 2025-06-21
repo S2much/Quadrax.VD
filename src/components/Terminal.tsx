@@ -270,7 +270,7 @@ ${context === 'workshop' ? '- quadrax list/start/stop - Workstation management\n
 
   return (
     <div 
-      className="relative bottom-0 left-0 right-0 bg-black border-t border-[#00699a] shadow-2xl z-50 flex flex-col"
+      className="absolute bottom-0 left-0 right-0 bg-black border-t border-[#00699a] shadow-2xl z-50 flex flex-col"
       style={{ height: isMinimized ? '40px' : `${terminalHeight}px` }}
     >
       {/* Resize Handle */}
