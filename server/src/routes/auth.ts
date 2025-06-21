@@ -2,30 +2,11 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
-import { v4 as uuidv4 } from 'uuid';
+import { getDatabase } from '../services/database';
+import { setUserSession, deleteUserSession } from '../services/redis';
 import { createError } from '../middleware/errorHandler';
-import { User } from '../types';
 
 const router = express.Router();
-
-// In-memory user store (replace with database in production)
-const users: User[] = [
-  {
-    id: '1',
-    email: 'drax123@example.com',
-    firstName: 'Drax',
-    lastName: 'User',
-    organization: 'QUADRAX Technologies',
-    role: 'admin',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  }
-];
-
-// Store hashed passwords separately (in production, this would be in the database)
-const userPasswords: { [email: string]: string } = {
-  'drax123@example.com': bcrypt.hashSync('@Pwd123456', 10)
-};
 
 // Register
 router.post('/register', [
@@ -41,42 +22,65 @@ router.post('/register', [
     }
 
     const { email, password, firstName, lastName, organization } = req.body;
+    const db = getDatabase();
 
     // Check if user already exists
-    const existingUser = users.find(u => u.email === email);
+    const existingUser = await db.user.findUnique({
+      where: { email }
+    });
+
     if (existingUser) {
       throw createError('User already exists', 409);
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 12);
 
     // Create user
-    const newUser: User = {
-      id: uuidv4(),
-      email,
-      firstName,
-      lastName,
-      organization,
-      role: 'user',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    users.push(newUser);
-    userPasswords[email] = hashedPassword;
+    const newUser = await db.user.create({
+      data: {
+        email,
+        firstName,
+        lastName,
+        organization,
+        passwordHash,
+        role: 'USER'
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        organization: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true
+      }
+    });
 
     // Generate JWT
     const token = jwt.sign(
-      { id: newUser.id, email: newUser.email, role: newUser.role },
+      { 
+        id: newUser.id, 
+        email: newUser.email, 
+        role: newUser.role 
+      },
       process.env.JWT_SECRET || 'fallback-secret',
       { expiresIn: '24h' }
     );
 
+    // Store session in Redis
+    await setUserSession(newUser.id, {
+      userId: newUser.id,
+      email: newUser.email,
+      role: newUser.role,
+      loginTime: new Date()
+    }, 86400); // 24 hours
+
     res.status(201).json({
       success: true,
       data: {
-        user: { ...newUser },
+        user: newUser,
         token
       }
     });
@@ -97,32 +101,76 @@ router.post('/login', [
     }
 
     const { email, password } = req.body;
+    const db = getDatabase();
 
-    // Find user
-    const user = users.find(u => u.email === email);
+    // Find user with password
+    const user = await db.user.findUnique({
+      where: { email }
+    });
+
     if (!user) {
       throw createError('Invalid credentials', 401);
     }
 
     // Check password
-    const hashedPassword = userPasswords[email];
-    if (!hashedPassword || !await bcrypt.compare(password, hashedPassword)) {
+    const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+    if (!isValidPassword) {
       throw createError('Invalid credentials', 401);
     }
 
     // Generate JWT
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { 
+        id: user.id, 
+        email: user.email, 
+        role: user.role 
+      },
       process.env.JWT_SECRET || 'fallback-secret',
       { expiresIn: '24h' }
     );
 
+    // Store session in Redis
+    await setUserSession(user.id, {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      loginTime: new Date()
+    }, 86400); // 24 hours
+
+    // Remove password from response
+    const { passwordHash, ...userWithoutPassword } = user;
+
     res.json({
       success: true,
       data: {
-        user: { ...user },
+        user: userWithoutPassword,
         token
       }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Logout
+router.post('/logout', async (req, res, next) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any;
+        await deleteUserSession(decoded.id);
+      } catch (error) {
+        // Token might be invalid, but we still want to logout
+        console.warn('Invalid token during logout:', error.message);
+      }
+    }
+
+    res.json({
+      success: true,
+      message: 'Logged out successfully'
     });
   } catch (error) {
     next(error);
@@ -139,21 +187,50 @@ router.post('/refresh', async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any;
-    const user = users.find(u => u.id === decoded.id);
+    const db = getDatabase();
+    
+    const user = await db.user.findUnique({
+      where: { id: decoded.id },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        organization: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true
+      }
+    });
     
     if (!user) {
       throw createError('User not found', 404);
     }
 
     const newToken = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { 
+        id: user.id, 
+        email: user.email, 
+        role: user.role 
+      },
       process.env.JWT_SECRET || 'fallback-secret',
       { expiresIn: '24h' }
     );
 
+    // Update session in Redis
+    await setUserSession(user.id, {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      refreshTime: new Date()
+    }, 86400);
+
     res.json({
       success: true,
-      data: { token: newToken }
+      data: { 
+        token: newToken,
+        user 
+      }
     });
   } catch (error) {
     next(error);

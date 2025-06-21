@@ -1,0 +1,1057 @@
+# QUADRAX•ML Backend - Complete Setup and Development Guide
+
+## 🚀 Overview
+
+QUADRAX•ML Backend is a comprehensive, production-ready API server built with Node.js, TypeScript, PostgreSQL, and Redis. It provides a complete machine learning platform backend with authentication, workstation management, dataset processing, model training, pipeline orchestration, and AI integration.
+
+## 📋 Table of Contents
+
+1. [System Requirements](#system-requirements)
+2. [Installation & Setup](#installation--setup)
+3. [Database Configuration](#database-configuration)
+4. [Redis Configuration](#redis-configuration)
+5. [Environment Variables](#environment-variables)
+6. [Development Workflow](#development-workflow)
+7. [API Documentation](#api-documentation)
+8. [Architecture Overview](#architecture-overview)
+9. [Security Features](#security-features)
+10. [Performance Optimization](#performance-optimization)
+11. [Deployment Guide](#deployment-guide)
+12. [Monitoring & Logging](#monitoring--logging)
+13. [Testing](#testing)
+14. [Troubleshooting](#troubleshooting)
+
+## 🔧 System Requirements
+
+### Minimum Requirements:
+- Node.js 18.0.0 or higher
+- PostgreSQL 13.0 or higher
+- Redis 6.0 or higher
+- Docker 20.10.0 or higher (for container management)
+- 4GB RAM
+- 20GB available disk space
+
+### Recommended Requirements:
+- Node.js 20.0.0 LTS
+- PostgreSQL 15.0
+- Redis 7.0
+- Docker 24.0.0
+- 8GB RAM
+- 50GB available disk space
+
+## 🛠 Installation & Setup
+
+### Step 1: Clone and Install Dependencies
+
+```bash
+# Navigate to server directory
+cd server
+
+# Install dependencies
+npm install
+
+# Install global dependencies (optional)
+npm install -g prisma tsx nodemon
+```
+
+### Step 2: Environment Configuration
+
+```bash
+# Copy environment template
+cp .env.example .env
+
+# Edit environment variables
+nano .env
+```
+
+### Step 3: Database Setup
+
+```bash
+# Generate Prisma client
+npx prisma generate
+
+# Run database migrations
+npx prisma migrate dev --name init
+
+# Seed database with initial data
+npx prisma db seed
+```
+
+### Step 4: Start Development Server
+
+```bash
+# Start in development mode
+npm run dev
+
+# Or start with nodemon
+npm run dev:watch
+
+# Build and start production
+npm run build
+npm start
+```
+
+## 🗄️ Database Configuration
+
+### PostgreSQL Setup
+
+1. **Install PostgreSQL:**
+   ```bash
+   # Ubuntu/Debian
+   sudo apt update
+   sudo apt install postgresql postgresql-contrib
+
+   # macOS with Homebrew
+   brew install postgresql
+   brew services start postgresql
+
+   # Windows - Download from postgresql.org
+   ```
+
+2. **Create Database and User:**
+   ```sql
+   -- Connect to PostgreSQL
+   sudo -u postgres psql
+
+   -- Create database
+   CREATE DATABASE quadrax_ml;
+
+   -- Create user
+   CREATE USER quadrax_user WITH PASSWORD 'your_secure_password';
+
+   -- Grant privileges
+   GRANT ALL PRIVILEGES ON DATABASE quadrax_ml TO quadrax_user;
+   ALTER USER quadrax_user CREATEDB;
+
+   -- Exit
+   \q
+   ```
+
+3. **Configure Connection:**
+   ```env
+   DATABASE_URL="postgresql://quadrax_user:your_secure_password@localhost:5432/quadrax_ml"
+   ```
+
+### Database Schema
+
+The database uses Prisma ORM with the following main entities:
+
+- **Users**: Authentication and user management
+- **Workstations**: Development environment containers
+- **DataKits**: Dataset management and processing
+- **Models**: ML model training and deployment
+- **Pipelines**: Workflow automation
+- **CodeSheets**: Interactive notebook environments
+- **VirtualMachines**: Compute resource management
+- **ChatMessages**: AI assistant conversations
+
+### Migration Commands
+
+```bash
+# Create new migration
+npx prisma migrate dev --name migration_name
+
+# Deploy migrations to production
+npx prisma migrate deploy
+
+# Reset database (development only)
+npx prisma migrate reset
+
+# View migration status
+npx prisma migrate status
+
+# Generate Prisma client after schema changes
+npx prisma generate
+```
+
+## 🔴 Redis Configuration
+
+### Redis Setup
+
+1. **Install Redis:**
+   ```bash
+   # Ubuntu/Debian
+   sudo apt update
+   sudo apt install redis-server
+
+   # macOS with Homebrew
+   brew install redis
+   brew services start redis
+
+   # Windows - Use WSL or Docker
+   docker run -d -p 6379:6379 redis:7-alpine
+   ```
+
+2. **Configure Redis:**
+   ```bash
+   # Edit Redis configuration
+   sudo nano /etc/redis/redis.conf
+
+   # Key settings:
+   # bind 127.0.0.1
+   # port 6379
+   # maxmemory 256mb
+   # maxmemory-policy allkeys-lru
+   ```
+
+3. **Test Connection:**
+   ```bash
+   redis-cli ping
+   # Should return: PONG
+   ```
+
+### Redis Usage in Application
+
+- **Session Management**: User sessions and JWT token storage
+- **Caching**: API response caching for improved performance
+- **Rate Limiting**: Request rate limiting per user/IP
+- **Real-time Data**: WebSocket session management
+- **Queue Management**: Background job processing
+
+## 🔐 Environment Variables
+
+### Complete .env Configuration
+
+```env
+# Server Configuration
+PORT=3001
+NODE_ENV=development
+FRONTEND_URL=http://localhost:5173
+
+# Security
+JWT_SECRET=your-super-secret-jwt-key-minimum-32-characters-long
+BCRYPT_ROUNDS=12
+
+# Database
+DATABASE_URL=postgresql://username:password@localhost:5432/quadrax_ml
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# Docker
+DOCKER_HOST=unix:///var/run/docker.sock
+
+# File Upload
+MAX_FILE_SIZE=100MB
+UPLOAD_DIR=./uploads
+
+# AI Integration
+OPENAI_API_KEY=your-openai-api-key
+
+# Email (for notifications)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+
+# Monitoring
+LOG_LEVEL=info
+SENTRY_DSN=your-sentry-dsn
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+
+# CORS
+CORS_ORIGIN=http://localhost:5173,https://yourdomain.com
+```
+
+### Environment-Specific Configurations
+
+**Development (.env.development):**
+```env
+NODE_ENV=development
+LOG_LEVEL=debug
+DATABASE_URL=postgresql://dev_user:dev_pass@localhost:5432/quadrax_ml_dev
+```
+
+**Production (.env.production):**
+```env
+NODE_ENV=production
+LOG_LEVEL=warn
+DATABASE_URL=postgresql://prod_user:secure_pass@prod-db:5432/quadrax_ml
+REDIS_URL=redis://prod-redis:6379
+```
+
+## 💻 Development Workflow
+
+### Project Structure
+
+```
+server/
+├── src/
+│   ├── routes/              # API route handlers
+│   │   ├── auth.ts         # Authentication routes
+│   │   ├── workstations.ts # Workstation management
+│   │   ├── datakits.ts     # Dataset management
+│   │   ├── models.ts       # ML model operations
+│   │   ├── pipelines.ts    # Pipeline orchestration
+│   │   ├── codesheets.ts   # Interactive notebooks
+│   │   ├── vms.ts          # Virtual machine management
+│   │   ├── ai.ts           # AI assistant
+│   │   └── users.ts        # User management
+│   ├── middleware/          # Express middleware
+│   │   ├── auth.ts         # Authentication middleware
+│   │   ├── cache.ts        # Caching middleware
+│   │   ├── rateLimiter.ts  # Rate limiting
+│   │   └── errorHandler.ts # Error handling
+│   ├── services/           # Business logic services
+│   │   ├── database.ts     # Database connection
+│   │   ├── redis.ts        # Redis connection
+│   │   ├── docker.ts       # Container management
+│   │   └── socket.ts       # WebSocket handling
+│   ├── utils/              # Utility functions
+│   │   ├── logger.ts       # Logging utility
+│   │   └── validation.ts   # Input validation
+│   ├── types/              # TypeScript definitions
+│   │   └── index.ts        # Type definitions
+│   └── server.ts           # Main server file
+├── prisma/
+│   ├── schema.prisma       # Database schema
+│   └── migrations/         # Database migrations
+├── uploads/                # File upload directory
+├── logs/                   # Application logs
+├── dist/                   # Compiled JavaScript
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+### Development Commands
+
+```bash
+# Development
+npm run dev              # Start development server
+npm run dev:watch        # Start with file watching
+npm run dev:debug        # Start with debugging
+
+# Building
+npm run build            # Compile TypeScript
+npm run build:watch      # Build with watching
+
+# Database
+npm run db:migrate       # Run migrations
+npm run db:seed          # Seed database
+npm run db:reset         # Reset database
+npm run db:studio        # Open Prisma Studio
+
+# Testing
+npm test                 # Run tests
+npm run test:watch       # Run tests in watch mode
+npm run test:coverage    # Generate coverage report
+
+# Code Quality
+npm run lint             # Check code style
+npm run lint:fix         # Fix linting issues
+npm run type-check       # TypeScript type checking
+
+# Production
+npm start                # Start production server
+npm run pm2:start        # Start with PM2
+npm run pm2:stop         # Stop PM2 processes
+```
+
+### Git Workflow
+
+```bash
+# Feature development
+git checkout -b feature/new-feature
+git add .
+git commit -m "feat: add new feature"
+git push origin feature/new-feature
+
+# Create pull request
+# After review and approval, merge to main
+
+# Release workflow
+git checkout main
+git pull origin main
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+## 📚 API Documentation
+
+### Authentication Endpoints
+
+**POST /api/auth/register**
+```json
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!",
+  "firstName": "John",
+  "lastName": "Doe",
+  "organization": "Company Inc"
+}
+```
+
+**POST /api/auth/login**
+```json
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "user": {
+      "id": "user-id",
+      "email": "user@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "role": "USER"
+    },
+    "token": "jwt-token"
+  }
+}
+```
+
+### Workstation Management
+
+**POST /api/workstations**
+```json
+{
+  "name": "ml-training-env",
+  "description": "Machine learning training environment",
+  "function": "TRAINING",
+  "nature": ["machine-learning", "data-science"],
+  "resources": {
+    "cpu": 8,
+    "memory": 16384,
+    "storage": 102400,
+    "gpu": true
+  }
+}
+```
+
+**GET /api/workstations**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "workstation-id",
+      "name": "ml-training-env",
+      "status": "RUNNING",
+      "resources": {...},
+      "createdAt": "2024-01-15T10:00:00Z"
+    }
+  ]
+}
+```
+
+### Dataset Management
+
+**POST /api/datakits/upload**
+```bash
+curl -X POST \
+  -H "Authorization: Bearer your-jwt-token" \
+  -F "dataset=@dataset.csv" \
+  -F "name=Customer Data" \
+  -F "description=Customer analytics dataset" \
+  http://localhost:3001/api/datakits/upload
+```
+
+### Model Operations
+
+**POST /api/models**
+```json
+{
+  "name": "Customer Classifier",
+  "description": "Binary classification model",
+  "type": "CLASSIFICATION",
+  "framework": "TENSORFLOW",
+  "workstationId": "workstation-id"
+}
+```
+
+**POST /api/models/{id}/predict**
+```json
+{
+  "inputs": {
+    "age": 35,
+    "income": 50000,
+    "location": "urban"
+  }
+}
+```
+
+### Error Responses
+
+```json
+{
+  "success": false,
+  "error": "Validation failed",
+  "details": [
+    {
+      "field": "email",
+      "message": "Invalid email format"
+    }
+  ]
+}
+```
+
+## 🏗️ Architecture Overview
+
+### System Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   Load Balancer │    │   API Gateway   │
+│   (React)       │◄──►│   (Nginx)       │◄──►│   (Express)     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                                        │
+                       ┌─────────────────────────────────┼─────────────────────────────────┐
+                       │                                 │                                 │
+                ┌─────────────────┐              ┌─────────────────┐              ┌─────────────────┐
+                │   Auth Service  │              │  Business Logic │              │  WebSocket      │
+                │   (JWT/Session) │              │   (Routes)      │              │  (Socket.IO)    │
+                └─────────────────┘              └─────────────────┘              └─────────────────┘
+                       │                                 │                                 │
+                ┌─────────────────┐              ┌─────────────────┐              ┌─────────────────┐
+                │   PostgreSQL    │              │     Redis       │              │    Docker       │
+                │   (Primary DB)  │              │   (Cache/Queue) │              │  (Containers)   │
+                └─────────────────┘              └─────────────────┘              └─────────────────┘
+```
+
+### Service Layer Architecture
+
+1. **API Layer**: Express.js routes with middleware
+2. **Business Logic**: Service classes for core functionality
+3. **Data Layer**: Prisma ORM with PostgreSQL
+4. **Cache Layer**: Redis for performance optimization
+5. **Container Layer**: Docker for workstation/VM management
+6. **Real-time Layer**: Socket.IO for live updates
+
+### Security Architecture
+
+- **Authentication**: JWT tokens with Redis session storage
+- **Authorization**: Role-based access control (RBAC)
+- **Input Validation**: Express-validator with custom rules
+- **Rate Limiting**: Redis-based rate limiting per user/IP
+- **CORS**: Configurable cross-origin resource sharing
+- **Security Headers**: Helmet.js for security headers
+
+## 🔒 Security Features
+
+### Authentication & Authorization
+
+1. **JWT Implementation:**
+   - Secure token generation with configurable expiration
+   - Token refresh mechanism
+   - Session storage in Redis for revocation
+
+2. **Password Security:**
+   - bcrypt hashing with configurable rounds
+   - Password strength validation
+   - Account lockout after failed attempts
+
+3. **Role-Based Access Control:**
+   ```typescript
+   enum Role {
+     ADMIN = 'ADMIN',
+     USER = 'USER',
+     VIEWER = 'VIEWER'
+   }
+   ```
+
+### Input Validation & Sanitization
+
+```typescript
+// Example validation middleware
+export const validateWorkstation = [
+  body('name').trim().isLength({ min: 3, max: 50 }),
+  body('description').trim().isLength({ min: 10, max: 1000 }),
+  body('function').isIn(['DEVELOPMENT', 'TRAINING', 'PROCESSING']),
+  // ... more validations
+];
+```
+
+### Rate Limiting
+
+```typescript
+// Different rate limits for different endpoints
+const authRateLimit = createRateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 attempts per window
+  keyGenerator: (req) => `auth:${req.ip}`
+});
+
+const apiRateLimit = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 100, // 100 requests per window
+  keyGenerator: (req) => `api:${req.user?.id || req.ip}`
+});
+```
+
+### File Upload Security
+
+- File type validation
+- File size limits
+- Virus scanning (configurable)
+- Secure file storage with UUID naming
+
+## ⚡ Performance Optimization
+
+### Caching Strategy
+
+1. **Redis Caching:**
+   ```typescript
+   // Cache API responses
+   app.get('/api/workstations', 
+     cacheMiddleware({ ttl: 300 }), // 5 minutes
+     getWorkstations
+   );
+   ```
+
+2. **Database Optimization:**
+   - Connection pooling
+   - Query optimization with indexes
+   - Pagination for large datasets
+
+3. **Response Compression:**
+   ```typescript
+   app.use(compression({
+     level: 6,
+     threshold: 1024
+   }));
+   ```
+
+### Database Performance
+
+```sql
+-- Example indexes for performance
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_workstations_user_id ON workstations(user_id);
+CREATE INDEX idx_models_status ON models(status);
+CREATE INDEX idx_chat_messages_session ON chat_messages(session_id, timestamp);
+```
+
+### Monitoring & Metrics
+
+- Request/response time tracking
+- Database query performance monitoring
+- Redis cache hit/miss ratios
+- Memory and CPU usage tracking
+
+## 🚀 Deployment Guide
+
+### Docker Deployment
+
+1. **Create Dockerfile:**
+   ```dockerfile
+   FROM node:18-alpine
+   
+   WORKDIR /app
+   
+   COPY package*.json ./
+   RUN npm ci --only=production
+   
+   COPY . .
+   RUN npm run build
+   
+   EXPOSE 3001
+   
+   CMD ["npm", "start"]
+   ```
+
+2. **Docker Compose:**
+   ```yaml
+   version: '3.8'
+   services:
+     api:
+       build: .
+       ports:
+         - "3001:3001"
+       environment:
+         - NODE_ENV=production
+       depends_on:
+         - postgres
+         - redis
+     
+     postgres:
+       image: postgres:15
+       environment:
+         POSTGRES_DB: quadrax_ml
+         POSTGRES_USER: quadrax_user
+         POSTGRES_PASSWORD: secure_password
+       volumes:
+         - postgres_data:/var/lib/postgresql/data
+     
+     redis:
+       image: redis:7-alpine
+       volumes:
+         - redis_data:/data
+   
+   volumes:
+     postgres_data:
+     redis_data:
+   ```
+
+### Production Deployment
+
+1. **Environment Setup:**
+   ```bash
+   # Install PM2 for process management
+   npm install -g pm2
+   
+   # Create ecosystem file
+   cat > ecosystem.config.js << EOF
+   module.exports = {
+     apps: [{
+       name: 'quadrax-ml-api',
+       script: 'dist/server.js',
+       instances: 'max',
+       exec_mode: 'cluster',
+       env: {
+         NODE_ENV: 'production',
+         PORT: 3001
+       }
+     }]
+   };
+   EOF
+   ```
+
+2. **Deployment Script:**
+   ```bash
+   #!/bin/bash
+   # deploy.sh
+   
+   # Pull latest code
+   git pull origin main
+   
+   # Install dependencies
+   npm ci --only=production
+   
+   # Run database migrations
+   npx prisma migrate deploy
+   
+   # Build application
+   npm run build
+   
+   # Restart application
+   pm2 reload ecosystem.config.js
+   
+   # Check health
+   curl -f http://localhost:3001/health || exit 1
+   ```
+
+### Cloud Deployment (AWS)
+
+1. **ECS Deployment:**
+   - Use AWS ECS with Fargate
+   - Configure Application Load Balancer
+   - Set up RDS for PostgreSQL
+   - Use ElastiCache for Redis
+
+2. **Environment Variables:**
+   ```bash
+   # AWS Systems Manager Parameter Store
+   aws ssm put-parameter \
+     --name "/quadrax-ml/prod/jwt-secret" \
+     --value "your-secret" \
+     --type "SecureString"
+   ```
+
+## 📊 Monitoring & Logging
+
+### Logging Configuration
+
+```typescript
+// Custom logger with different levels
+import { logger } from './utils/logger';
+
+// Usage examples
+logger.info('Server started', { port: 3001 });
+logger.warn('High memory usage', { usage: '85%' });
+logger.error('Database connection failed', { error: error.message });
+```
+
+### Health Checks
+
+```typescript
+// Health check endpoint
+app.get('/health', async (req, res) => {
+  const health = {
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    services: {
+      database: await checkDatabaseHealth(),
+      redis: await checkRedisHealth(),
+      docker: await checkDockerHealth()
+    }
+  };
+  
+  const isHealthy = Object.values(health.services)
+    .every(service => service.status === 'healthy');
+  
+  res.status(isHealthy ? 200 : 503).json(health);
+});
+```
+
+### Metrics Collection
+
+- Request duration and count
+- Database query performance
+- Cache hit/miss ratios
+- Error rates and types
+- Resource utilization
+
+## 🧪 Testing
+
+### Test Structure
+
+```
+tests/
+├── unit/                # Unit tests
+│   ├── services/
+│   ├── utils/
+│   └── middleware/
+├── integration/         # Integration tests
+│   ├── auth.test.ts
+│   ├── workstations.test.ts
+│   └── models.test.ts
+├── e2e/                # End-to-end tests
+└── fixtures/           # Test data
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run specific test suite
+npm test -- --grep "Authentication"
+
+# Run with coverage
+npm run test:coverage
+
+# Run integration tests
+npm run test:integration
+
+# Run e2e tests
+npm run test:e2e
+```
+
+### Test Examples
+
+```typescript
+// Unit test example
+describe('Authentication Service', () => {
+  it('should hash password correctly', async () => {
+    const password = 'testPassword123!';
+    const hash = await hashPassword(password);
+    
+    expect(hash).toBeDefined();
+    expect(hash).not.toBe(password);
+    expect(await verifyPassword(password, hash)).toBe(true);
+  });
+});
+
+// Integration test example
+describe('POST /api/auth/login', () => {
+  it('should login with valid credentials', async () => {
+    const response = await request(app)
+      .post('/api/auth/login')
+      .send({
+        email: 'test@example.com',
+        password: 'validPassword123!'
+      });
+    
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    expect(response.body.data.token).toBeDefined();
+  });
+});
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+1. **Database Connection Issues:**
+   ```bash
+   # Check PostgreSQL status
+   sudo systemctl status postgresql
+   
+   # Test connection
+   psql -h localhost -U quadrax_user -d quadrax_ml
+   
+   # Check logs
+   tail -f /var/log/postgresql/postgresql-15-main.log
+   ```
+
+2. **Redis Connection Issues:**
+   ```bash
+   # Check Redis status
+   redis-cli ping
+   
+   # Check Redis logs
+   tail -f /var/log/redis/redis-server.log
+   
+   # Monitor Redis
+   redis-cli monitor
+   ```
+
+3. **Docker Issues:**
+   ```bash
+   # Check Docker daemon
+   docker info
+   
+   # List containers
+   docker ps -a
+   
+   # Check container logs
+   docker logs container-name
+   ```
+
+### Debug Mode
+
+```bash
+# Start in debug mode
+DEBUG=* npm run dev
+
+# Debug specific modules
+DEBUG=quadrax:* npm run dev
+
+# Node.js inspector
+node --inspect dist/server.js
+```
+
+### Performance Issues
+
+1. **Database Slow Queries:**
+   ```sql
+   -- Enable query logging
+   ALTER SYSTEM SET log_statement = 'all';
+   ALTER SYSTEM SET log_min_duration_statement = 1000;
+   
+   -- Analyze slow queries
+   SELECT query, mean_time, calls 
+   FROM pg_stat_statements 
+   ORDER BY mean_time DESC;
+   ```
+
+2. **Memory Leaks:**
+   ```bash
+   # Monitor memory usage
+   node --inspect --max-old-space-size=4096 dist/server.js
+   
+   # Use clinic.js for profiling
+   npm install -g clinic
+   clinic doctor -- node dist/server.js
+   ```
+
+### Error Handling
+
+```typescript
+// Global error handler
+process.on('uncaughtException', (error) => {
+  logger.error('Uncaught Exception', { error: error.message, stack: error.stack });
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled Rejection', { reason, promise });
+});
+```
+
+## 📞 Support & Maintenance
+
+### Regular Maintenance Tasks
+
+1. **Database Maintenance:**
+   ```sql
+   -- Vacuum and analyze
+   VACUUM ANALYZE;
+   
+   -- Reindex
+   REINDEX DATABASE quadrax_ml;
+   
+   -- Update statistics
+   ANALYZE;
+   ```
+
+2. **Log Rotation:**
+   ```bash
+   # Configure logrotate
+   sudo nano /etc/logrotate.d/quadrax-ml
+   
+   /path/to/logs/*.log {
+     daily
+     rotate 30
+     compress
+     delaycompress
+     missingok
+     notifempty
+     create 644 app app
+   }
+   ```
+
+3. **Security Updates:**
+   ```bash
+   # Check for vulnerabilities
+   npm audit
+   
+   # Fix vulnerabilities
+   npm audit fix
+   
+   # Update dependencies
+   npm update
+   ```
+
+### Backup Strategy
+
+1. **Database Backups:**
+   ```bash
+   # Daily backup script
+   #!/bin/bash
+   DATE=$(date +%Y%m%d_%H%M%S)
+   pg_dump -h localhost -U quadrax_user quadrax_ml > backup_$DATE.sql
+   
+   # Upload to S3
+   aws s3 cp backup_$DATE.sql s3://your-backup-bucket/
+   ```
+
+2. **File Backups:**
+   ```bash
+   # Backup uploads directory
+   tar -czf uploads_backup_$DATE.tar.gz uploads/
+   ```
+
+### Contact Information
+
+- **Technical Support**: support@quadrax-ml.com
+- **Documentation**: https://docs.quadrax-ml.com
+- **GitHub Issues**: https://github.com/quadrax-ml/backend/issues
+- **Community Forum**: https://community.quadrax-ml.com
+
+---
+
+## 📝 Changelog
+
+### Version 1.0.0 (2024-01-15)
+- Initial release
+- Complete authentication system
+- Workstation management
+- Dataset processing
+- Model training and deployment
+- Pipeline orchestration
+- AI assistant integration
+- Real-time WebSocket support
+
+### Version 1.1.0 (Planned)
+- Enhanced AI capabilities
+- Advanced monitoring
+- Multi-tenant support
+- Kubernetes deployment
+- GraphQL API
+
+---
+
+This guide provides comprehensive information for setting up, developing, and maintaining the QUADRAX•ML backend. For additional support or questions, please refer to the documentation or contact the development team.

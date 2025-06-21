@@ -1,0 +1,260 @@
+// Prisma schema for QUADRAX•ML Platform
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  firstName    String
+  lastName     String
+  organization String?
+  role         Role     @default(USER)
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  workstations  Workstation[]
+  datakits      DataKit[]
+  models        Model[]
+  pipelines     Pipeline[]
+  codesheets    CodeSheet[]
+  virtualMachines VirtualMachine[]
+  chatMessages  ChatMessage[]
+  sessions      UserSession[]
+
+  @@map("users")
+}
+
+model UserSession {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_sessions")
+}
+
+model Workstation {
+  id          String            @id @default(cuid())
+  name        String
+  description String
+  function    WorkstationFunction
+  nature      String[]
+  status      WorkstationStatus @default(CREATING)
+  resources   Json
+  containerId String?
+  userId      String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  models     Model[]
+  codesheets CodeSheet[]
+
+  @@unique([name, userId])
+  @@map("workstations")
+}
+
+model DataKit {
+  id           String        @id @default(cuid())
+  name         String
+  description  String
+  fileName     String
+  fileSize     Int
+  fileType     String
+  filePath     String
+  schema       Json?
+  qualityScore Float?
+  status       DataKitStatus @default(UPLOADING)
+  userId       String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("datakits")
+}
+
+model Model {
+  id            String      @id @default(cuid())
+  name          String
+  description   String
+  type          ModelType
+  framework     ModelFramework
+  status        ModelStatus @default(TRAINING)
+  accuracy      Float?
+  metrics       Json?
+  modelPath     String?
+  endpointUrl   String?
+  userId        String
+  workstationId String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workstation Workstation? @relation(fields: [workstationId], references: [id], onDelete: SetNull)
+
+  @@map("models")
+}
+
+model Pipeline {
+  id          String         @id @default(cuid())
+  name        String
+  description String
+  config      Json
+  status      PipelineStatus @default(IDLE)
+  schedule    String?
+  lastRun     DateTime?
+  nextRun     DateTime?
+  userId      String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("pipelines")
+}
+
+model CodeSheet {
+  id            String          @id @default(cuid())
+  name          String
+  description   String
+  content       Json
+  language      CodeLanguage
+  status        CodeSheetStatus @default(IDLE)
+  userId        String
+  workstationId String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workstation Workstation? @relation(fields: [workstationId], references: [id], onDelete: SetNull)
+
+  @@map("codesheets")
+}
+
+model VirtualMachine {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  image       String
+  status      VMStatus  @default(CREATING)
+  resources   Json
+  containerId String?
+  ports       Int[]
+  userId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("virtual_machines")
+}
+
+model ChatMessage {
+  id        String      @id @default(cuid())
+  content   String
+  sender    MessageSender
+  sessionId String
+  userId    String
+  timestamp DateTime    @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+}
+
+// Enums
+enum Role {
+  ADMIN
+  USER
+  VIEWER
+}
+
+enum WorkstationFunction {
+  DEVELOPMENT
+  TRAINING
+  PROCESSING
+  INFERENCE
+  AUTOMATION
+  CUSTOM
+}
+
+enum WorkstationStatus {
+  CREATING
+  RUNNING
+  STOPPED
+  ERROR
+}
+
+enum DataKitStatus {
+  UPLOADING
+  PROCESSING
+  READY
+  ERROR
+}
+
+enum ModelType {
+  CLASSIFICATION
+  REGRESSION
+  NLP
+  COMPUTER_VISION
+  CUSTOM
+}
+
+enum ModelFramework {
+  TENSORFLOW
+  PYTORCH
+  SCIKIT_LEARN
+  CUSTOM
+}
+
+enum ModelStatus {
+  TRAINING
+  TRAINED
+  DEPLOYED
+  FAILED
+}
+
+enum PipelineStatus {
+  IDLE
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum CodeLanguage {
+  PYTHON
+  R
+  SQL
+  JAVASCRIPT
+}
+
+enum CodeSheetStatus {
+  IDLE
+  RUNNING
+  COMPLETED
+  ERROR
+}
+
+enum VMStatus {
+  CREATING
+  RUNNING
+  STOPPED
+  ERROR
+}
+
+enum MessageSender {
+  USER
+  ASSISTANT
+}
