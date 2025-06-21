@@ -13,7 +13,7 @@ interface ChatbotProps {
   onClose: () => void;
 }
 
-function Chatbot({ isOpen, onClose }: ChatbotProps) {
+export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -415,5 +415,3 @@ What would you like to explore first?`;
     </div>
   );
 }
-
-export default Chatbot;
