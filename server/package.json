@@ -4,8 +4,8 @@
   "description": "Backend API for QUADRAX•ML Platform",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "dev": "npx prisma generate && tsx watch src/server.ts",
+    "build": "npx prisma generate && tsc",
     "start": "node dist/server.js",
     "test": "jest",
     "lint": "eslint src/**/*.ts"
