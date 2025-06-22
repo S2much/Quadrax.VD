@@ -24,7 +24,7 @@ function Navbar({ navItems, bottomNavItems, currentPage, setCurrentPage, isColla
   // Filter nav items based on login status
   const filteredNavItems = isLoggedIn 
     ? navItems // Show all items when logged in
-    : navItems.filter(item => !['workshops', 'datakits', 'notebooks', 'pipelines', 'vms', 'models'].includes(item.id)); // Hide protected items when not logged in
+    : navItems.filter(item => !['workshops', 'datakits', 'notebooks', 'manufacture', 'vms', 'models'].includes(item.id)); // Hide protected items when not logged in
 
   // When locked, prevent hover expansion and maintain current state
   const shouldExpand = !isLocked && isHovered && isCollapsed;
