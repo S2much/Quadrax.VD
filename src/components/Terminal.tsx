@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Terminal as TerminalIcon, X, Minimize2, Copy, Download, Power, ChevronUp, ChevronDown } from 'lucide-react';
+import { Terminal as TerminalIcon, X, Minimize2, Copy, Download, Power, ChevronUp, ChevronDown, Zap, Brain, Database, Settings, Play, Stop } from 'lucide-react';
 
 interface TerminalProps {
   isOpen: boolean;
@@ -58,7 +58,7 @@ function Terminal({ isOpen, onClose, shell: initialShell, workingDirectory = '~'
     };
   }, [isResizing]);
 
-  // Simulated command execution
+  // Enhanced command execution with ML/AI context
   const executeCommand = (command: string): { output: string; exitCode: number } => {
     const cmd = command.trim().toLowerCase();
     
@@ -72,9 +72,94 @@ function Terminal({ isOpen, onClose, shell: initialShell, workingDirectory = '~'
       return { output: 'Switched to PowerShell', exitCode: 0 };
     }
     
-    // Workstation initialization commands
+    // Enhanced AI/ML commands
+    if (cmd.includes('ai') || cmd.includes('ml') || cmd.includes('model')) {
+      if (cmd.includes('deploy')) {
+        return { 
+          output: `🚀 Model Deployment Initiated
+Model: customer-classifier-v2.1
+Environment: production
+Status: Deploying...
+Endpoint: https://api.quadrax-ml.com/v1/predict
+Health Check: ✓ Passed
+Scaling: Auto (1-10 instances)
+Estimated completion: 2-3 minutes`, 
+          exitCode: 0 
+        };
+      }
+      if (cmd.includes('train')) {
+        return { 
+          output: `🧠 Model Training Started
+Dataset: customer_data_v3.csv (50,000 samples)
+Algorithm: Random Forest Classifier
+Progress: [████████████████████████████████████████] 100%
+Accuracy: 94.7%
+Precision: 95.2%
+Recall: 94.1%
+F1-Score: 94.6%
+Training completed in 45 minutes`, 
+          exitCode: 0 
+        };
+      }
+      if (cmd.includes('status')) {
+        return { 
+          output: `📊 AI/ML System Status
+Active Models: 12 deployed
+Training Jobs: 3 running
+Manufacturing Jobs: 8 in progress
+GPU Utilization: 67%
+Model Accuracy (avg): 92.3%
+Inference Latency: 120ms
+Success Rate: 99.2%`, 
+          exitCode: 0 
+        };
+      }
+    }
+
+    // Manufacturing commands
+    if (cmd.includes('manufacture') || cmd.includes('manufacturing')) {
+      if (cmd.includes('start') || cmd.includes('create')) {
+        return { 
+          output: `🏭 Manufacturing Job Created
+Job ID: mfg_job_${Date.now()}
+Type: Fine-tuning workflow
+Base Model: BERT-base-uncased
+Dataset: sentiment_analysis_v2
+Feedback System: Enabled (star ratings, thumbs up/down, text reviews)
+Estimated Duration: 2-4 hours
+Status: Queued for execution`, 
+          exitCode: 0 
+        };
+      }
+      if (cmd.includes('list')) {
+        return { 
+          output: `📋 Manufacturing Jobs
+1. sentiment-tuning-v3     [RUNNING]    Progress: 67%
+2. recommendation-opt      [COMPLETED]  Rating: ⭐⭐⭐⭐⭐
+3. image-classifier-tune   [QUEUED]     ETA: 30 min
+4. nlp-prompt-optimization [FAILED]     Error: Data validation
+5. customer-feedback-loop  [RUNNING]    Progress: 23%`, 
+          exitCode: 0 
+        };
+      }
+      if (cmd.includes('feedback')) {
+        return { 
+          output: `💬 Feedback Summary
+Job: sentiment-tuning-v3
+⭐ Average Rating: 4.2/5 (based on 15 reviews)
+👍 Positive Feedback: 87%
+📝 Recent Comments:
+  - "Excellent accuracy improvement!" (5⭐)
+  - "Training time could be optimized" (3⭐)
+  - "Great results on test data" (4⭐)
+Suggestions: Reduce training time, add more validation metrics`, 
+          exitCode: 0 
+        };
+      }
+    }
+
+    // Enhanced workstation commands
     if (cmd === 'quadrax init' || cmd === 'quadrax initialize' || cmd.includes('init workstation') || cmd.includes('create workstation')) {
-      // Trigger workstation creation modal
       setTimeout(() => {
         if (onOpenNewWorkstation) {
           onOpenNewWorkstation();
@@ -83,63 +168,215 @@ function Terminal({ isOpen, onClose, shell: initialShell, workingDirectory = '~'
       return { output: 'Initializing workstation creation interface...\nOpening workstation configuration wizard...', exitCode: 0 };
     }
     
-    // Context-specific commands
+    // Context-specific enhanced commands
     if (context === 'workshop') {
       if (cmd.startsWith('quadrax')) {
-        if (cmd.includes('list')) return { output: 'Active workstations:\n- quadrax-ml-v_2 (active)\n- data-processing-env (stopped)', exitCode: 0 };
-        if (cmd.includes('start')) return { output: 'Starting workstation environment...', exitCode: 0 };
-        if (cmd.includes('stop')) return { output: 'Stopping workstation environment...', exitCode: 0 };
+        if (cmd.includes('list')) return { 
+          output: `🛠️ Active Workstations:
+1. ml-training-env-v2    [RUNNING]    CPU: 8 cores, RAM: 16GB, GPU: Tesla V100
+2. data-processing-hub   [STOPPED]    CPU: 4 cores, RAM: 8GB
+3. ai-research-lab       [RUNNING]    CPU: 16 cores, RAM: 32GB, GPU: 2x A100
+4. dev-environment       [RUNNING]    CPU: 2 cores, RAM: 4GB`, 
+          exitCode: 0 
+        };
+        if (cmd.includes('start')) return { output: 'Starting workstation environment...\nGPU acceleration enabled\nJupyter Lab server started on port 8888', exitCode: 0 };
+        if (cmd.includes('stop')) return { output: 'Stopping workstation environment...\nSaving session state...\nWorkstation stopped successfully', exitCode: 0 };
       }
     }
     
     if (context === 'datakits') {
       if (cmd.startsWith('data')) {
-        if (cmd.includes('upload')) return { output: 'Uploading dataset to DataKits...\nUpload completed: dataset_v1.csv (1.2MB)', exitCode: 0 };
-        if (cmd.includes('validate')) return { output: 'Validating dataset...\n✓ Schema validation passed\n✓ Data quality check: 96%', exitCode: 0 };
-        if (cmd.includes('transform')) return { output: 'Applying data transformations...\nTransformation pipeline completed.', exitCode: 0 };
-        if (cmd.includes('export')) return { output: 'Exporting dataset...\nExport completed: processed_data.csv', exitCode: 0 };
+        if (cmd.includes('upload')) return { 
+          output: `📊 Uploading dataset to DataKits...
+File: customer_analytics_2024.csv
+Size: 2.3GB
+Validation: ✓ Schema valid
+Quality Score: 96%
+Upload completed: dataset_v1.csv (2.3GB)
+Available in DataKits dashboard`, 
+          exitCode: 0 
+        };
+        if (cmd.includes('validate')) return { 
+          output: `🔍 Dataset Validation Results:
+✓ Schema validation passed
+✓ Data types consistent
+✓ No duplicate records found
+⚠ 0.3% missing values in 'age' column
+✓ Data quality score: 96%
+✓ 1,250,000 records processed
+Recommendations: Handle missing values in 'age' column`, 
+          exitCode: 0 
+        };
+        if (cmd.includes('transform')) return { 
+          output: `⚡ Data Transformation Pipeline:
+Step 1: Missing value imputation    [✓ COMPLETED]
+Step 2: Feature scaling             [✓ COMPLETED]  
+Step 3: Categorical encoding        [✓ COMPLETED]
+Step 4: Feature selection           [✓ COMPLETED]
+Step 5: Train/test split            [✓ COMPLETED]
+Transformation pipeline completed successfully
+Output: processed_customer_data.csv`, 
+          exitCode: 0 
+        };
+        if (cmd.includes('export')) return { 
+          output: `📤 Exporting processed dataset...
+Format: CSV, Parquet, JSON
+Compression: gzip
+Export location: /exports/processed_data_${new Date().toISOString().split('T')[0]}.csv
+Export completed: 1.8GB → 450MB (compressed)`, 
+          exitCode: 0 
+        };
       }
     }
 
     if (context === 'models') {
       if (cmd.startsWith('model')) {
-        if (cmd.includes('deploy')) return { output: 'Deploying model to production...\nModel deployed successfully at endpoint: /api/v1/predict', exitCode: 0 };
-        if (cmd.includes('train')) return { output: 'Starting model training...\nEpoch 1/10: loss=0.4521, accuracy=0.8234', exitCode: 0 };
-        if (cmd.includes('evaluate')) return { output: 'Model evaluation results:\nAccuracy: 94.7%\nPrecision: 95.2%\nRecall: 94.1%', exitCode: 0 };
-        if (cmd.includes('logs')) return { output: 'Model logs:\n[INFO] Model loaded successfully\n[INFO] Inference completed in 120ms', exitCode: 0 };
+        if (cmd.includes('deploy')) return { 
+          output: `🚀 Model Deployment Pipeline:
+Model: customer-classifier-v2.1
+Environment: production
+Container: Docker image built successfully
+Health checks: ✓ All passed
+Load balancer: Configured
+Auto-scaling: 1-10 instances
+Endpoint: https://api.quadrax-ml.com/v1/predict
+Status: ✓ DEPLOYED SUCCESSFULLY`, 
+          exitCode: 0 
+        };
+        if (cmd.includes('train')) return { 
+          output: `🧠 Model Training Progress:
+Algorithm: Gradient Boosting Classifier
+Dataset: 1,250,000 samples
+Epoch 1/50: loss=0.4521, accuracy=0.8234, val_accuracy=0.8156
+Epoch 10/50: loss=0.2341, accuracy=0.9123, val_accuracy=0.9087
+Epoch 25/50: loss=0.1234, accuracy=0.9567, val_accuracy=0.9534
+Epoch 50/50: loss=0.0876, accuracy=0.9723, val_accuracy=0.9698
+Training completed! Final accuracy: 97.23%`, 
+          exitCode: 0 
+        };
+        if (cmd.includes('evaluate')) return { 
+          output: `📈 Model Evaluation Results:
+Test Dataset: 250,000 samples
+Accuracy: 94.7%
+Precision: 95.2%
+Recall: 94.1%
+F1-Score: 94.6%
+AUC-ROC: 0.987
+Confusion Matrix:
+  Predicted:  0      1
+Actual: 0   47,234  1,876
+        1   2,134   48,756
+Model performance: EXCELLENT`, 
+          exitCode: 0 
+        };
+        if (cmd.includes('logs')) return { 
+          output: `📋 Model Inference Logs:
+[2024-01-15 10:30:15] Model loaded successfully
+[2024-01-15 10:30:16] Health check passed
+[2024-01-15 10:31:20] Inference request processed (120ms)
+[2024-01-15 10:31:45] Batch prediction completed (500 samples, 2.3s)
+[2024-01-15 10:32:10] Model performance within SLA
+[2024-01-15 10:32:30] Auto-scaling triggered (load: 85%)`, 
+          exitCode: 0 
+        };
       }
     }
 
-    if (context === 'pipelines') {
-      if (cmd.startsWith('pipeline')) {
-        if (cmd.includes('run')) return { output: 'Executing pipeline...\n[1/5] Data ingestion: ✓\n[2/5] Data processing: ✓\n[3/5] Model training: running...', exitCode: 0 };
-        if (cmd.includes('status')) return { output: 'Pipeline Status:\n- customer-analysis: Running (67%)\n- fraud-detection: Completed\n- image-classification: Failed', exitCode: 0 };
-        if (cmd.includes('logs')) return { output: 'Pipeline logs:\n[2024-01-15 10:30:15] Pipeline started\n[2024-01-15 10:31:20] Data validation passed', exitCode: 0 };
-        if (cmd.includes('stop')) return { output: 'Stopping pipeline execution...', exitCode: 0 };
+    if (context === 'manufacture') {
+      if (cmd.startsWith('manufacture') || cmd.startsWith('mfg')) {
+        if (cmd.includes('create')) return { 
+          output: `🏭 Manufacturing Job Creation:
+Job Type: Fine-tuning workflow
+Drag-and-drop interface: Available
+Feedback systems: Enabled
+  - Star ratings (1-5)
+  - Thumbs up/down
+  - Text reviews
+  - Performance metrics
+Job created successfully!
+Use the web interface for visual workflow building`, 
+          exitCode: 0 
+        };
+        if (cmd.includes('feedback')) return { 
+          output: `💬 Manufacturing Feedback Analytics:
+Total Jobs: 47
+Average Rating: 4.3/5 stars
+Positive Feedback: 89%
+Top Rated Jobs:
+  1. sentiment-analysis-v3    (4.8⭐)
+  2. recommendation-engine    (4.7⭐)
+  3. image-classifier-tune    (4.6⭐)
+Recent Feedback:
+  "Excellent fine-tuning results!" - 5⭐
+  "Could use better progress tracking" - 3⭐`, 
+          exitCode: 0 
+        };
       }
     }
 
     if (context === 'codesheets') {
       if (cmd.startsWith('jupyter')) {
-        return { output: 'Starting Jupyter notebook server...\nServer running at: http://localhost:8888', exitCode: 0 };
+        return { 
+          output: `🔬 Starting Jupyter Lab Server...
+Environment: Python 3.11, R 4.3, Julia 1.9
+Extensions: AI Assistant, Git integration, Real-time collaboration
+Server running at: http://localhost:8888
+Token: quadrax-ml-secure-token-2024
+GPU support: ✓ CUDA 12.0 available
+Ready for interactive development!`, 
+          exitCode: 0 
+        };
       }
       if (cmd.startsWith('python')) {
-        return { output: 'Python 3.9.7 (default, Sep 16 2021, 16:59:28)\nExecuting script...', exitCode: 0 };
+        return { 
+          output: `🐍 Python 3.11.7 (main, Dec 15 2023, 12:09:04)
+[GCC 11.4.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import tensorflow as tf
+>>> print(f"TensorFlow version: {tf.__version__}")
+TensorFlow version: 2.15.0
+>>> print("GPU available:", tf.config.list_physical_devices('GPU'))
+GPU available: [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]`, 
+          exitCode: 0 
+        };
       }
       if (cmd.startsWith('pip install')) {
         const packageName = cmd.split(' ')[2] || 'package';
-        return { output: `Installing ${packageName}...\nSuccessfully installed ${packageName}`, exitCode: 0 };
+        return { 
+          output: `📦 Installing ${packageName}...
+Collecting ${packageName}
+  Downloading ${packageName}-2.1.0-py3-none-any.whl (1.2 MB)
+Installing collected packages: ${packageName}
+Successfully installed ${packageName}-2.1.0
+Note: Package available in all Codesheets environments`, 
+          exitCode: 0 
+        };
       }
     }
 
-    // Common commands
+    // Enhanced system commands
     switch (cmd) {
       case 'ls':
       case 'dir':
         return { 
           output: shell === 'bash' 
-            ? 'datasets/  models/  notebooks/  pipelines/  scripts/  logs/' 
-            : 'Directory: ' + workingDirectory + '\n\nMode    LastWriteTime    Length Name\n----    -------------    ------ ----\nd-----  12/15/2024  datasets\nd-----  12/15/2024  models\nd-----  12/15/2024  notebooks', 
+            ? `📁 Directory Contents:
+drwxr-xr-x  datasets/     (1.2TB - ML training data)
+drwxr-xr-x  models/       (450GB - trained models)  
+drwxr-xr-x  notebooks/    (2.3GB - Jupyter notebooks)
+drwxr-xr-x  manufacturing/ (890MB - fine-tuning jobs)
+drwxr-xr-x  scripts/      (156MB - automation scripts)
+drwxr-xr-x  logs/         (2.1GB - system logs)
+drwxr-xr-x  exports/      (3.4GB - processed outputs)` 
+            : `📁 Directory: ${workingDirectory}
+
+Mode    LastWriteTime         Length Name
+----    -------------         ------ ----
+d-----  12/15/2024  10:30 AM         datasets
+d-----  12/15/2024  11:45 AM         models  
+d-----  12/15/2024  09:15 AM         notebooks
+d-----  12/15/2024  02:30 PM         manufacturing
+d-----  12/15/2024  08:20 AM         scripts`, 
           exitCode: 0 
         };
       
@@ -147,7 +384,7 @@ function Terminal({ isOpen, onClose, shell: initialShell, workingDirectory = '~'
         return { output: workingDirectory, exitCode: 0 };
       
       case 'whoami':
-        return { output: 'quadrax-user', exitCode: 0 };
+        return { output: 'quadrax-user (ML Engineer)', exitCode: 0 };
       
       case 'date':
         return { output: new Date().toString(), exitCode: 0 };
@@ -156,24 +393,78 @@ function Terminal({ isOpen, onClose, shell: initialShell, workingDirectory = '~'
       case 'cls':
         setCommandHistory([]);
         return { output: '', exitCode: 0 };
+
+      case 'nvidia-smi':
+        return { 
+          output: `🖥️ GPU Status:
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 525.60.11    Driver Version: 525.60.11    CUDA Version: 12.0   |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  Tesla V100-SXM2...  On   | 00000000:00:04.0 Off |                    0 |
+| N/A   42C    P0    45W / 300W |   2847MiB / 32768MiB |     67%      Default |
++-------------------------------+----------------------+----------------------+`, 
+          exitCode: 0 
+        };
+
+      case 'top':
+      case 'htop':
+        return { 
+          output: `📊 System Resources:
+CPU Usage: 67% (8 cores @ 3.2GHz)
+Memory: 45% (14.4GB / 32GB)
+GPU: 67% (Tesla V100)
+Disk I/O: 234 MB/s read, 156 MB/s write
+Network: 1.2 GB/s in, 890 MB/s out
+
+Top Processes:
+PID    COMMAND           CPU%   MEM%
+1234   model_training    45.2   12.3
+5678   jupyter-lab       8.7    4.2
+9012   data_processing   12.1   8.9`, 
+          exitCode: 0 
+        };
       
       case 'help':
         return { 
-          output: `Available commands:
-- bash/powershell - Switch shell environment
-- quadrax init - Initialize new workstation
-${context === 'workshop' ? '- quadrax list/start/stop - Workstation management\n' : ''}${context === 'datakits' ? '- data upload/validate/transform/export - Dataset operations\n' : ''}${context === 'models' ? '- model deploy/train/evaluate/logs - Model operations\n' : ''}${context === 'pipelines' ? '- pipeline run/status/logs/stop - Pipeline management\n' : ''}${context === 'codesheets' ? '- jupyter notebook - Start Jupyter server\n- python <script> - Execute Python script\n- pip install <package> - Install packages\n' : ''}- ls/dir - List directory contents
-- pwd - Show current directory
-- whoami - Show current user
-- date - Show current date/time
-- clear/cls - Clear terminal
-- exit - Close terminal`, 
+          output: `🚀 QUADRAX•ML Terminal Help
+
+🔧 System Commands:
+- bash/powershell     - Switch shell environment
+- quadrax init        - Initialize new workstation
+- nvidia-smi          - GPU status and utilization
+- top/htop           - System resource monitoring
+
+🤖 AI/ML Commands:
+- ai deploy <model>   - Deploy model to production
+- ai train <config>   - Start model training
+- ai status          - AI system overview
+- model evaluate     - Model performance metrics
+
+🏭 Manufacturing Commands:
+- manufacture create  - Create fine-tuning job
+- manufacture list    - List all manufacturing jobs
+- manufacture feedback - View job feedback analytics
+- mfg start <job>    - Start manufacturing job
+
+${context === 'workshop' ? '🛠️ Workshop Commands:\n- quadrax list/start/stop - Workstation management\n' : ''}${context === 'datakits' ? '📊 DataKit Commands:\n- data upload/validate/transform/export - Dataset operations\n' : ''}${context === 'models' ? '🧠 Model Commands:\n- model deploy/train/evaluate/logs - Model operations\n' : ''}${context === 'manufacture' ? '🏭 Manufacturing Commands:\n- manufacture create/feedback - Manufacturing operations\n' : ''}${context === 'codesheets' ? '💻 Development Commands:\n- jupyter notebook - Start Jupyter server\n- python <script> - Execute Python script\n- pip install <package> - Install packages\n' : ''}
+📁 File Commands:
+- ls/dir             - List directory contents
+- pwd                - Show current directory
+- clear/cls          - Clear terminal
+
+💡 Pro Tips:
+- Use tab completion for commands
+- Arrow keys for command history
+- Ctrl+C to interrupt running commands`, 
           exitCode: 0 
         };
       
       case 'exit':
         onClose();
-        return { output: 'Goodbye!', exitCode: 0 };
+        return { output: 'Goodbye! 👋', exitCode: 0 };
       
       case '':
         return { output: '', exitCode: 0 };
@@ -184,8 +475,8 @@ ${context === 'workshop' ? '- quadrax list/start/stop - Workstation management\n
         }
         return { 
           output: shell === 'bash' 
-            ? `bash: ${command}: command not found` 
-            : `'${command}' is not recognized as an internal or external command.`, 
+            ? `bash: ${command}: command not found\n💡 Type 'help' for available commands` 
+            : `'${command}' is not recognized as an internal or external command.\n💡 Type 'help' for available commands`, 
           exitCode: 1 
         };
     }
@@ -249,7 +540,7 @@ ${context === 'workshop' ? '- quadrax list/start/stop - Workstation management\n
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `terminal-log-${shell}-${Date.now()}.txt`;
+    a.download = `quadrax-terminal-log-${shell}-${Date.now()}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -284,7 +575,7 @@ ${context === 'workshop' ? '- quadrax list/start/stop - Workstation management\n
         <div className="flex items-center gap-3">
           <TerminalIcon size={20} className="text-[#00beef]" />
           <span className="text-white font-medium">
-            Terminal - {context}
+            Enhanced Terminal - {context}
           </span>
           <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`}></div>
           
@@ -356,11 +647,11 @@ ${context === 'workshop' ? '- quadrax list/start/stop - Workstation management\n
             className="flex-1 p-4 bg-black text-green-400 font-mono text-sm overflow-y-auto custom-scrollbar"
           >
             <div className="mb-2 text-[#00beef]">
-              QUADRAX•ML {shell === 'bash' ? 'Bash' : 'PowerShell'} Terminal v1.0
+              🚀 QUADRAX•ML Enhanced {shell === 'bash' ? 'Bash' : 'PowerShell'} Terminal v2.0
               <br />
-              Type 'help' for available commands. Use 'bash' or 'powershell' to switch shells.
+              🤖 AI/ML Commands Available | 🏭 Manufacturing Support | 📊 Real-time Monitoring
               <br />
-              Try 'quadrax init' to initialize a new workstation.
+              💡 Type 'help' for enhanced commands | 'quadrax init' to create workstation
               <br />
             </div>
             
@@ -396,8 +687,8 @@ ${context === 'workshop' ? '- quadrax list/start/stop - Workstation management\n
 
           {/* Terminal Footer */}
           <div className="px-4 py-2 bg-gradient-to-r from-[#005778] to-black border-t border-[#00699a] text-xs text-gray-400 flex justify-between items-center">
-            <span>Working Directory: {workingDirectory}</span>
-            <span>Shell: {shell} | Context: {context} | Height: {terminalHeight}px</span>
+            <span>Working Directory: {workingDirectory} | Context: {context}</span>
+            <span>Shell: {shell} | Enhanced Mode | Height: {terminalHeight}px</span>
           </div>
         </>
       )}

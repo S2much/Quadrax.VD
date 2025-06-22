@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Home, Terminal, FileJson, FileCode, Baseline as Pipeline, Monitor, Brain, BookOpen, Info, Settings as Settings2,Search, HelpCircle, LogIn, LogOut, UserPlus, Bot} from 'lucide-react';
+import { Home, Terminal, FileJson, FileCode, Zap, Monitor, Brain, BookOpen, Info, Settings as Settings2,Search, HelpCircle, LogIn, LogOut, UserPlus, Bot} from 'lucide-react';
 import Navbar from './components/Navbar';
 import Workshop from './components/Workshop';
 import VirtualMachines from './components/VirtualMachines';
@@ -8,7 +8,7 @@ import Dashboard from './components/Dashboard';
 import Chatbot from './components/Chatbot';
 import Datakits from './components/Datakits';
 import Codesheets from './components/Codesheets';
-import Pipelines from './components/Pipelines';
+import Manufacture from './components/Manufacture';
 import Models from './components/Models';
 import Documentation from './components/Documentation';
 import About from './components/About';
@@ -72,7 +72,7 @@ function App2() {
     { id: 'workshops', label: 'Workshops', icon: Terminal },
     { id: 'datakits', label: 'Datakits', icon: FileJson },
     { id: 'notebooks', label: 'Codesheets', icon: FileCode },
-    { id: 'pipelines', label: 'Pipelines', icon: Pipeline },
+    { id: 'manufacture', label: 'Manufacture', icon: Zap },
     { id: 'vms', label: 'VMs', icon: Monitor },
     { id: 'models', label: 'Models', icon: Brain },
     { id: 'documentation', label: 'Documentation', icon: BookOpen },
@@ -235,7 +235,7 @@ function App2() {
             {currentPage === 'vms' && <VirtualMachines />}
             {currentPage === 'datakits' && <Datakits />}
             {currentPage === 'notebooks' && <Codesheets />}
-            {currentPage === 'pipelines' && <Pipelines />}
+            {currentPage === 'manufacture' && <Manufacture />}
             {currentPage === 'models' && <Models />}
             {currentPage === 'documentation' && <Documentation />}
             {currentPage === 'about' && <About />}
