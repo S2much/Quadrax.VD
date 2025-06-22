@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Terminal as TerminalIcon, X, Minimize2, Copy, Download, Power, ChevronUp, ChevronDown, Zap, Brain, Database, Settings, Play, Stop } from 'lucide-react';
+import { Terminal as TerminalIcon, X, Minimize2, Copy, Download, Power, ChevronUp, ChevronDown, Zap, Brain, Database, Settings, Play, Store as Stop } from 'lucide-react';
 
 interface TerminalProps {
   isOpen: boolean;
