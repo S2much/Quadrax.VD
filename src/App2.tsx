@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Home, Terminal, FileJson, FileCode, Zap, Brain, BookOpen, Info, Settings as Settings2,Search, HelpCircle, LogIn, LogOut, UserPlus, Bot} from 'lucide-react';
+import { Home, Terminal, FileJson, FileCode, Zap, Brain, BookOpen, Info, Settings as Settings2,Search, HelpCircle, LogIn, LogOut, UserPlus, Bot, Download} from 'lucide-react';
 import Navbar from './components/Navbar';
 import Workshop from './components/Workshop';
 import HomePage from './components/HomePage';
@@ -16,6 +16,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import LoadingSpinner from './components/LoadingSpinner';
 import NewWorkstationModal from './components/NewWorkstationModal';
+import PlatformDownloads from './components/PlatformDownloads';
 
 interface WorkstationData {
   name: string;
@@ -38,6 +39,7 @@ function App2() {
   const [isChatbotDetached, setIsChatbotDetached] = useState(false);
   const [isNewWorkstationOpen, setIsNewWorkstationOpen] = useState(false);
   const [workstationTriggerSource, setWorkstationTriggerSource] = useState<'workshop' | 'chatbot' | 'cli'>('workshop');
+  const [showPlatformDownloads, setShowPlatformDownloads] = useState(false);
 
   // Initial loading effect
   useEffect(() => {
@@ -193,7 +195,15 @@ function App2() {
             />
           </div>
         
-<button className="relative top-2 p-1 text-white hover:text-[#00beef] transition-colors duration-10">
+          <button 
+            onClick={() => setShowPlatformDownloads(true)}
+            className="relative top-2 p-1 text-white hover:text-[#00beef] transition-colors duration-300 mr-4"
+            title="Platform Downloads"
+          >
+            <Download size={30} />
+          </button>
+
+          <button className="relative top-2 p-1 text-white hover:text-[#00beef] transition-colors duration-10">
             <HelpCircle size={30} />
           </button>
           </div>
@@ -259,6 +269,12 @@ function App2() {
         onClose={() => setIsNewWorkstationOpen(false)}
         onCreateWorkstation={handleCreateWorkstation}
         triggerSource={workstationTriggerSource}
+      />
+
+      {/* Platform Downloads Modal */}
+      <PlatformDownloads
+        isOpen={showPlatformDownloads}
+        onClose={() => setShowPlatformDownloads(false)}
       />
 
  {/* Logout Confirmation Modal */}
