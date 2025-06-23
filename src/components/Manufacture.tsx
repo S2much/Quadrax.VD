@@ -1,16 +1,26 @@
-import { useState, useRef, useCallback } from 'react';
-import { Plus, Play, Pause, Square, Settings, Download, Upload, Zap, Database, Brain, Star, ThumbsUp, ThumbsDown, MessageSquare, BarChart3, Clock, CheckCircle, XCircle, AlertTriangle, Trash2, Copy, Edit3, Save, X, Terminal as TerminalIcon, Code, Sparkles, Target, Layers, GitBranch, Workflow } from 'lucide-react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { Plus, Play, Pause, Square, Settings, Download, Upload, Zap, Database, Brain, Star, ThumbsUp, ThumbsDown, MessageSquare, BarChart3, Clock, CheckCircle, XCircle, AlertTriangle, Trash2, Copy, Edit3, Save, X, Terminal as TerminalIcon, Code, Sparkles, Target, Layers, GitBranch, Workflow, FileCode, ExternalLink, Cpu, Network, Gauge } from 'lucide-react';
 import Terminal from './Terminal';
 import CodeEditor from './CodeEditor';
 
 interface WorkflowNode {
   id: string;
-  type: 'data' | 'model' | 'process' | 'output';
+  type: 'datakit' | 'codesheet' | 'model' | 'external' | 'output';
   name: string;
   position: { x: number; y: number };
   config: any;
   status: 'idle' | 'running' | 'completed' | 'error';
   connections: string[];
+  inputs: string[];
+  outputs: string[];
+}
+
+interface Connection {
+  id: string;
+  from: string;
+  to: string;
+  fromPort: string;
+  toPort: string;
 }
 
 interface FeedbackItem {
@@ -26,6 +36,7 @@ interface ManufacturingJob {
   name: string;
   description: string;
   workflow: WorkflowNode[];
+  connections: Connection[];
   status: 'draft' | 'running' | 'completed' | 'failed';
   progress: number;
   feedback: FeedbackItem[];
@@ -45,6 +56,7 @@ function Manufacture() {
   const [isCreatingJob, setIsCreatingJob] = useState(false);
   const [draggedNode, setDraggedNode] = useState<string | null>(null);
   const [workflowNodes, setWorkflowNodes] = useState<WorkflowNode[]>([]);
+  const [connections, setConnections] = useState<Connection[]>([]);
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [terminalShell, setTerminalShell] = useState<'bash' | 'powershell'>('bash');
@@ -52,43 +64,91 @@ function Manufacture() {
   const [selectedJobForFeedback, setSelectedJobForFeedback] = useState<string | null>(null);
   const [newJobName, setNewJobName] = useState('');
   const [newJobDescription, setNewJobDescription] = useState('');
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionStart, setConnectionStart] = useState<{nodeId: string, port: string} | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
+  const [canvasOffset, setCanvasOffset] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
 
   const nodeTypes = [
-    { id: 'data', name: 'Data Source', icon: Database, color: 'bg-blue-500', description: 'Input datasets and data sources' },
-    { id: 'model', name: 'Model', icon: Brain, color: 'bg-purple-500', description: 'ML models and algorithms' },
-    { id: 'process', name: 'Processing', icon: Zap, color: 'bg-green-500', description: 'Data processing and transformation' },
-    { id: 'output', name: 'Output', icon: Target, color: 'bg-orange-500', description: 'Results and outputs' }
+    { 
+      id: 'datakit', 
+      name: 'DataKit', 
+      icon: Database, 
+      color: 'bg-blue-500', 
+      description: 'Input datasets and data sources',
+      inputs: [],
+      outputs: ['data']
+    },
+    { 
+      id: 'codesheet', 
+      name: 'CodeSheet', 
+      icon: FileCode, 
+      color: 'bg-green-500', 
+      description: 'Data processing and analysis',
+      inputs: ['data'],
+      outputs: ['processed_data', 'insights']
+    },
+    { 
+      id: 'model', 
+      name: 'ML Model', 
+      icon: Brain, 
+      color: 'bg-purple-500', 
+      description: 'Machine learning models',
+      inputs: ['data', 'processed_data'],
+      outputs: ['predictions', 'model']
+    },
+    { 
+      id: 'external', 
+      name: 'External Tool', 
+      icon: ExternalLink, 
+      color: 'bg-orange-500', 
+      description: 'Third-party integrations',
+      inputs: ['data', 'predictions'],
+      outputs: ['results']
+    },
+    { 
+      id: 'output', 
+      name: 'QML Export', 
+      icon: Target, 
+      color: 'bg-red-500', 
+      description: 'Export as QUADRAX•ML model',
+      inputs: ['model', 'predictions', 'results'],
+      outputs: []
+    }
   ];
 
   const sampleJobs: ManufacturingJob[] = [
     {
       id: '1',
-      name: 'Customer Sentiment Fine-tuning',
-      description: 'Fine-tune BERT model for customer sentiment analysis with feedback optimization',
+      name: 'Customer Sentiment Analysis QML',
+      description: 'Complete sentiment analysis pipeline with feedback optimization',
       workflow: [],
+      connections: [],
       status: 'completed',
       progress: 100,
       feedback: [
-        { id: '1', type: 'star', value: 4, timestamp: new Date(), jobId: '1' },
+        { id: '1', type: 'star', value: 5, timestamp: new Date(), jobId: '1' },
         { id: '2', type: 'thumbs', value: 'up', timestamp: new Date(), jobId: '1' },
-        { id: '3', type: 'text', value: 'Great accuracy improvement!', timestamp: new Date(), jobId: '1' }
+        { id: '3', type: 'text', value: 'Excellent QML device! Easy to use interface.', timestamp: new Date(), jobId: '1' }
       ],
       createdAt: new Date(Date.now() - 86400000),
       updatedAt: new Date(),
-      metrics: { accuracy: 94.7, loss: 0.23, duration: 45, cost: 12.50 }
+      metrics: { accuracy: 96.8, loss: 0.18, duration: 52, cost: 15.75 }
     },
     {
       id: '2',
-      name: 'Product Recommendation Tuning',
-      description: 'Optimize recommendation engine with user feedback and A/B testing',
+      name: 'Real-time Fraud Detection QML',
+      description: 'Advanced fraud detection with live monitoring dashboard',
       workflow: [],
+      connections: [],
       status: 'running',
-      progress: 67,
+      progress: 73,
       feedback: [],
       createdAt: new Date(Date.now() - 43200000),
       updatedAt: new Date(),
-      metrics: { accuracy: 87.3, duration: 23 }
+      metrics: { accuracy: 94.2, duration: 38 }
     }
   ];
 
@@ -114,22 +174,64 @@ function Manufacture() {
     if (!draggedNode || !canvasRef.current) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = (e.clientX - rect.left - canvasOffset.x) / zoom;
+    const y = (e.clientY - rect.top - canvasOffset.y) / zoom;
+
+    const nodeType = nodeTypes.find(t => t.id === draggedNode);
+    if (!nodeType) return;
 
     const newNode: WorkflowNode = {
       id: `node-${Date.now()}`,
       type: draggedNode as any,
-      name: `${draggedNode} Node`,
+      name: `${nodeType.name} ${workflowNodes.length + 1}`,
       position: { x, y },
       config: {},
       status: 'idle',
-      connections: []
+      connections: [],
+      inputs: nodeType.inputs,
+      outputs: nodeType.outputs
     };
 
     setWorkflowNodes(prev => [...prev, newNode]);
     setDraggedNode(null);
-  }, [draggedNode]);
+  }, [draggedNode, canvasOffset, zoom, workflowNodes.length]);
+
+  const handleNodeClick = (nodeId: string) => {
+    setSelectedNode(selectedNode === nodeId ? null : nodeId);
+  };
+
+  const handlePortClick = (nodeId: string, port: string, isOutput: boolean) => {
+    if (!isConnecting) {
+      if (isOutput) {
+        setIsConnecting(true);
+        setConnectionStart({ nodeId, port });
+      }
+    } else {
+      if (!isOutput && connectionStart) {
+        // Create connection
+        const newConnection: Connection = {
+          id: `conn-${Date.now()}`,
+          from: connectionStart.nodeId,
+          to: nodeId,
+          fromPort: connectionStart.port,
+          toPort: port
+        };
+        setConnections(prev => [...prev, newConnection]);
+      }
+      setIsConnecting(false);
+      setConnectionStart(null);
+    }
+  };
+
+  const deleteNode = (nodeId: string) => {
+    setWorkflowNodes(prev => prev.filter(n => n.id !== nodeId));
+    setConnections(prev => prev.filter(c => c.from !== nodeId && c.to !== nodeId));
+    setSelectedNode(null);
+  };
+
+  const deleteConnection = (connectionId: string) => {
+    setConnections(prev => prev.filter(c => c.id !== connectionId));
+  };
 
   const createNewJob = () => {
     if (!newJobName.trim()) return;
@@ -139,6 +241,7 @@ function Manufacture() {
       name: newJobName,
       description: newJobDescription,
       workflow: workflowNodes,
+      connections: connections,
       status: 'draft',
       progress: 0,
       feedback: [],
@@ -152,6 +255,36 @@ function Manufacture() {
     setNewJobName('');
     setNewJobDescription('');
     setWorkflowNodes([]);
+    setConnections([]);
+  };
+
+  const exportAsQML = (jobId: string) => {
+    const job = jobs.find(j => j.id === jobId);
+    if (!job) return;
+
+    // Simulate QML export
+    const qmlData = {
+      name: job.name,
+      type: 'QUADRAX_ML_MODEL',
+      version: '1.0.0',
+      workflow: job.workflow,
+      connections: job.connections,
+      interface: {
+        inputs: job.workflow.filter(n => n.type === 'datakit').map(n => n.name),
+        outputs: job.workflow.filter(n => n.type === 'output').map(n => n.name),
+        controls: ['start', 'stop', 'configure', 'monitor']
+      },
+      metrics: job.metrics,
+      exportedAt: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(qmlData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${job.name.replace(/\s+/g, '_')}_QML.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const startJob = (jobId: string) => {
@@ -165,7 +298,7 @@ function Manufacture() {
     const interval = setInterval(() => {
       setJobs(prev => prev.map(job => {
         if (job.id === jobId && job.status === 'running') {
-          const newProgress = Math.min(job.progress + Math.random() * 10, 100);
+          const newProgress = Math.min(job.progress + Math.random() * 8, 100);
           if (newProgress >= 100) {
             clearInterval(interval);
             return { 
@@ -174,9 +307,9 @@ function Manufacture() {
               progress: 100,
               metrics: {
                 ...job.metrics,
-                accuracy: 90 + Math.random() * 10,
-                loss: Math.random() * 0.5,
-                duration: Math.floor(Math.random() * 60) + 10
+                accuracy: 92 + Math.random() * 8,
+                loss: Math.random() * 0.3,
+                duration: Math.floor(Math.random() * 45) + 15
               }
             };
           }
@@ -184,7 +317,7 @@ function Manufacture() {
         }
         return job;
       }));
-    }, 1000);
+    }, 800);
   };
 
   const stopJob = (jobId: string) => {
@@ -229,6 +362,41 @@ function Manufacture() {
     }
   };
 
+  const renderConnection = (connection: Connection) => {
+    const fromNode = workflowNodes.find(n => n.id === connection.from);
+    const toNode = workflowNodes.find(n => n.id === connection.to);
+    
+    if (!fromNode || !toNode) return null;
+
+    const fromX = fromNode.position.x + 120;
+    const fromY = fromNode.position.y + 40;
+    const toX = toNode.position.x;
+    const toY = toNode.position.y + 40;
+
+    const midX = (fromX + toX) / 2;
+
+    return (
+      <g key={connection.id}>
+        <path
+          d={`M ${fromX} ${fromY} C ${midX} ${fromY} ${midX} ${toY} ${toX} ${toY}`}
+          stroke="#00beef"
+          strokeWidth="2"
+          fill="none"
+          className="hover:stroke-[#00699a] cursor-pointer"
+          onClick={() => deleteConnection(connection.id)}
+        />
+        <circle
+          cx={midX}
+          cy={(fromY + toY) / 2}
+          r="4"
+          fill="#00beef"
+          className="hover:fill-[#00699a] cursor-pointer"
+          onClick={() => deleteConnection(connection.id)}
+        />
+      </g>
+    );
+  };
+
   const FeedbackModal = ({ jobId, onClose }: { jobId: string; onClose: () => void }) => {
     const [starRating, setStarRating] = useState(0);
     const [thumbsRating, setThumbsRating] = useState<'up' | 'down' | null>(null);
@@ -245,7 +413,7 @@ function Manufacture() {
       <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
         <div className="bg-gradient-to-b from-black to-[#005778] p-6 rounded-lg border border-[#00699a] max-w-md w-full mx-4">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-bold text-white">Rate This Job</h3>
+            <h3 className="text-xl font-bold text-white">Rate This QML Workflow</h3>
             <button onClick={onClose} className="text-gray-400 hover:text-white">
               <X size={20} />
             </button>
@@ -299,11 +467,11 @@ function Manufacture() {
 
             {/* Text Feedback */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Detailed Feedback</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">QML Performance Feedback</label>
               <textarea
                 value={textFeedback}
                 onChange={(e) => setTextFeedback(e.target.value)}
-                placeholder="Share your thoughts about this job's performance..."
+                placeholder="How did the QML device perform? Any suggestions for improvement?"
                 className="w-full px-3 py-2 bg-gradient-to-r from-black to-[#005778] border border-[#00699a] text-white placeholder:text-gray-400 rounded-lg focus:outline-none focus:border-[#00beef] resize-none"
                 rows={3}
               />
@@ -347,7 +515,7 @@ function Manufacture() {
               className="px-4 py-2 bg-[#00beef] hover:bg-[#00699a] text-black font-semibold rounded-lg transition-colors duration-300 flex items-center gap-2"
             >
               <Plus size={16} />
-              New Manufacturing Job
+              New QML Workflow
             </button>
             <button className="px-4 py-2 bg-[#00699a] hover:bg-[#00beef] text-white rounded-lg transition-colors duration-300 flex items-center gap-2">
               <Workflow size={16} />
@@ -396,7 +564,7 @@ function Manufacture() {
                 {job.status === 'running' && (
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-300">Progress</span>
+                      <span className="text-gray-300">QML Assembly Progress</span>
                       <span className="text-[#00beef]">{Math.round(job.progress)}%</span>
                     </div>
                     <div className="w-full bg-gray-700 rounded-full h-2">
@@ -411,7 +579,7 @@ function Manufacture() {
                 {/* Metrics */}
                 {Object.keys(job.metrics).length > 0 && (
                   <div className="mb-4 p-3 bg-black/30 rounded-lg">
-                    <h4 className="text-sm font-semibold text-white mb-2">Metrics</h4>
+                    <h4 className="text-sm font-semibold text-white mb-2">QML Performance</h4>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       {job.metrics.accuracy && (
                         <div>
@@ -427,7 +595,7 @@ function Manufacture() {
                       )}
                       {job.metrics.duration && (
                         <div>
-                          <span className="text-gray-400">Duration:</span>
+                          <span className="text-gray-400">Build Time:</span>
                           <span className="text-[#00beef] ml-1">{job.metrics.duration}min</span>
                         </div>
                       )}
@@ -444,7 +612,7 @@ function Manufacture() {
                 {/* Feedback Summary */}
                 {job.feedback.length > 0 && (
                   <div className="mb-4 p-3 bg-black/30 rounded-lg">
-                    <h4 className="text-sm font-semibold text-white mb-2">Feedback</h4>
+                    <h4 className="text-sm font-semibold text-white mb-2">User Feedback</h4>
                     <div className="flex items-center gap-3 text-xs">
                       {job.feedback.find(f => f.type === 'star') && (
                         <div className="flex items-center gap-1">
@@ -478,7 +646,7 @@ function Manufacture() {
                       className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-300 flex items-center justify-center gap-1"
                     >
                       <Play size={14} />
-                      Start
+                      Build QML
                     </button>
                   )}
                   {job.status === 'running' && (
@@ -491,16 +659,24 @@ function Manufacture() {
                     </button>
                   )}
                   {job.status === 'completed' && (
-                    <button
-                      onClick={() => {
-                        setSelectedJobForFeedback(job.id);
-                        setShowFeedbackModal(true);
-                      }}
-                      className="flex-1 px-3 py-2 bg-[#00beef] hover:bg-[#00699a] text-black rounded-lg transition-colors duration-300 flex items-center justify-center gap-1"
-                    >
-                      <Star size={14} />
-                      Rate
-                    </button>
+                    <>
+                      <button
+                        onClick={() => exportAsQML(job.id)}
+                        className="flex-1 px-3 py-2 bg-[#00beef] hover:bg-[#00699a] text-black rounded-lg transition-colors duration-300 flex items-center justify-center gap-1"
+                      >
+                        <Download size={14} />
+                        Export QML
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedJobForFeedback(job.id);
+                          setShowFeedbackModal(true);
+                        }}
+                        className="px-3 py-2 bg-[#00699a] hover:bg-[#00beef] text-white rounded-lg transition-colors duration-300"
+                      >
+                        <Star size={14} />
+                      </button>
+                    </>
                   )}
                   <button className="px-3 py-2 bg-[#00699a] hover:bg-[#00beef] text-white rounded-lg transition-colors duration-300">
                     <Settings size={14} />
@@ -511,11 +687,11 @@ function Manufacture() {
           })}
         </div>
 
-        {/* Workflow Builder */}
+        {/* Workflow Builder Canvas */}
         {isCreatingJob && (
           <div className="bg-black/80 backdrop-blur-sm p-6 rounded-lg border border-[#00699a]/30 mb-8">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-white">Create Manufacturing Job</h3>
+              <h3 className="text-xl font-bold text-white">QML Workflow Designer</h3>
               <button
                 onClick={() => setIsCreatingJob(false)}
                 className="text-gray-400 hover:text-white"
@@ -524,16 +700,16 @@ function Manufacture() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Job Configuration */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              {/* Node Palette */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Job Name</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Workflow Name</label>
                   <input
                     type="text"
                     value={newJobName}
                     onChange={(e) => setNewJobName(e.target.value)}
-                    placeholder="Enter job name..."
+                    placeholder="Enter QML workflow name..."
                     className="w-full px-3 py-2 bg-gradient-to-r from-black to-[#005778] border border-[#00699a] text-white placeholder:text-gray-400 rounded-lg focus:outline-none focus:border-[#00beef]"
                   />
                 </div>
@@ -542,7 +718,7 @@ function Manufacture() {
                   <textarea
                     value={newJobDescription}
                     onChange={(e) => setNewJobDescription(e.target.value)}
-                    placeholder="Describe your manufacturing job..."
+                    placeholder="Describe your QML device..."
                     className="w-full px-3 py-2 bg-gradient-to-r from-black to-[#005778] border border-[#00699a] text-white placeholder:text-gray-400 rounded-lg focus:outline-none focus:border-[#00beef] resize-none"
                     rows={3}
                   />
@@ -568,54 +744,159 @@ function Manufacture() {
                     ))}
                   </div>
                 </div>
+
+                {/* Canvas Controls */}
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold text-white">Canvas Controls</h4>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setZoom(Math.min(2, zoom + 0.1))}
+                      className="px-2 py-1 bg-[#00699a] hover:bg-[#00beef] text-white rounded text-sm"
+                    >
+                      Zoom +
+                    </button>
+                    <button
+                      onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
+                      className="px-2 py-1 bg-[#00699a] hover:bg-[#00beef] text-white rounded text-sm"
+                    >
+                      Zoom -
+                    </button>
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    Zoom: {Math.round(zoom * 100)}%
+                  </div>
+                </div>
               </div>
 
               {/* Workflow Canvas */}
-              <div className="lg:col-span-2">
-                <h4 className="text-sm font-semibold text-white mb-3">Workflow Canvas</h4>
+              <div className="lg:col-span-3">
+                <h4 className="text-sm font-semibold text-white mb-3">Visual Workflow Canvas</h4>
                 <div
                   ref={canvasRef}
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
                   className="relative w-full h-96 bg-gradient-to-b from-gray-900 to-black border-2 border-dashed border-[#00699a] rounded-lg overflow-hidden"
+                  style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}
                 >
-                  {workflowNodes.length === 0 ? (
+                  {/* Grid Background */}
+                  <div className="absolute inset-0 opacity-20">
+                    <svg width="100%" height="100%">
+                      <defs>
+                        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#00699a" strokeWidth="0.5"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill="url(#grid)" />
+                    </svg>
+                  </div>
+
+                  {/* Connections */}
+                  <svg className="absolute inset-0 pointer-events-none">
+                    {connections.map(renderConnection)}
+                  </svg>
+
+                  {/* Nodes */}
+                  {workflowNodes.map((node) => {
+                    const nodeType = nodeTypes.find(t => t.id === node.type);
+                    const NodeIcon = nodeType?.icon || Database;
+                    const isSelected = selectedNode === node.id;
+                    
+                    return (
+                      <div
+                        key={node.id}
+                        className={`absolute w-32 h-20 ${nodeType?.color} rounded-lg p-2 cursor-move shadow-lg border-2 transition-all duration-300 ${
+                          isSelected ? 'border-[#00beef] scale-105' : 'border-transparent'
+                        }`}
+                        style={{ left: node.position.x, top: node.position.y }}
+                        onClick={() => handleNodeClick(node.id)}
+                      >
+                        <div className="text-center text-white">
+                          <NodeIcon size={16} className="mx-auto mb-1" />
+                          <div className="text-xs font-medium truncate">{node.name}</div>
+                        </div>
+
+                        {/* Input Ports */}
+                        {node.inputs.map((input, index) => (
+                          <div
+                            key={`input-${index}`}
+                            className="absolute w-3 h-3 bg-white rounded-full border-2 border-gray-600 cursor-pointer hover:bg-[#00beef] transition-colors duration-300"
+                            style={{ left: -6, top: 8 + index * 12 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePortClick(node.id, input, false);
+                            }}
+                            title={input}
+                          />
+                        ))}
+
+                        {/* Output Ports */}
+                        {node.outputs.map((output, index) => (
+                          <div
+                            key={`output-${index}`}
+                            className="absolute w-3 h-3 bg-white rounded-full border-2 border-gray-600 cursor-pointer hover:bg-[#00beef] transition-colors duration-300"
+                            style={{ right: -6, top: 8 + index * 12 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePortClick(node.id, output, true);
+                            }}
+                            title={output}
+                          />
+                        ))}
+
+                        {/* Delete Button */}
+                        {isSelected && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteNode(node.id);
+                            }}
+                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs"
+                          >
+                            <X size={12} />
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  {/* Empty State */}
+                  {workflowNodes.length === 0 && (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-400">
                       <div className="text-center">
                         <Layers size={48} className="mx-auto mb-4 opacity-50" />
-                        <p>Drag components here to build your workflow</p>
+                        <p>Drag components here to build your QML workflow</p>
+                        <p className="text-sm mt-2">Connect nodes to create data flow</p>
                       </div>
                     </div>
-                  ) : (
-                    workflowNodes.map((node) => {
-                      const nodeType = nodeTypes.find(t => t.id === node.type);
-                      const NodeIcon = nodeType?.icon || Database;
-                      return (
-                        <div
-                          key={node.id}
-                          className={`absolute w-24 h-20 ${nodeType?.color} rounded-lg p-2 cursor-move shadow-lg`}
-                          style={{ left: node.position.x, top: node.position.y }}
-                        >
-                          <div className="text-center text-white">
-                            <NodeIcon size={16} className="mx-auto mb-1" />
-                            <div className="text-xs font-medium truncate">{node.name}</div>
-                          </div>
-                        </div>
-                      );
-                    })
                   )}
+                </div>
+
+                {/* Canvas Instructions */}
+                <div className="mt-4 p-3 bg-gradient-to-b from-[#005778] to-black rounded-lg border border-[#00699a]/30">
+                  <h5 className="text-white font-semibold mb-2">Canvas Instructions</h5>
+                  <div className="text-sm text-gray-300 space-y-1">
+                    <p>• Drag components from the left panel onto the canvas</p>
+                    <p>• Click output ports (right side) then input ports (left side) to connect nodes</p>
+                    <p>• Click nodes to select them, then click the X to delete</p>
+                    <p>• Click connections to delete them</p>
+                    <p>• Build a complete workflow ending with QML Export</p>
+                  </div>
                 </div>
 
                 <div className="flex gap-3 mt-4">
                   <button
                     onClick={createNewJob}
-                    disabled={!newJobName.trim()}
+                    disabled={!newJobName.trim() || workflowNodes.length === 0}
                     className="px-4 py-2 bg-[#00beef] hover:bg-[#00699a] disabled:bg-gray-600 disabled:cursor-not-allowed text-black disabled:text-gray-400 font-semibold rounded-lg transition-colors duration-300"
                   >
-                    Create Job
+                    Create QML Workflow
                   </button>
                   <button
-                    onClick={() => setWorkflowNodes([])}
+                    onClick={() => {
+                      setWorkflowNodes([]);
+                      setConnections([]);
+                      setSelectedNode(null);
+                    }}
                     className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-300"
                   >
                     Clear Canvas
@@ -630,10 +911,10 @@ function Manufacture() {
         {jobs.length === 0 && !isCreatingJob && (
           <div className="text-center py-16">
             <div className="bg-black/80 backdrop-blur-sm rounded-lg p-12 max-w-2xl mx-auto">
-              <Zap size={64} className="mx-auto text-gray-400 mb-6" />
-              <h3 className="text-2xl font-bold text-white mb-4">Manufacturing Playground</h3>
+              <Workflow size={64} className="mx-auto text-gray-400 mb-6" />
+              <h3 className="text-2xl font-bold text-white mb-4">QML Manufacturing Playground</h3>
               <p className="text-gray-300 mb-8 text-lg">
-                Create intelligent manufacturing jobs with drag-and-drop workflows, fine-tuning capabilities, and comprehensive feedback systems.
+                Design intelligent workflows with drag-and-drop components, then export them as QUADRAX•ML virtual devices.
               </p>
               
               <button 
@@ -641,7 +922,7 @@ function Manufacture() {
                 className="px-8 py-4 bg-[#00beef] hover:bg-[#00699a] text-black font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 mx-auto"
               >
                 <Plus size={20} />
-                Start Manufacturing
+                Start QML Manufacturing
               </button>
             </div>
           </div>
