@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Brain, Zap, MapPin, Play, Pause, Settings, Download, Upload, BarChart3, Clock, CheckCircle, AlertCircle, Star, Users, Terminal as TerminalIcon, Code, Plus, Gauge, Cpu, Monitor, Volume2, VolumeX, RotateCcw, Power, Sliders, Target, Activity, TrendingUp, Eye, EyeOff, Maximize2, Minimize2 } from 'lucide-react';
+import { Brain, Zap, MapPin, Play, Pause, Settings, Download, Upload, BarChart3, Clock, CheckCircle, AlertCircle, Star, Users, Terminal as TerminalIcon, Code, Plus, Gauge, Cpu, Monitor, Volume2, VolumeX, RotateCcw, Power, Sliders, Target, Activity, TrendingUp, Eye, EyeOff, Maximize2, Minimize2, Layers, Shield } from 'lucide-react';
 import Terminal from './Terminal';
 import CodeEditor from './CodeEditor';
 
