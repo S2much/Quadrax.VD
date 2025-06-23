@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Brain, Zap, MapPin, Play, Pause, Settings, Download, Upload, BarChart3, Clock, CheckCircle, AlertCircle, Star, Users, Terminal as TerminalIcon, Code, Plus, Gauge, Cpu, Monitor, Volume2, VolumeX, RotateCcw, Power, Sliders, Target, Activity, TrendingUp, Eye, EyeOff, Maximize2, Minimize2, Layers, Shield } from 'lucide-react';
+import { Brain, Zap, Play, Pause, Settings, Download, Upload, BarChart3, Clock, CheckCircle, AlertCircle, Star, Users, Terminal as TerminalIcon, Code, Plus, Gauge, Cpu, Monitor, Volume2, VolumeX, RotateCcw, Power, Sliders, Target, Activity, TrendingUp, Eye, EyeOff, Maximize2, Minimize2, Layers, Shield, Save, X } from 'lucide-react';
 import Terminal from './Terminal';
 import CodeEditor from './CodeEditor';
 
@@ -13,6 +13,8 @@ interface QMLDevice {
   requests: number;
   description: string;
   controls: any;
+  isOn: boolean;
+  isMaximized: boolean;
 }
 
 function Models() {
@@ -21,6 +23,11 @@ function Models() {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [terminalShell, setTerminalShell] = useState<'bash' | 'powershell'>('bash');
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
+  const [hoveredDevice, setHoveredDevice] = useState<string | null>(null);
+  const [showDeveloperTools, setShowDeveloperTools] = useState(false);
+  const [activeQML, setActiveQML] = useState<string | null>(null);
+  const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const [pendingQML, setPendingQML] = useState<string | null>(null);
 
   // QML Device States
   const [qmlDevices, setQmlDevices] = useState<QMLDevice[]>([
@@ -32,13 +39,15 @@ function Models() {
       accuracy: 96.8,
       uptime: 99.2,
       requests: 15420,
-      description: 'Real-time sentiment analysis for customer feedback',
+      description: 'Real-time sentiment analysis for customer feedback with advanced NLP processing and emotion detection capabilities.',
       controls: {
         threshold: 0.85,
         batchSize: 32,
         autoScale: true,
         volume: 75
-      }
+      },
+      isOn: false,
+      isMaximized: false
     },
     {
       id: 'qml-standard-002',
@@ -48,14 +57,16 @@ function Models() {
       accuracy: 94.2,
       uptime: 97.8,
       requests: 8750,
-      description: 'Advanced fraud detection with real-time monitoring',
+      description: 'Advanced fraud detection with real-time monitoring, pattern recognition, and risk assessment algorithms.',
       controls: {
         sensitivity: 0.92,
         alertThreshold: 0.7,
         monitoringEnabled: true,
         processingSpeed: 'high',
         riskLevel: 'medium'
-      }
+      },
+      isOn: false,
+      isMaximized: false
     },
     {
       id: 'qml-complex-003',
@@ -65,7 +76,7 @@ function Models() {
       accuracy: 98.1,
       uptime: 99.9,
       requests: 32100,
-      description: 'Advanced AI system with vision, language, and reasoning capabilities',
+      description: 'Advanced AI system with vision, language, and reasoning capabilities. Supports multi-modal inputs and complex decision making.',
       controls: {
         visionEnabled: true,
         languageModel: 'advanced',
@@ -75,7 +86,9 @@ function Models() {
         multiModal: true,
         contextWindow: 32000,
         temperature: 0.3
-      }
+      },
+      isOn: false,
+      isMaximized: false
     }
   ]);
 
@@ -92,15 +105,87 @@ function Models() {
     ));
   };
 
-  const toggleDeviceStatus = (deviceId: string) => {
+  const toggleDevicePower = (deviceId: string) => {
+    const device = qmlDevices.find(d => d.id === deviceId);
+    if (!device) return;
+
+    // If turning on and another QML is active, show confirmation
+    if (!device.isOn && activeQML && activeQML !== deviceId) {
+      setPendingQML(deviceId);
+      setShowSaveConfirm(true);
+      return;
+    }
+
     setQmlDevices(prev => prev.map(device => 
       device.id === deviceId 
         ? { 
             ...device, 
-            status: device.status === 'active' ? 'idle' : 'active' as any
+            isOn: !device.isOn,
+            isMaximized: !device.isOn ? false : device.isMaximized
           }
         : device
     ));
+
+    if (!device.isOn) {
+      setActiveQML(deviceId);
+      setShowDeveloperTools(false);
+    } else {
+      setActiveQML(null);
+      setShowDeveloperTools(false);
+    }
+  };
+
+  const maximizeDevice = (deviceId: string) => {
+    setQmlDevices(prev => prev.map(device => 
+      device.id === deviceId 
+        ? { ...device, isMaximized: !device.isMaximized }
+        : device
+    ));
+  };
+
+  const handleTrainClick = (deviceId: string) => {
+    if (activeQML === deviceId) {
+      setShowDeveloperTools(true);
+    }
+  };
+
+  const handleSaveAndSwitch = () => {
+    if (pendingQML) {
+      // Turn off current QML
+      setQmlDevices(prev => prev.map(device => 
+        device.id === activeQML 
+          ? { ...device, isOn: false, isMaximized: false }
+          : device.id === pendingQML
+          ? { ...device, isOn: true }
+          : device
+      ));
+      setActiveQML(pendingQML);
+      setShowDeveloperTools(false);
+    }
+    setShowSaveConfirm(false);
+    setPendingQML(null);
+  };
+
+  const handleDontSaveAndSwitch = () => {
+    if (pendingQML) {
+      // Turn off current QML without saving
+      setQmlDevices(prev => prev.map(device => 
+        device.id === activeQML 
+          ? { ...device, isOn: false, isMaximized: false }
+          : device.id === pendingQML
+          ? { ...device, isOn: true }
+          : device
+      ));
+      setActiveQML(pendingQML);
+      setShowDeveloperTools(false);
+    }
+    setShowSaveConfirm(false);
+    setPendingQML(null);
+  };
+
+  const handleCancelSwitch = () => {
+    setShowSaveConfirm(false);
+    setPendingQML(null);
   };
 
   const getStatusColor = (status: string) => {
@@ -145,69 +230,81 @@ function Models() {
       <div className="space-y-3">
         {/* Power Button */}
         <button
-          onClick={() => toggleDeviceStatus(device.id)}
+          onClick={() => toggleDevicePower(device.id)}
           className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-            device.status === 'active' 
+            device.isOn 
               ? 'bg-green-600 hover:bg-green-700 text-white' 
               : 'bg-gray-600 hover:bg-gray-700 text-white'
           }`}
         >
           <Power size={16} />
-          {device.status === 'active' ? 'ACTIVE' : 'STANDBY'}
+          {device.isOn ? 'ON' : 'OFF'}
         </button>
 
-        {/* Threshold Slider */}
-        <div className="bg-black/30 p-3 rounded-lg">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-300">Threshold</span>
-            <span className="text-sm text-[#00beef]">{device.controls.threshold}</span>
-          </div>
-          <input
-            type="range"
-            min="0.1"
-            max="1"
-            step="0.01"
-            value={device.controls.threshold}
-            onChange={(e) => updateDeviceControl(device.id, 'threshold', parseFloat(e.target.value))}
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-          />
-        </div>
-
-        {/* Volume Control */}
-        <div className="bg-black/30 p-3 rounded-lg">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-300">Volume</span>
-            <div className="flex items-center gap-2">
-              <Volume2 size={14} className="text-[#00beef]" />
-              <span className="text-sm text-[#00beef]">{device.controls.volume}%</span>
+        {device.isOn && (
+          <>
+            {/* Threshold Slider */}
+            <div className="bg-black/30 p-3 rounded-lg">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-gray-300">Threshold</span>
+                <span className="text-sm text-[#00beef]">{device.controls.threshold}</span>
+              </div>
+              <input
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.01"
+                value={device.controls.threshold}
+                onChange={(e) => updateDeviceControl(device.id, 'threshold', parseFloat(e.target.value))}
+                className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+              />
             </div>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={device.controls.volume}
-            onChange={(e) => updateDeviceControl(device.id, 'volume', parseInt(e.target.value))}
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-          />
-        </div>
 
-        {/* Auto Scale Toggle */}
-        <div className="flex items-center justify-between bg-black/30 p-3 rounded-lg">
-          <span className="text-sm text-gray-300">Auto Scale</span>
-          <button
-            onClick={() => updateDeviceControl(device.id, 'autoScale', !device.controls.autoScale)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
-              device.controls.autoScale ? 'bg-[#00beef]' : 'bg-gray-600'
-            }`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
-                device.controls.autoScale ? 'translate-x-6' : 'translate-x-1'
-              }`}
-            />
-          </button>
-        </div>
+            {/* Volume Control */}
+            <div className="bg-black/30 p-3 rounded-lg">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-gray-300">Volume</span>
+                <div className="flex items-center gap-2">
+                  <Volume2 size={14} className="text-[#00beef]" />
+                  <span className="text-sm text-[#00beef]">{device.controls.volume}%</span>
+                </div>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={device.controls.volume}
+                onChange={(e) => updateDeviceControl(device.id, 'volume', parseInt(e.target.value))}
+                className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+              />
+            </div>
+
+            {/* Auto Scale Toggle */}
+            <div className="flex items-center justify-between bg-black/30 p-3 rounded-lg">
+              <span className="text-sm text-gray-300">Auto Scale</span>
+              <button
+                onClick={() => updateDeviceControl(device.id, 'autoScale', !device.controls.autoScale)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
+                  device.controls.autoScale ? 'bg-[#00beef]' : 'bg-gray-600'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                    device.controls.autoScale ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Train Button */}
+            <button
+              onClick={() => handleTrainClick(device.id)}
+              className="w-full py-2 bg-[#00beef] hover:bg-[#00699a] text-black font-semibold rounded-lg transition-colors duration-300"
+            >
+              Train Model
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -286,78 +383,92 @@ function Models() {
         {/* Power and Processing Speed */}
         <div className="grid grid-cols-2 gap-4">
           <button
-            onClick={() => toggleDeviceStatus(device.id)}
+            onClick={() => toggleDevicePower(device.id)}
             className={`py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-              device.status === 'active' 
+              device.isOn 
                 ? 'bg-green-600 hover:bg-green-700 text-white' 
                 : 'bg-gray-600 hover:bg-gray-700 text-white'
             }`}
           >
             <Power size={16} />
-            {device.status === 'active' ? 'ACTIVE' : 'STANDBY'}
+            {device.isOn ? 'ON' : 'OFF'}
           </button>
           
-          <select
-            value={device.controls.processingSpeed}
-            onChange={(e) => updateDeviceControl(device.id, 'processingSpeed', e.target.value)}
-            className="py-3 px-4 bg-black/50 border border-[#00699a] text-white rounded-lg focus:outline-none focus:border-[#00beef]"
-          >
-            <option value="low">Low Speed</option>
-            <option value="medium">Medium Speed</option>
-            <option value="high">High Speed</option>
-          </select>
+          {device.isOn && (
+            <select
+              value={device.controls.processingSpeed}
+              onChange={(e) => updateDeviceControl(device.id, 'processingSpeed', e.target.value)}
+              className="py-3 px-4 bg-black/50 border border-[#00699a] text-white rounded-lg focus:outline-none focus:border-[#00beef]"
+            >
+              <option value="low">Low Speed</option>
+              <option value="medium">Medium Speed</option>
+              <option value="high">High Speed</option>
+            </select>
+          )}
         </div>
 
-        {/* Sensitivity Control */}
-        <div className="bg-black/30 p-4 rounded-lg">
-          <div className="flex justify-between items-center mb-3">
-            <span className="text-sm text-gray-300">Sensitivity</span>
-            <span className="text-sm text-[#00beef]">{device.controls.sensitivity}</span>
-          </div>
-          <input
-            type="range"
-            min="0.1"
-            max="1"
-            step="0.01"
-            value={device.controls.sensitivity}
-            onChange={(e) => updateDeviceControl(device.id, 'sensitivity', parseFloat(e.target.value))}
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-          />
-        </div>
+        {device.isOn && (
+          <>
+            {/* Sensitivity Control */}
+            <div className="bg-black/30 p-4 rounded-lg">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-sm text-gray-300">Sensitivity</span>
+                <span className="text-sm text-[#00beef]">{device.controls.sensitivity}</span>
+              </div>
+              <input
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.01"
+                value={device.controls.sensitivity}
+                onChange={(e) => updateDeviceControl(device.id, 'sensitivity', parseFloat(e.target.value))}
+                className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+              />
+            </div>
 
-        {/* Alert Threshold */}
-        <div className="bg-black/30 p-4 rounded-lg">
-          <div className="flex justify-between items-center mb-3">
-            <span className="text-sm text-gray-300">Alert Threshold</span>
-            <span className="text-sm text-[#00beef]">{device.controls.alertThreshold}</span>
-          </div>
-          <input
-            type="range"
-            min="0.1"
-            max="1"
-            step="0.01"
-            value={device.controls.alertThreshold}
-            onChange={(e) => updateDeviceControl(device.id, 'alertThreshold', parseFloat(e.target.value))}
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-          />
-        </div>
+            {/* Alert Threshold */}
+            <div className="bg-black/30 p-4 rounded-lg">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-sm text-gray-300">Alert Threshold</span>
+                <span className="text-sm text-[#00beef]">{device.controls.alertThreshold}</span>
+              </div>
+              <input
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.01"
+                value={device.controls.alertThreshold}
+                onChange={(e) => updateDeviceControl(device.id, 'alertThreshold', parseFloat(e.target.value))}
+                className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+              />
+            </div>
 
-        {/* Monitoring Toggle */}
-        <div className="flex items-center justify-between bg-black/30 p-4 rounded-lg">
-          <span className="text-sm text-gray-300">Real-time Monitoring</span>
-          <button
-            onClick={() => updateDeviceControl(device.id, 'monitoringEnabled', !device.controls.monitoringEnabled)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
-              device.controls.monitoringEnabled ? 'bg-[#00beef]' : 'bg-gray-600'
-            }`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
-                device.controls.monitoringEnabled ? 'translate-x-6' : 'translate-x-1'
-              }`}
-            />
-          </button>
-        </div>
+            {/* Monitoring Toggle */}
+            <div className="flex items-center justify-between bg-black/30 p-4 rounded-lg">
+              <span className="text-sm text-gray-300">Real-time Monitoring</span>
+              <button
+                onClick={() => updateDeviceControl(device.id, 'monitoringEnabled', !device.controls.monitoringEnabled)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
+                  device.controls.monitoringEnabled ? 'bg-[#00beef]' : 'bg-gray-600'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                    device.controls.monitoringEnabled ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Train Button */}
+            <button
+              onClick={() => handleTrainClick(device.id)}
+              className="w-full py-3 bg-[#00beef] hover:bg-[#00699a] text-black font-semibold rounded-lg transition-colors duration-300"
+            >
+              Train Advanced Model
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -418,190 +529,398 @@ function Models() {
           {/* Power and Language Model */}
           <div className="grid grid-cols-2 gap-3">
             <button
-              onClick={() => toggleDeviceStatus(device.id)}
+              onClick={() => toggleDevicePower(device.id)}
               className={`py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-                device.status === 'active' 
+                device.isOn 
                   ? 'bg-green-600 hover:bg-green-700 text-white' 
                   : 'bg-gray-600 hover:bg-gray-700 text-white'
               }`}
             >
               <Power size={16} />
-              {device.status === 'active' ? 'ACTIVE' : 'STANDBY'}
+              {device.isOn ? 'ON' : 'OFF'}
             </button>
             
-            <select
-              value={device.controls.languageModel}
-              onChange={(e) => updateDeviceControl(device.id, 'languageModel', e.target.value)}
-              className="py-3 px-3 bg-black/50 border border-[#00699a] text-white rounded-lg focus:outline-none focus:border-[#00beef] text-sm"
-            >
-              <option value="basic">Basic Model</option>
-              <option value="advanced">Advanced Model</option>
-              <option value="expert">Expert Model</option>
-            </select>
+            {device.isOn && (
+              <select
+                value={device.controls.languageModel}
+                onChange={(e) => updateDeviceControl(device.id, 'languageModel', e.target.value)}
+                className="py-3 px-3 bg-black/50 border border-[#00699a] text-white rounded-lg focus:outline-none focus:border-[#00beef] text-sm"
+              >
+                <option value="basic">Basic Model</option>
+                <option value="advanced">Advanced Model</option>
+                <option value="expert">Expert Model</option>
+              </select>
+            )}
           </div>
 
-          {/* Temperature Control */}
-          <div className="bg-black/30 p-4 rounded-lg">
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-sm text-gray-300">Temperature</span>
-              <span className="text-sm text-[#00beef]">{device.controls.temperature}</span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={device.controls.temperature}
-              onChange={(e) => updateDeviceControl(device.id, 'temperature', parseFloat(e.target.value))}
-              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-            />
-            <div className="flex justify-between text-xs text-gray-400 mt-1">
-              <span>Focused</span>
-              <span>Creative</span>
-            </div>
-          </div>
+          {device.isOn && (
+            <>
+              {/* Temperature Control */}
+              <div className="bg-black/30 p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-sm text-gray-300">Temperature</span>
+                  <span className="text-sm text-[#00beef]">{device.controls.temperature}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={device.controls.temperature}
+                  onChange={(e) => updateDeviceControl(device.id, 'temperature', parseFloat(e.target.value))}
+                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                />
+                <div className="flex justify-between text-xs text-gray-400 mt-1">
+                  <span>Focused</span>
+                  <span>Creative</span>
+                </div>
+              </div>
 
-          {/* Creativity Level */}
-          <div className="bg-black/30 p-4 rounded-lg">
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-sm text-gray-300">Creativity Level</span>
-              <span className="text-sm text-[#00beef]">{device.controls.creativityLevel}</span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={device.controls.creativityLevel}
-              onChange={(e) => updateDeviceControl(device.id, 'creativityLevel', parseFloat(e.target.value))}
-              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-            />
-          </div>
+              {/* Creativity Level */}
+              <div className="bg-black/30 p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-sm text-gray-300">Creativity Level</span>
+                  <span className="text-sm text-[#00beef]">{device.controls.creativityLevel}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={device.controls.creativityLevel}
+                  onChange={(e) => updateDeviceControl(device.id, 'creativityLevel', parseFloat(e.target.value))}
+                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                />
+              </div>
 
-          {/* Reasoning Depth */}
-          <div className="bg-black/30 p-4 rounded-lg">
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-sm text-gray-300">Reasoning Depth</span>
-              <span className="text-sm text-[#00beef]">{device.controls.reasoningDepth}</span>
-            </div>
-            <input
-              type="range"
-              min="1"
-              max="10"
-              step="1"
-              value={device.controls.reasoningDepth}
-              onChange={(e) => updateDeviceControl(device.id, 'reasoningDepth', parseInt(e.target.value))}
-              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-            />
-          </div>
+              {/* Reasoning Depth */}
+              <div className="bg-black/30 p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-sm text-gray-300">Reasoning Depth</span>
+                  <span className="text-sm text-[#00beef]">{device.controls.reasoningDepth}</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  step="1"
+                  value={device.controls.reasoningDepth}
+                  onChange={(e) => updateDeviceControl(device.id, 'reasoningDepth', parseInt(e.target.value))}
+                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Right Panel - Advanced Features */}
         <div className="space-y-4">
-          {/* Feature Toggles */}
-          <div className="bg-black/30 p-4 rounded-lg space-y-3">
-            <h4 className="text-sm font-semibold text-white mb-3">Advanced Features</h4>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Eye size={16} className="text-[#00beef]" />
-                <span className="text-sm text-gray-300">Vision Processing</span>
-              </div>
-              <button
-                onClick={() => updateDeviceControl(device.id, 'visionEnabled', !device.controls.visionEnabled)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
-                  device.controls.visionEnabled ? 'bg-[#00beef]' : 'bg-gray-600'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
-                    device.controls.visionEnabled ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </div>
+          {device.isOn && (
+            <>
+              {/* Feature Toggles */}
+              <div className="bg-black/30 p-4 rounded-lg space-y-3">
+                <h4 className="text-sm font-semibold text-white mb-3">Advanced Features</h4>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Eye size={16} className="text-[#00beef]" />
+                    <span className="text-sm text-gray-300">Vision Processing</span>
+                  </div>
+                  <button
+                    onClick={() => updateDeviceControl(device.id, 'visionEnabled', !device.controls.visionEnabled)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
+                      device.controls.visionEnabled ? 'bg-[#00beef]' : 'bg-gray-600'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                        device.controls.visionEnabled ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Layers size={16} className="text-[#00beef]" />
-                <span className="text-sm text-gray-300">Multi-Modal</span>
-              </div>
-              <button
-                onClick={() => updateDeviceControl(device.id, 'multiModal', !device.controls.multiModal)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
-                  device.controls.multiModal ? 'bg-[#00beef]' : 'bg-gray-600'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
-                    device.controls.multiModal ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Layers size={16} className="text-[#00beef]" />
+                    <span className="text-sm text-gray-300">Multi-Modal</span>
+                  </div>
+                  <button
+                    onClick={() => updateDeviceControl(device.id, 'multiModal', !device.controls.multiModal)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
+                      device.controls.multiModal ? 'bg-[#00beef]' : 'bg-gray-600'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                        device.controls.multiModal ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Shield size={16} className="text-[#00beef]" />
-                <span className="text-sm text-gray-300">Safety Filter</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Shield size={16} className="text-[#00beef]" />
+                    <span className="text-sm text-gray-300">Safety Filter</span>
+                  </div>
+                  <button
+                    onClick={() => updateDeviceControl(device.id, 'safetyFilter', !device.controls.safetyFilter)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
+                      device.controls.safetyFilter ? 'bg-[#00beef]' : 'bg-gray-600'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                        device.controls.safetyFilter ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={() => updateDeviceControl(device.id, 'safetyFilter', !device.controls.safetyFilter)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
-                  device.controls.safetyFilter ? 'bg-[#00beef]' : 'bg-gray-600'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
-                    device.controls.safetyFilter ? 'translate-x-6' : 'translate-x-1'
-                  }`}
+
+              {/* Context Window */}
+              <div className="bg-black/30 p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-sm text-gray-300">Context Window</span>
+                  <span className="text-sm text-[#00beef]">{device.controls.contextWindow.toLocaleString()}</span>
+                </div>
+                <input
+                  type="range"
+                  min="1000"
+                  max="100000"
+                  step="1000"
+                  value={device.controls.contextWindow}
+                  onChange={(e) => updateDeviceControl(device.id, 'contextWindow', parseInt(e.target.value))}
+                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
                 />
-              </button>
+                <div className="flex justify-between text-xs text-gray-400 mt-1">
+                  <span>1K</span>
+                  <span>100K</span>
+                </div>
+              </div>
+
+              {/* System Status */}
+              <div className="bg-gradient-to-b from-[#00beef]/10 to-black/50 p-4 rounded-lg border border-[#00beef]/30">
+                <h4 className="text-sm font-semibold text-white mb-3">System Status</h4>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-gray-300">CPU Usage</span>
+                    <span className="text-green-400">67%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-300">Memory</span>
+                    <span className="text-yellow-400">82%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-300">GPU Utilization</span>
+                    <span className="text-green-400">45%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-300">Network I/O</span>
+                    <span className="text-blue-400">1.2 GB/s</span>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {device.isOn && (
+            <button
+              onClick={() => handleTrainClick(device.id)}
+              className="w-full py-3 bg-[#00beef] hover:bg-[#00699a] text-black font-semibold rounded-lg transition-colors duration-300"
+            >
+              Train Complex Model
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  const QMLGridItem = ({ device }: { device: QMLDevice }) => (
+    <div 
+      className="relative bg-gradient-to-b from-black to-[#005778] p-4 rounded-lg border border-[#00699a]/30 hover:border-[#00699a] transition-all duration-300 cursor-pointer"
+      onMouseEnter={() => setHoveredDevice(device.id)}
+      onMouseLeave={() => setHoveredDevice(null)}
+    >
+      <div className="flex justify-between items-center">
+        <h3 className="text-white font-semibold truncate flex-1 mr-2">{device.name}</h3>
+        <button
+          onClick={() => toggleDevicePower(device.id)}
+          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+            device.isOn 
+              ? 'bg-green-600 hover:bg-green-700 text-white' 
+              : 'bg-gray-600 hover:bg-gray-700 text-white'
+          }`}
+        >
+          <Power size={16} />
+        </button>
+      </div>
+
+      {/* Hover Description */}
+      {hoveredDevice === device.id && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-black/95 backdrop-blur-sm p-4 rounded-lg border border-[#00699a] z-10 shadow-2xl">
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <h4 className="text-white font-semibold mb-2">{device.name}</h4>
+              <p className="text-gray-300 text-sm mb-3">{device.description}</p>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <span className="text-gray-400">Accuracy:</span>
+                  <span className="text-[#00beef] ml-1">{device.accuracy}%</span>
+                </div>
+                <div>
+                  <span className="text-gray-400">Uptime:</span>
+                  <span className="text-green-400 ml-1">{device.uptime}%</span>
+                </div>
+                <div>
+                  <span className="text-gray-400">Requests:</span>
+                  <span className="text-blue-400 ml-1">{device.requests.toLocaleString()}</span>
+                </div>
+                <div>
+                  <span className="text-gray-400">Type:</span>
+                  <span className="text-purple-400 ml-1 capitalize">{device.type}</span>
+                </div>
+              </div>
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleDevicePower(device.id);
+                  }}
+                  className={`px-3 py-1 rounded text-xs font-semibold transition-colors duration-300 ${
+                    device.isOn 
+                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                      : 'bg-gray-600 hover:bg-gray-700 text-white'
+                  }`}
+                >
+                  <Power size={12} className="inline mr-1" />
+                  {device.isOn ? 'ON' : 'OFF'}
+                </button>
+                {device.isOn && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      maximizeDevice(device.id);
+                    }}
+                    className="px-3 py-1 bg-[#00beef] hover:bg-[#00699a] text-black rounded text-xs font-semibold transition-colors duration-300"
+                  >
+                    <Maximize2 size={12} className="inline mr-1" />
+                    Maximize
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="w-24 h-16 bg-gradient-to-b from-[#00beef]/20 to-black/50 rounded border border-[#00beef]/50 flex items-center justify-center">
+              <Brain size={24} className="text-[#00beef]" />
             </div>
           </div>
+        </div>
+      )}
+    </div>
+  );
 
-          {/* Context Window */}
+  const DeveloperTools = () => (
+    <div className="fixed right-0 top-16 h-[calc(100vh-4rem)] w-80 bg-gradient-to-b from-black to-[#005778] border-l border-[#00699a] shadow-2xl z-40 overflow-y-auto">
+      <div className="p-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-bold text-white">Developer Tools</h3>
+          <button
+            onClick={() => setShowDeveloperTools(false)}
+            className="text-gray-400 hover:text-white"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          {/* Training Configuration */}
           <div className="bg-black/30 p-4 rounded-lg">
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-sm text-gray-300">Context Window</span>
-              <span className="text-sm text-[#00beef]">{device.controls.contextWindow.toLocaleString()}</span>
-            </div>
-            <input
-              type="range"
-              min="1000"
-              max="100000"
-              step="1000"
-              value={device.controls.contextWindow}
-              onChange={(e) => updateDeviceControl(device.id, 'contextWindow', parseInt(e.target.value))}
-              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-            />
-            <div className="flex justify-between text-xs text-gray-400 mt-1">
-              <span>1K</span>
-              <span>100K</span>
+            <h4 className="text-white font-semibold mb-3">Training Configuration</h4>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm text-gray-300 mb-1">Learning Rate</label>
+                <input
+                  type="range"
+                  min="0.001"
+                  max="0.1"
+                  step="0.001"
+                  defaultValue="0.01"
+                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-300 mb-1">Batch Size</label>
+                <select className="w-full px-3 py-2 bg-black border border-[#00699a] text-white rounded focus:outline-none focus:border-[#00beef]">
+                  <option value="16">16</option>
+                  <option value="32">32</option>
+                  <option value="64">64</option>
+                  <option value="128">128</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-300 mb-1">Epochs</label>
+                <input
+                  type="number"
+                  defaultValue="100"
+                  className="w-full px-3 py-2 bg-black border border-[#00699a] text-white rounded focus:outline-none focus:border-[#00beef]"
+                />
+              </div>
             </div>
           </div>
 
-          {/* System Status */}
-          <div className="bg-gradient-to-b from-[#00beef]/10 to-black/50 p-4 rounded-lg border border-[#00beef]/30">
-            <h4 className="text-sm font-semibold text-white mb-3">System Status</h4>
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between">
-                <span className="text-gray-300">CPU Usage</span>
-                <span className="text-green-400">67%</span>
+          {/* Training Progress */}
+          <div className="bg-black/30 p-4 rounded-lg">
+            <h4 className="text-white font-semibold mb-3">Training Progress</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-300">Epoch 45/100</span>
+                <span className="text-[#00beef]">45%</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-300">Memory</span>
-                <span className="text-yellow-400">82%</span>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div className="bg-gradient-to-r from-[#00beef] to-[#00699a] h-2 rounded-full w-[45%]" />
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-300">GPU Utilization</span>
-                <span className="text-green-400">45%</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-300">Network I/O</span>
-                <span className="text-blue-400">1.2 GB/s</span>
+              <div className="text-xs text-gray-400">
+                Loss: 0.234 | Accuracy: 94.7%
               </div>
             </div>
+          </div>
+
+          {/* Model Metrics */}
+          <div className="bg-black/30 p-4 rounded-lg">
+            <h4 className="text-white font-semibold mb-3">Model Metrics</h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-300">Validation Accuracy</span>
+                <span className="text-green-400">96.8%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-300">Training Loss</span>
+                <span className="text-yellow-400">0.234</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-300">F1 Score</span>
+                <span className="text-blue-400">0.947</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-300">Inference Time</span>
+                <span className="text-purple-400">12ms</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="space-y-2">
+            <button className="w-full py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-300">
+              Start Training
+            </button>
+            <button className="w-full py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors duration-300">
+              Pause Training
+            </button>
+            <button className="w-full py-2 bg-[#00beef] hover:bg-[#00699a] text-black rounded-lg transition-colors duration-300">
+              Save Model
+            </button>
           </div>
         </div>
       </div>
@@ -676,99 +995,129 @@ function Models() {
           </div>
         </div>
 
-        {/* CLI Command Examples */}
-        <div className="bg-gradient-to-b from-[#005778] to-black p-4 rounded-lg mb-6 border border-[#00699a]/30">
-          <h5 className="text-white font-semibold mb-3">QML Device CLI Commands</h5>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-            <div>
-              <span className="text-[#00beef] font-mono">qml deploy {'<device>'}</span>
-              <span className="text-gray-300 block">Deploy QML device</span>
-            </div>
-            <div>
-              <span className="text-[#00beef] font-mono">qml status {'<device>'}</span>
-              <span className="text-gray-300 block">Check device status</span>
-            </div>
-            <div>
-              <span className="text-[#00beef] font-mono">qml control {'<device>'}</span>
-              <span className="text-gray-300 block">Access device controls</span>
-            </div>
-            <div>
-              <span className="text-[#00beef] font-mono">qml monitor {'<device>'}</span>
-              <span className="text-gray-300 block">Monitor performance</span>
-            </div>
+        {/* QML Grid View */}
+        <div className="bg-black/80 backdrop-blur-sm p-6 rounded-lg mb-6">
+          <h3 className="text-2xl font-bold text-white mb-6">QML Devices</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {qmlDevices.map((device) => (
+              <QMLGridItem key={device.id} device={device} />
+            ))}
           </div>
         </div>
 
-        {/* QML Devices Showcase */}
-        <div className="space-y-8">
-          <div>
-            <h3 className="text-2xl font-bold text-white mb-6">Active QML Devices</h3>
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 justify-items-center">
-              {qmlDevices.map((device) => (
-                <div key={device.id}>
-                  {device.type === 'compact' && <CompactQMLDevice device={device} />}
-                  {device.type === 'standard' && <StandardQMLDevice device={device} />}
-                  {device.type === 'complex' && <ComplexQMLDevice device={device} />}
-                </div>
-              ))}
+        {/* Maximized QML Devices */}
+        {qmlDevices.some(device => device.isOn && device.isMaximized) && (
+          <div className="space-y-8">
+            <h3 className="text-2xl font-bold text-white">Active QML Devices</h3>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 justify-items-center">
+              {qmlDevices
+                .filter(device => device.isOn && device.isMaximized)
+                .map((device) => (
+                  <div key={device.id} className="relative">
+                    <button
+                      onClick={() => maximizeDevice(device.id)}
+                      className="absolute -top-2 -right-2 w-8 h-8 bg-[#00699a] hover:bg-[#00beef] text-white rounded-full flex items-center justify-center z-10"
+                    >
+                      <Minimize2 size={16} />
+                    </button>
+                    {device.type === 'compact' && <CompactQMLDevice device={device} />}
+                    {device.type === 'standard' && <StandardQMLDevice device={device} />}
+                    {device.type === 'complex' && <ComplexQMLDevice device={device} />}
+                  </div>
+                ))}
             </div>
           </div>
+        )}
 
-          {/* Device Information */}
-          <div className="bg-black/80 backdrop-blur-sm p-6 rounded-lg">
-            <h3 className="text-2xl font-bold text-white mb-6">QML Device Types</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-b from-[#005778] to-black p-6 rounded-lg border border-[#00699a]">
-                <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                  <Monitor size={20} className="text-[#00beef]" />
-                  Compact QML
-                </h4>
-                <p className="text-gray-300 text-sm mb-4">
-                  Streamlined interface for single-purpose AI tasks. Perfect for focused applications with simple controls.
-                </p>
-                <ul className="text-sm text-gray-300 space-y-1">
-                  <li>• Single main display</li>
-                  <li>• Essential controls only</li>
-                  <li>• Power and threshold sliders</li>
-                  <li>• Auto-scaling toggle</li>
-                </ul>
-              </div>
+        {/* Device Information */}
+        <div className="bg-black/80 backdrop-blur-sm p-6 rounded-lg">
+          <h3 className="text-2xl font-bold text-white mb-6">QML Device Types</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-gradient-to-b from-[#005778] to-black p-6 rounded-lg border border-[#00699a]">
+              <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                <Monitor size={20} className="text-[#00beef]" />
+                Compact QML
+              </h4>
+              <p className="text-gray-300 text-sm mb-4">
+                Streamlined interface for single-purpose AI tasks. Perfect for focused applications with simple controls.
+              </p>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• Single main display</li>
+                <li>• Essential controls only</li>
+                <li>• Power and threshold sliders</li>
+                <li>• Auto-scaling toggle</li>
+              </ul>
+            </div>
 
-              <div className="bg-gradient-to-b from-[#005778] to-black p-6 rounded-lg border border-[#00699a]">
-                <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                  <Gauge size={20} className="text-[#00beef]" />
-                  Standard QML
-                </h4>
-                <p className="text-gray-300 text-sm mb-4">
-                  Balanced interface with comprehensive monitoring and control capabilities for professional applications.
-                </p>
-                <ul className="text-sm text-gray-300 space-y-1">
-                  <li>• Performance dashboard</li>
-                  <li>• Advanced controls</li>
-                  <li>• Real-time monitoring</li>
-                  <li>• Risk level indicators</li>
-                </ul>
-              </div>
+            <div className="bg-gradient-to-b from-[#005778] to-black p-6 rounded-lg border border-[#00699a]">
+              <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                <Gauge size={20} className="text-[#00beef]" />
+                Standard QML
+              </h4>
+              <p className="text-gray-300 text-sm mb-4">
+                Balanced interface with comprehensive monitoring and control capabilities for professional applications.
+              </p>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• Performance dashboard</li>
+                <li>• Advanced controls</li>
+                <li>• Real-time monitoring</li>
+                <li>• Risk level indicators</li>
+              </ul>
+            </div>
 
-              <div className="bg-gradient-to-b from-[#005778] to-black p-6 rounded-lg border border-[#00699a]">
-                <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                  <Cpu size={20} className="text-[#00beef]" />
-                  Complex QML
-                </h4>
-                <p className="text-gray-300 text-sm mb-4">
-                  Enterprise-grade interface with extensive customization and multi-modal AI capabilities.
-                </p>
-                <ul className="text-sm text-gray-300 space-y-1">
-                  <li>• Multi-panel dashboard</li>
-                  <li>• Advanced AI features</li>
-                  <li>• System monitoring</li>
-                  <li>• Extensive customization</li>
-                </ul>
-              </div>
+            <div className="bg-gradient-to-b from-[#005778] to-black p-6 rounded-lg border border-[#00699a]">
+              <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                <Cpu size={20} className="text-[#00beef]" />
+                Complex QML
+              </h4>
+              <p className="text-gray-300 text-sm mb-4">
+                Enterprise-grade interface with extensive customization and multi-modal AI capabilities.
+              </p>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• Multi-panel dashboard</li>
+                <li>• Advanced AI features</li>
+                <li>• System monitoring</li>
+                <li>• Extensive customization</li>
+              </ul>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Developer Tools Sidebar */}
+      {showDeveloperTools && activeQML && <DeveloperTools />}
+
+      {/* Save Confirmation Modal */}
+      {showSaveConfirm && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gradient-to-b from-black to-[#005778] p-6 rounded-lg border border-[#00699a] max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold text-white mb-4">Save Current QML State?</h3>
+            <p className="text-gray-300 mb-6">
+              Another QML is currently active. Do you want to save the current state before switching?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleSaveAndSwitch}
+                className="flex-1 px-4 py-2 bg-[#00beef] hover:bg-[#00699a] text-black font-semibold rounded-lg transition-colors duration-300"
+              >
+                Save & Switch
+              </button>
+              <button
+                onClick={handleDontSaveAndSwitch}
+                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-300"
+              >
+                Don't Save
+              </button>
+              <button
+                onClick={handleCancelSwitch}
+                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors duration-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Editor and Terminal Overlays */}
       {isEditorOpen && (

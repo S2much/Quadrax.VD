@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Home, Terminal, FileJson, FileCode, Zap, Monitor, Brain, BookOpen, Info, Settings as Settings2,Search, HelpCircle, LogIn, LogOut, UserPlus, Bot} from 'lucide-react';
+import { Home, Terminal, FileJson, FileCode, Zap, Brain, BookOpen, Info, Settings as Settings2,Search, HelpCircle, LogIn, LogOut, UserPlus, Bot} from 'lucide-react';
 import Navbar from './components/Navbar';
 import Workshop from './components/Workshop';
-import VirtualMachines from './components/VirtualMachines';
 import HomePage from './components/HomePage';
 import Dashboard from './components/Dashboard';
 import Chatbot from './components/Chatbot';
@@ -73,7 +72,6 @@ function App2() {
     { id: 'datakits', label: 'Datakits', icon: FileJson },
     { id: 'notebooks', label: 'Codesheets', icon: FileCode },
     { id: 'manufacture', label: 'Manufacture', icon: Zap },
-    { id: 'vms', label: 'VMs', icon: Monitor },
     { id: 'models', label: 'Models', icon: Brain },
     { id: 'documentation', label: 'Documentation', icon: BookOpen },
     { id: 'about', label: 'About', icon: Info },
@@ -232,7 +230,6 @@ function App2() {
             {currentPage === 'homePage' && <HomePage onGetStarted={() => setCurrentPage('register')} />}
             {currentPage === 'dashboard' && <Dashboard />}
             {currentPage === 'workshops' && <Workshop />}
-            {currentPage === 'vms' && <VirtualMachines />}
             {currentPage === 'datakits' && <Datakits />}
             {currentPage === 'notebooks' && <Codesheets />}
             {currentPage === 'manufacture' && <Manufacture />}
