@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Exo+2:wght@100;200;300;400;500;600;800;900&display=swap");
 
 body {
-  background: linear-gradient(#00adde, #000);
+  background: #000;
   margin: 0;
 }
 
@@ -102,13 +102,28 @@ li:hover {
     font-weight: 700;
     border: none;
 }
-#hero {
+#hero-home {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 70%;
+    width: 85%;
+    background-image: linear-gradient(#00000044, #00000088, #008aab), url('./images/image6.png');
+    background-size: cover;
+    background-position: 40% 25%;
+    margin: 0.5rem auto;
+    border-radius: 10px;
+    height: 20vh;
+    box-shadow: 0 3px 8px #000;
 }
+#explore {
+    background: linear-gradient(transparent,transparent,#000, #002556);
+    width: 90%;
+    margin:2vh auto 0.5vw;
+    box-shadow: 0 1px 2px #000;
+    border-radius: 10px;
+}
+
 h2 {
     padding: 0 20px;
     font-size: 2rem;
@@ -127,7 +142,7 @@ main {
 #welcomeSec {
     padding: 15px 10px;
     text-align: center;
-    background: linear-gradient(#00adde,#000, #000);
+    background: linear-gradient(#00adde, #000,#000,#000, #000);
     width: 100%;
 }
 #welcomeNote {
@@ -161,4 +176,31 @@ main {
 #card-description {
     font-size: 1.2rem;
     margin-bottom: 0;
+}
+
+/* Loader animations */
+.loader2 {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #00beef;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+#btn-pwr {
+    position: absolute;
+    left:0;
+    z-index: 100000;
+    background: #00adde;
 }
