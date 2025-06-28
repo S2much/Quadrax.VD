@@ -1,6 +1,12 @@
+@import url(https://fonts.googleapis.com/css2?family=Exo+2:wght@100;200;300;400;500;600;800;900&display=swap);
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@tailwind font;
+
+*, body {
+  font-family: 'Exo 2';
+}
 
 /* Custom animations */
 @keyframes float {
@@ -84,4 +90,17 @@
   
   *::-webkit-scrollbar-corner {
     background: rgba(0, 0, 0, 0.3);
+  }
+  #execute, #clear-canvas {
+    transition: all 0.3s ease;
+    background-color: #000;
+    border: 1px solid #00beef;
+    color: #00beef;
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+  }
+  #execute:hover, #clear-canvas:hover {
+    transform: scale(1.05);
   }
