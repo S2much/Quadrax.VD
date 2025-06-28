@@ -1,14 +1,13 @@
-# QUADRAX•ML Platform
+![Image3
+# QUADRAX•VD Platform
+](https://github.com/user-attachments/assets/c59db9b4-7a08-4a00-988c-9d1153429b4a)
 
-A comprehensive machine learning platform with AI-powered assistance, workstation management, and manufacturing capabilities.
+A comprehensive machine learning platform with AI-powered assistance, simplified drag-drop manufacturing of virtual devices.
 
 ## 🚀 Features
 
-- **Workshop**: Create and manage development workstations
-- **DataKits**: Upload, validate, and process datasets
-- **Codesheets**: Interactive development environments
-- **Manufacturing**: Fine-tuning playground with feedback systems
-- **Models**: Deploy and monitor ML models
+- **Manufacturing**: Assembling data, scripts, external tools, input and output nodes in a Quadrax virtual device
+- **Models**: Deploy and monitor Virtual device models
 - **AI Assistant**: Intelligent help and automation
 
 ## 🛠️ Tech Stack
@@ -75,10 +74,8 @@ A comprehensive machine learning platform with AI-powered assistance, workstatio
 The platform uses the following main tables:
 
 - **profiles**: User profiles and settings
-- **workstations**: Development environments
-- **datakits**: Dataset management
 - **models**: ML model tracking
-- **pipelines**: Workflow automation
+- **Manufacture**: Workflow automation
 - **user_sessions**: Activity tracking
 
 ## 🔧 Supabase Configuration
@@ -158,23 +155,12 @@ supabase functions deploy
 
 ## 📊 Features Overview
 
-### Workshop
-- Create development workstations
-- Configure resources (CPU, memory, storage)
-- Start/stop workstation lifecycle
-- Terminal and code editor integration
-
-### DataKits
-- Upload datasets in various formats
-- Data validation and quality scoring
-- Data transformation pipelines
-- Export processed data
-
 ### Manufacturing
 - Drag-and-drop workflow builder
 - Fine-tuning with feedback systems
 - Star ratings and text reviews
 - Performance metrics tracking
+- Export as Quadrax Model Virtual Device, .qmvd
 
 ### AI Assistant
 - Natural language interaction
@@ -203,4 +189,4 @@ For support and questions:
 
 ---
 
-Built with ❤️ by the QUADRAX•ML team
+Built by Mordecai Thulani Makatini
