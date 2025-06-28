@@ -1,6 +1,6 @@
 # QUADRAX•VD Platform
+<img src={![image6](https://github.com/user-attachments/assets/afc14666-4819-4326-9190-225e7abd64b4)} />
 
-![Image](https://github.com/S2much/Quadrax.Bolt/src/images/image4)
 
 A comprehensive machine learning platform with AI-powered assistance, simplified drag-drop manufacturing of virtual devices.
 
