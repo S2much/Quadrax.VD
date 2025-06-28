@@ -69,10 +69,10 @@ function Register({ onCancel }: RegisterProps) {
     <div className="min-h-screen bg-gradient-to-b from-[#00beef] to-black flex items-center justify-center p-6 custom-scrollbar">
       <div className="w-full max-w-2xl">
         {/* Header */}
-        <div className="text-center mb-8 relative">
+        <div className="text-center mb-8">
           <button
             onClick={onCancel}
-            className="absolute top-0 left-0 p-2 text-white hover:bg-white/10 rounded-lg transition-colors duration-300 flex items-center gap-2"
+            className="absolute w-[6%] [text-shadow:2px_2px_2px_#000] [box-shadow:0_1px_4px_#000] top-10 left-10 py-0 px-4 text-white hover:bg-white/10 rounded-lg transition-colors duration-300 flex items-center gap-2"
           >
             <ArrowLeft size={20} />
             <span>Back</span>
@@ -156,7 +156,7 @@ function Register({ onCancel }: RegisterProps) {
             {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
-              <div className="relative">
+              <div className="relative contain-content">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type={showPassword ? "text" : "password"}
@@ -169,9 +169,9 @@ function Register({ onCancel }: RegisterProps) {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300"
+                  className="absolute right-[-92%] top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300"
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPassword ? <EyeOff size={28} /> : <Eye size={28} />}
                 </button>
               </div>
               
@@ -199,7 +199,7 @@ function Register({ onCancel }: RegisterProps) {
             {/* Confirm Password */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
-              <div className="relative">
+              <div className="relative contain-content">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type={showConfirmPassword ? "text" : "password"}
@@ -212,9 +212,9 @@ function Register({ onCancel }: RegisterProps) {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300"
+                  className="absolute right-[-92%] top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300"
                 >
-                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showConfirmPassword ? <EyeOff size={28} /> : <Eye size={28} />}
                 </button>
               </div>
               {formData.confirmPassword && formData.password !== formData.confirmPassword && (
@@ -223,8 +223,8 @@ function Register({ onCancel }: RegisterProps) {
             </div>
 
             {/* Agreements */}
-            <div className="space-y-3">
-              <label className="flex items-start gap-3">
+            <div className="p-2">
+              <label className="flex items-center gap-3 m-0">
                 <div className="relative">
                   <input
                     type="checkbox"
@@ -234,11 +234,12 @@ function Register({ onCancel }: RegisterProps) {
                     required
                   />
                   {agreements.terms && (
-                    <Check size={12} className="absolute top-1.5 left-0.5 text-[#00beef] pointer-events-none" />
+                    <Check size={12} className="text-[#00beef] pointer-events-none" />
                   )}
                 </div>
-                <span className="text-sm text-gray-300">
-                  I agree to the <button type="button" className="text-[#00beef] hover:text-white transition-colors duration-300">Terms of Service</button> and <button type="button" className="text-[#00beef] hover:text-white transition-colors duration-300">Privacy Policy</button>
+                <span className="text-lg flex flex-row items-center text-left w-[80%] text-gray-300">
+                  <span className='w-[75%]'>
+                  I agree to the</span> <button type="button" className="text-[#00beef] hover:text-white transition-colors duration-300">Terms of Service</button> and <button type="button" className="text-[#00beef] p-2 hover:text-white transition-colors duration-300">Privacy Policy</button>
                 </span>
               </label>
               
@@ -263,7 +264,7 @@ function Register({ onCancel }: RegisterProps) {
             <button
               type="submit"
               disabled={!agreements.terms || formData.password !== formData.confirmPassword}
-              className="w-full py-3 bg-gradient-to-r from-[#00beef] to-[#00699a] hover:from-[#00699a] hover:to-[#00beef] disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-black disabled:text-gray-400 font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 shadow-lg"
+              className="w-full py-3 justify-center bg-gradient-to-r from-[#00beef] to-[#00699a] hover:from-[#00699a] hover:to-[#00beef] disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-black disabled:text-gray-400 font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 shadow-lg"
             >
               Create Account
             </button>
@@ -291,7 +292,7 @@ function Register({ onCancel }: RegisterProps) {
           {/* Sign In Link */}
           <div className="mt-6 text-center">
             <span className="text-gray-400">Already have an account? </span>
-            <button className="text-[#00beef] hover:text-white transition-colors duration-300 font-medium">
+            <button className="text-[#00beef] p-4 text-4xl justify-center hover:text-white transition-colors duration-300 font-medium">
               Sign in
             </button>
           </div>
