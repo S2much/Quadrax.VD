@@ -35,10 +35,10 @@ function Login({ onCancel, onLogin }: LoginProps) {
     <div className="min-h-screen m-0 bg-gradient-to-b from-[#00beef] to-black flex items-center justify-center custom-scrollbar">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8 relative">
+        <div className="text-center mb-8">
           <button
             onClick={onCancel}
-            className="absolute top-0 left-0 p-2 text-white hover:bg-white/10 rounded-lg transition-colors duration-300 flex items-center gap-2"
+            className="absolute w-[8vw] [text-shadow:2px_2px_2px_#000] [box-shadow:0_1px_4px_#000] top-10 left-10 py-0 px-4 text-white hover:bg-white/10 rounded-lg transition-colors duration-300 flex items-center gap-2"
           >
             <ArrowLeft size={20} />
             <span>Back</span>
@@ -92,15 +92,15 @@ function Login({ onCancel, onLogin }: LoginProps) {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300"
+                  className="absolute right-[2%] w-auto top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300"
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPassword ? <Eye size={28} /> : <EyeOff size={28} />}
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2">
+            <div className="flex flex-row w-[100%] items-center justify-between">
+              <label className="flex items-center w-[20vw] gap-2">
                 <input
                   type="checkbox"
                   checked={rememberMe}
@@ -111,7 +111,7 @@ function Login({ onCancel, onLogin }: LoginProps) {
               </label>
               <button
                 type="button"
-                className="text-sm text-[#00beef] hover:text-white transition-colors duration-300"
+                className="text-sm justify-end text-[#00beef] hover:text-white transition-colors duration-300"
               >
                 Forgot password?
               </button>
@@ -120,7 +120,7 @@ function Login({ onCancel, onLogin }: LoginProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-gradient-to-r from-[#00beef] to-[#00699a] hover:from-[#00699a] hover:to-[#00beef] disabled:from-gray-600 disabled:to-gray-700 text-black disabled:text-gray-400 font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 shadow-lg"
+              className="w-full py-3 bg-gradient-to-r text-2xl from-[#00beef] to-[#00699a] hover:from-[#00699a] hover:to-[#00beef] justify-center disabled:from-gray-600 disabled:to-gray-700 text-black disabled:text-gray-400 font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 shadow-lg"
             >
               {isLoading ? 'Signing In...' : 'Sign In'}
             </button>
@@ -155,7 +155,7 @@ function Login({ onCancel, onLogin }: LoginProps) {
           {/* Sign Up Link */}
           <div className="mt-6 text-center">
             <span className="text-gray-400">Don't have an account? </span>
-            <button className="text-[#00beef] hover:text-white transition-colors duration-300 font-medium">
+            <button className="text-[#00beef] text-2xl justify-center hover:text-white transition-colors duration-300 font-medium">
               Sign up
             </button>
           </div>
