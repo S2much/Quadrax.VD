@@ -1,0 +1,14 @@
+<svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0 0 L100 0 L100 100 L0 100 Z" fill="url(#gradient)" />
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#000000" offset="0" />
+      <stop stop-color="#000000" offset="1" />
+    </linearGradient>
+  </defs>
+  <ellipse id="github" cx="50" cy="50" rx="40" ry="20" fill="none" stroke-style="#00beef" stroke-width="3" stroke-dasharray="10,5" />
+  <ellipse id="linkedin" cx="50" cy="50" rx="40" ry="20" fill="none" stroke-style="#00beef" stroke-width="3" stroke-dasharray="10,5" />
+  <ellipse id="facebook" cx="50" cy="50" rx="40" ry="20" fill="none" stroke-style="#00beef" stroke-width="3" stroke-dasharray="10,5" />
+  <ellipse id="youtube" cx="50" cy="50" rx="40" ry="20" fill="none" stroke-style="#00beef" stroke-width="3" stroke-dasharray="10,5" />
+  <ellipse id="tiktok" cx="50" cy="50" rx="40" ry="20" fill="none" stroke-style="#00beef" stroke-width="3" stroke-dasharray="10,5" />
+</svg>
