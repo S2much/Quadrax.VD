@@ -1,5 +1,73 @@
 import { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, Activity, Database, Brain, Zap, Clock, CheckCircle, AlertTriangle, Users, Plus, ArrowUp, ArrowDown, Play, Settings, Star, Target, Cpu, HardDrive, Gauge } from 'lucide-react';
+import { BarChart3, TrendingUp, Activity, Database, Brain, Zap, Clock, CheckCircle, ArrowUp, Star, Cpu, HardDrive, Gauge } from 'lucide-react';
+import DeviceInterface from './DeviceInterface';
+
+// QMLDevice type (copied from Models)
+interface QMLDevice {
+  id: string;
+  name: string;
+  type: 'compact' | 'standard' | 'complex';
+  status: 'active' | 'idle' | 'processing' | 'error';
+  accuracy: number;
+  uptime: number;
+  requests: number;
+  description: string;
+  detailedDescription: string;
+  controls: Record<string, unknown>;
+  isOn: boolean;
+  isMaximized: boolean;
+}
+
+const variantMap = {
+  compact: 'alpha',
+  standard: 'beta',
+  complex: 'gamma',
+} as const;
+
+const mockDevices: QMLDevice[] = [
+  {
+    id: 'qml-compact-001',
+    name: 'Sentiment Analyzer Pro',
+    type: 'compact',
+    status: 'active',
+    accuracy: 96.8,
+    uptime: 99.2,
+    requests: 15420,
+    description: 'Real-time sentiment analysis for customer feedback',
+    detailedDescription: 'Advanced sentiment analysis QML device featuring real-time emotion detection, multi-language support, and contextual understanding. Perfect for customer service automation, social media monitoring, and feedback analysis. Built with transformer-based architecture for superior accuracy and lightning-fast processing speeds.',
+    controls: {},
+    isOn: true,
+    isMaximized: false
+  },
+  {
+    id: 'qml-standard-002',
+    name: 'Fraud Detection Engine',
+    type: 'standard',
+    status: 'processing',
+    accuracy: 94.2,
+    uptime: 97.8,
+    requests: 8750,
+    description: 'Advanced fraud detection with real-time monitoring',
+    detailedDescription: 'Enterprise-grade fraud detection QML with advanced pattern recognition, anomaly detection, and risk assessment capabilities. Features real-time transaction monitoring, behavioral analysis, and adaptive learning algorithms that improve over time. Includes comprehensive dashboard with customizable alerts and detailed reporting.',
+    controls: {},
+    isOn: false,
+    isMaximized: false
+  },
+  {
+    id: 'qml-complex-003',
+    name: 'Multi-Modal AI Assistant',
+    type: 'complex',
+    status: 'idle',
+    accuracy: 98.1,
+    uptime: 99.9,
+    requests: 32100,
+    description: 'Advanced AI system with vision, language, and reasoning',
+    detailedDescription: 'State-of-the-art multi-modal AI QML combining computer vision, natural language processing, and advanced reasoning capabilities. Supports text, image, audio, and video inputs with sophisticated decision-making algorithms and contextual understanding. Features extensive customization options and enterprise-grade security.',
+    controls: {},
+    isOn: false,
+    isMaximized: false
+  }
+];
 
 function Dashboard() {
   const [timeRange, setTimeRange] = useState('7d');
@@ -14,6 +82,9 @@ function Dashboard() {
     successRate: 0
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [showMore, setShowMore] = useState(false);
+  const mostRecent = mockDevices[0];
+  const otherDevices = mockDevices.slice(1);
 
   // Simulate loading real metrics
   useEffect(() => {
@@ -72,13 +143,89 @@ function Dashboard() {
   };
 
   return (
-    <section className="p-6 min-h-screen">
+    <section className="p-6 min-h-screen bg-gradient-to-b from-[#006889] to-black text-white">
+      <h2 className="text-3xl font-bold mb-6">Dashboard</h2>
+      {/* Most Recent Device */}
+      <div className="flex justify-center mb-8">
+        <DeviceInterface
+          name={mostRecent.name}
+          variant={variantMap[mostRecent.type]}
+          isOn={mostRecent.isOn}
+          details={
+            <>
+              <div className="mb-2">{mostRecent.detailedDescription}</div>
+              <div className="flex flex-col gap-1 text-sm">
+                <div>Type: <span className="capitalize">{mostRecent.type}</span></div>
+                <div>Status: {mostRecent.status}</div>
+                <div>Accuracy: {mostRecent.accuracy}%</div>
+                <div>Uptime: {mostRecent.uptime}%</div>
+                <div>Requests: {mostRecent.requests.toLocaleString()}</div>
+              </div>
+            </>
+          }
+        >
+          {/* Example metrics/graphs area */}
+          <div className="flex flex-col items-center justify-center h-full">
+            <span className="text-2xl font-bold mb-2">{mostRecent.name}</span>
+            <span className="text-sm text-cyan-200 mb-4">{mostRecent.description}</span>
+            {/* Insert metrics/graphs here */}
+            <div className="w-full mt-4">
+              <div className="bg-black/60 rounded-lg p-4 mb-2">
+                <span className="text-cyan-300 font-semibold">Accuracy:</span> {mostRecent.accuracy}%
+              </div>
+              <div className="bg-black/60 rounded-lg p-4 mb-2">
+                <span className="text-cyan-300 font-semibold">Uptime:</span> {mostRecent.uptime}%
+              </div>
+              <div className="bg-black/60 rounded-lg p-4 mb-2">
+                <span className="text-cyan-300 font-semibold">Requests:</span> {mostRecent.requests.toLocaleString()}
+              </div>
+            </div>
+          </div>
+        </DeviceInterface>
+      </div>
+      {/* More Devices Button */}
+      <div className="flex justify-center mb-6">
+        <button
+          className="px-6 py-2 rounded-lg bg-black border-2 border-cyan-500 text-cyan-200 font-semibold hover:bg-cyan-900 transition-all"
+          onClick={() => setShowMore(v => !v)}
+        >
+          {showMore ? 'Hide Other Devices' : 'More Devices'}
+        </button>
+      </div>
+      {/* Other Devices */}
+      {showMore && (
+        <div className="flex flex-wrap gap-8 justify-center overflow-auto custom-scrollbar p-4">
+          {otherDevices.map(device => (
+            <DeviceInterface
+              key={device.id}
+              name={device.name}
+              variant={variantMap[device.type]}
+              isOn={device.isOn}
+              details={
+                <>
+                  <div className="mb-2">{device.detailedDescription}</div>
+                  <div className="flex flex-col gap-1 text-sm">
+                    <div>Type: <span className="capitalize">{device.type}</span></div>
+                    <div>Status: {device.status}</div>
+                    <div>Accuracy: {device.accuracy}%</div>
+                    <div>Uptime: {device.uptime}%</div>
+                    <div>Requests: {device.requests.toLocaleString()}</div>
+                  </div>
+                </>
+              }
+            >
+              <div className="flex flex-col items-center justify-center h-full">
+                <span className="text-2xl font-bold mb-2">{device.name}</span>
+                <span className="text-sm text-cyan-200 mb-4">{device.description}</span>
+              </div>
+            </DeviceInterface>
+          ))}
+        </div>
+      )}
+
       <div className="text-white mb-6">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-3xl font-bold text-white [text-shadow:2px_2px_2px_#000] bg-black/30 p-4 rounded-lg">
-              Dashboard
-            </h2>
             <h3 className="text-white text-xl mt-2 ml-4">Welcome to QUADRAX•ML</h3>
           </div>
           <div className="flex gap-2">
