@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Image1 from '../images/image1.png';
 import Image2 from '../images/image2.png';
 import Image3 from '../images/image3.png';
-import Image4 from '../images/image4.png';
+import Image4 from '../images/Image4.png';
 
 const cardData = [
   { 
