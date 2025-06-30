@@ -32,7 +32,8 @@ const DeviceInterface: React.FC<DeviceInterfaceProps> = ({
           glow: 'shadow-cyan-500/30',
           accent: 'text-cyan-300',
           bg: 'from-slate-900 via-cyan-900/20 to-slate-900',
-          buttonGrid: 'grid-cols-3 gap-3'
+          buttonGrid: 'grid-cols-3 gap-3',
+          buttonColor: 'bg-cyan-600/60 hover:bg-cyan-500/70'
         };
       case 'beta':
         return {
@@ -41,7 +42,8 @@ const DeviceInterface: React.FC<DeviceInterfaceProps> = ({
           glow: 'shadow-blue-500/30',
           accent: 'text-blue-300',
           bg: 'from-slate-900 via-blue-900/20 to-slate-900',
-          buttonGrid: 'grid-cols-3 gap-4'
+          buttonGrid: 'grid-cols-4 gap-4',
+          buttonColor: 'bg-blue-600/60 hover:bg-blue-500/70'
         };
       case 'gamma':
         return {
@@ -124,7 +126,7 @@ const DeviceInterface: React.FC<DeviceInterfaceProps> = ({
           ${isMaximized ? 'm-0' : styles.container}
           bg-gradient-to-br ${styles.bg}
           ${styles.border} border-2 rounded-2xl
-          ${isOn ? styles.glow + ' shadow-2xl' : 'shadow-lg'}
+          ${isOn ? styles.glow + ' shadow- 2xl' : 'shadow-lg'}
           transition-all duration-500 ease-in-out
           cursor-pointer
           backdrop-blur-sm
@@ -146,7 +148,7 @@ const DeviceInterface: React.FC<DeviceInterfaceProps> = ({
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 [transform:translateX(-15px)]">
             <div className={`w-3 h-3 rounded-full ${isOn ? 'bg-green-400' : 'bg-red-400'} animate-pulse`} />
             <button
               onClick={(e) => {
@@ -194,18 +196,18 @@ const DeviceInterface: React.FC<DeviceInterfaceProps> = ({
         </div>
 
         {/* Device Interface Grid */}
-        <div className="relative self-center">
+        <div className="relative self-center bottom-[-300px] p-6 flex flex-col items-center justify-around">
           <div className={`grid ${styles.buttonGrid}`}>
             {deviceIcons.map((item, index) => {
               const IconComponent = item.icon;
               return (
                 <button
                   key={index}
-                  className="w-12 h-12 bg-teal-600/60 backdrop-blur-sm rounded-xl flex items-center justify-center text-white hover:bg-teal-500/70 transition-all duration-300 hover:scale-105"
+                  className="w-16 h-16 bg-teal-600/60 backdrop-blur-sm rounded-xl flex items-center justify-center text-white hover:bg-teal-500/70 transition-all duration-300 hover:scale-105"
                   title={item.label}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <IconComponent size={25} />
+                  <IconComponent size={35} />
                 </button>
               );
             })}
