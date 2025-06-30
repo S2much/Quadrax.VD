@@ -120,7 +120,7 @@ function Login({ onCancel, onLogin }: LoginProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-gradient-to-r text-2xl from-[#00beef] to-[#00699a] hover:from-[#00699a] hover:to-[#00beef] justify-center disabled:from-gray-600 disabled:to-gray-700 text-black disabled:text-gray-400 font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 shadow-lg"
+              className="w-full py-3 bg-gradient-to-r text-2xl from-[#00beef] to-[#00699a] hover:from-[#00699a] hover:to-[#00beef] justify-center disabled:from-black disabled:to-black text-black disabled:text-[#00beef] font-semibold rounded-lg border-[2px_solid_#00beef] transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 shadow-lg"
             >
               {isLoading ? 'Signing In...' : 'Sign In'}
             </button>
