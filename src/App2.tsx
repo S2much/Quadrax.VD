@@ -161,9 +161,6 @@ function App2() {
       </header>
       
       <main className="flex pt-16 h-screen">
-        <div id='badge' className='absolute w-[5vw] h-[5vw] top-4 right-4 z-50'>
-           <link class='p-0 m-0 w-full h-full' rel='hyperlink' href='//bolt.new' />
-          </div>
         {/* Navbar is now visible on all pages */}
         <Navbar 
           navItems={navItems} 
