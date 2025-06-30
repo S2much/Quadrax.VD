@@ -102,13 +102,24 @@ li:hover {
     font-weight: 700;
     border: none;
 }
+#badge {
+    position: absolute;
+    top: 0;
+    right: 15px;
+    width: 4vw;
+    height: 4vw;
+    background-image: url('./images/white_circle_360x360.png');
+    background-size: cover;
+    background-position: center;
+    z-index: 5000;
+}
 #hero-home {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 85%;
-    background-image: linear-gradient(#00000044, #00000088, #008aab), url('./images/image6.png');
+    background-image: linear-gradient(#00000044, #00000088, #008aab), url('./images/logo.png');
     background-size: cover;
     background-position: 40% 25%;
     margin: 0.5rem auto;
@@ -198,9 +209,11 @@ main {
     transform: rotate(360deg);
   }
 }
-#btn-pwr {
-    position: absolute;
-    left:0;
-    z-index: 100000;
-    background: #00adde;
+#device-case {
+    width: 350px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
 }
