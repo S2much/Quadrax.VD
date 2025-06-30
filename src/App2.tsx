@@ -133,7 +133,7 @@ function App2() {
       <LoadingSpinner isLoading={isLoading} />
     <div className="min-h-screen bg-gradient-to-b from-[#006889] to-black overflow-hidden">
       <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black via-black to-[#00699a] h-16 text-white px-4 flex justify-between items-center shadow-lg">
-        <h1 className="text-2xl md:text-4xl text-white [text-shadow:2px_2px_0px_#008aab,_-2px_-2px_2px_#000,_2px_-2px_2px_#000,_-2px_2px_0px_#008aab]">
+        <h1 className="text-2xl md:text-4xl text-white [text-shadow:2px_2px_0px_#008aab,_-2px_-2px_2px_#000,_2px_-2px_2px_#000,_-2px_2px_0px_#008aab] [transform:scaleX(1.2)_translateX(2vw)]">
         QUADRAX•ML
         </h1>
          {/* Search Bar */}
@@ -150,16 +150,19 @@ function App2() {
           </div>
           </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 mr-20">
         <button onClick={toggleChatbot} disabled={isChatbotDisabled}
-          className="bg-[#00beef] w-[8vw] text-black px-3 py-2 text-lg md:text-xl font-bold flex items-center gap-2 hover:bg-[#00a8d6] transition-colors duration-300">
+          className="bg-[#000] w-[8vw] text-[#00beef] px-3 py-1 [border:2px_solid_#00beef] text-lg md:text-xl font-bold flex items-center gap-2 hover:bg-[#00a8d6] transition-colors duration-300">
           <Bot size={30} className="md:w-12 md:h-12" />
           <span className="hidden md:inline">AI</span>
         </button>
         </div>
+        
       </header>
       
       <main className="flex pt-16 h-screen">
+        <div id='badge' className='absolute w-[5vw] h-[5vw] top-4 right-4 z-50'>
+          </div>
         {/* Navbar is now visible on all pages */}
         <Navbar 
           navItems={navItems} 
