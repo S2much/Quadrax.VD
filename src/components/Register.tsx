@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, User, Building, ArrowLeft, Github, Chrome, Check } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, Building, ArrowLeft, Github, Chrome, Check } from 'lucide-react';
 
 interface RegisterProps {
   onCancel: () => void;
@@ -10,10 +10,7 @@ function Register({ onCancel }: RegisterProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
     email: '',
-    organization: '',
     password: '',
     confirmPassword: ''
   });
@@ -89,38 +86,6 @@ function Register({ onCancel }: RegisterProps) {
           <h2 className="text-2xl font-bold text-white mb-6 text-center">Create Account</h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">First Name</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                  <input
-                    type="text"
-                    value={formData.firstName}
-                    onChange={(e) => handleInputChange('firstName', e.target.value)}
-                    placeholder="Enter your first name"
-                    className="w-full pl-10 pr-4 py-3 bg-gradient-to-r from-black to-[#005778] border border-[#00699a] text-white placeholder:text-gray-400 rounded-lg focus:outline-none focus:border-[#00beef] focus:ring-2 focus:ring-[#00beef]/20 transition-all duration-300"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                  <input
-                    type="text"
-                    value={formData.lastName}
-                    onChange={(e) => handleInputChange('lastName', e.target.value)}
-                    placeholder="Enter your last name"
-                    className="w-full pl-10 pr-4 py-3 bg-gradient-to-r from-black to-[#005778] border border-[#00699a] text-white placeholder:text-gray-400 rounded-lg focus:outline-none focus:border-[#00beef] focus:ring-2 focus:ring-[#00beef]/20 transition-all duration-300"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
 
             {/* Email */}
             <div>
@@ -134,21 +99,6 @@ function Register({ onCancel }: RegisterProps) {
                   placeholder="Enter your email"
                   className="w-full pl-10 pr-4 py-3 bg-gradient-to-r from-black to-[#005778] border border-[#00699a] text-white placeholder:text-gray-400 rounded-lg focus:outline-none focus:border-[#00beef] focus:ring-2 focus:ring-[#00beef]/20 transition-all duration-300"
                   required
-                />
-              </div>
-            </div>
-
-            {/* Organization */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Organization (Optional)</label>
-              <div className="relative">
-                <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="text"
-                  value={formData.organization}
-                  onChange={(e) => handleInputChange('organization', e.target.value)}
-                  placeholder="Enter your organization"
-                  className="w-full pl-10 pr-4 py-3 bg-gradient-to-r from-black to-[#005778] border border-[#00699a] text-white placeholder:text-gray-400 rounded-lg focus:outline-none focus:border-[#00beef] focus:ring-2 focus:ring-[#00beef]/20 transition-all duration-300"
                 />
               </div>
             </div>
