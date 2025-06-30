@@ -9,9 +9,11 @@ import {
   Layers,
   RotateCcw,
   Save,
+  Rocket,
   Eye,
   Code,
-  Trash2
+  Trash2, 
+  Power
 } from 'lucide-react';
 import DeviceInterface from './DeviceInterface';
 
@@ -71,8 +73,7 @@ function Models() {
   ]);
 
   const [selectedDevice, setSelectedDevice] = useState<QMLDevice | null>(null);
-  const [showDeveloperTools, setShowDeveloperTools] = useState(false);
-  const [expandedDeviceId, setExpandedDeviceId] = useState<string | null>(null);
+
 
   const toggleDevicePower = (device: QMLDevice) => {
     setQmlDevices(prev => prev.map(d =>
@@ -81,19 +82,16 @@ function Models() {
         : d
     ));
     setSelectedDevice({ ...device, isOn: !device.isOn });
-    setShowDeveloperTools(true);
+  };
+
+  const handleDeviceClick = (device: QMLDevice) => {
+    setSelectedDevice(device);
   };
 
   const DeveloperTools = () => (
-    <div className="fixed right-0 top-0 h-full w-80 bg-gradient-to-b from-black to-[#005778] border-l border-[#00699a] p-4 overflow-y-auto z-40">
+    <div className="relative right top-0 h-full w-60 bg-gradient-to-b from-black to-[#005778] border-l border-[#00699a] p-4 overflow-y-auto z-40">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-bold text-white">Developer Tools</h3>
-          <button
-            onClick={() => setShowDeveloperTools(false)}
-          className="text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-700"
-          >
-            <X size={20} />
-          </button>
         </div>
 
       {selectedDevice && (
@@ -143,33 +141,22 @@ function Models() {
   );
 
   return (
-    <section className="bg-gradient-to-b from-[#006889] to-black text-white p-6">
+    <section className="bg-gradient-to-b from-[#006889] to-black text-white p-4">
       <h1 className="text-4xl font-bold mb-6">QML Models</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="flex justify-between] gap-6">
+      <DeveloperTools />
         {qmlDevices.map(device => {
-          const isExpanded = expandedDeviceId === device.id;
-          if (!isExpanded) {
-            // Compact view
-            return (
-              <div
-                key={device.id}
-                className="bg-gradient-to-br from-black to-[#005778] p-4 rounded-lg border border-[#00699a] shadow-lg cursor-pointer hover:scale-105 transition-transform duration-300 hover:shadow-cyan-500/20"
-                onClick={() => setExpandedDeviceId(device.id)}
-              >
-                <p className="text-sm text-gray-400 mb-3">{device.description}</p>
-                <div className="flex justify-between text-sm">
-                  <span className="text-cyan-300">Uptime: {device.uptime}%</span>
-                </div>
-              </div>
-            );
-          }
+          
+          
           // Expanded view
           return (
-            <div key={device.id} className="flex">
+            <div key={device.id} className="m-auto">
               <DeviceInterface
                 name={device.name}
                 variant={variantMap[device.type]}
                 isOn={device.isOn}
+                type={device.type}
+                onDeviceClick={() => handleDeviceClick(device)}
                 details={
                   <>
                     <div className="mb-2">{device.detailedDescription}</div>
@@ -179,6 +166,7 @@ function Models() {
                       <div>Requests: {device.requests.toLocaleString()}</div>
                     </div>
                   </>
+                  
                 }
                 topRightButton={
                   <button
@@ -186,29 +174,21 @@ function Models() {
                       e.stopPropagation();
                       toggleDevicePower(device);
                       setSelectedDevice(device);
-                      setShowDeveloperTools(true);
                     }}
-                    className={`absolute top-0 left-0 px-3 py-2 rounded-full bg-black border-2 border-green-500 text-white flex items-center gap-2 shadow`}
+                    className={`absolute top-[5px] left-[-20px] rounded-lg bg-[#00beef] border-2 border-green-500 text-white flex items-center gap-2 shadow`}
                     title="Power"
                   >
-                    <span className="m-auto">Power</span>
+                    <span className="m-auto"><Power size={20} /></span>
                   </button>
                 }
               >
-                <div className="flex flex-col items-center justify-center h-full">
+                
+              </DeviceInterface>
+              <div className="flex flex-col items-center justify-center">
                   <span className="text-2xl font-bold mb-2">{device.name}</span>
                   <span className="text-sm text-cyan-200 mb-4">{device.description}</span>
-                  <div className="flex gap-3 mt-6">
-                    <button
-                      onClick={e => {
-                        e.stopPropagation();
-                        setSelectedDevice(device);
-                        setShowDeveloperTools(true);
-                      }}
-                      className="px-4 py-2 rounded-lg font-semibold bg-black border-2 border-blue-500 text-white flex items-center gap-2"
-                    >
-                      <Settings size={18} /> Configure
-                    </button>
+                  <div className="flex flex-row w=[50] gap-3 mt-6">
+                  
                     <button
                       onClick={e => {
                         e.stopPropagation();
@@ -216,7 +196,7 @@ function Models() {
                       }}
                       className="px-4 py-2 rounded-lg font-semibold bg-black border-2 border-indigo-500 text-white flex items-center gap-2"
                     >
-                      <Save size={18} /> Deploy
+                      <Rocket size={25} />
                     </button>
                     <button
                       onClick={e => {
@@ -225,34 +205,43 @@ function Models() {
                       }}
                       className="px-4 py-2 rounded-lg font-semibold bg-black border-2 border-yellow-500 text-white flex items-center gap-2"
                     >
-                      <RotateCcw size={18} /> Reset
+                      <RotateCcw size={25} />
+                    </button>
+                    
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        setSelectedDevice(device);
+                        setShowDeveloperTools(true);
+                      }}
+                      className="px-4 py-2 rounded-lg font-semibold bg-black border-2 border-blue-500 text-white flex items-center gap-2"
+                    >
+                      <Settings size={25} />
                     </button>
                     <button
                       onClick={e => {
                         e.stopPropagation();
                         // Placeholder for Delete action
                       }}
-                      className="px-4 py-2 rounded-lg font-semibold bg-black border-2 border-red-500 text-white flex items-center gap-2"
+                      className="px-4 py-0.5 rounded-lg font-semibold bg-black border-2 border-red-500 text-white flex items-center gap-2"
                     >
-                      <Trash2 size={18} /> Delete
+                      <Trash2 size={25} />
                     </button>
                     <button
                       onClick={e => {
                         e.stopPropagation();
-                        setExpandedDeviceId(null);
                       }}
                       className="px-4 py-2 rounded-lg font-semibold bg-black border-2 border-gray-500 text-white flex items-center gap-2"
                     >
-                      Close
+                      <X size={25} />
                     </button>
+                    </div>
                   </div>
                 </div>
-              </DeviceInterface>
-            </div>
+            
           );
         })}
       </div>
-      {showDeveloperTools && <DeveloperTools />}
     </section>
   );
 }
