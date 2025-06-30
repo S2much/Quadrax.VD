@@ -106,11 +106,9 @@ li:hover {
     position: absolute;
     top: 0;
     right: 15px;
-    width: 4vw;
-    height: 4vw;
-    background-image: url('./images/white_circle_360x360.png');
-    background-size: cover;
-    background-position: center;
+    width: 5vw;
+    height: 5vw;
+  background:none;
     z-index: 5000;
 }
 #hero-home {
