@@ -392,20 +392,7 @@ function CodeEditor({ isOpen, onClose, context, workingDirectory = '~', mode = '
     <div className="absolute top-[6%] left-[4%] w-[95.1%] h-[94%] bg-black z-40 flex">
       {/* Sidebar */}
       <div className={`${sidebarCollapsed ? 'w-12' : 'w-[20vw]'} bg-gradient-to-b from-black to-[#005778] border-r border-[#00699a] flex flex-col transition-all duration-300`}>
-        {/* Sidebar Header */}
-        <div className="p-4 border-b border-[#00699a] flex items-center justify-between">
-          {!sidebarCollapsed && (
-            <h3 className="text-xl font-bold text-white capitalize">
-              {editorMode === 'notebook' ? 'Jupyter Notebook' : 'Script Editor'}
-            </h3>
-          )}
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-1 text-gray-400 hover:text-white transition-colors duration-300"
-          >
-            <Folder size={20} />
-          </button>
-        </div>
+
 
         {!sidebarCollapsed && (
           <>
@@ -741,7 +728,7 @@ function CodeEditor({ isOpen, onClose, context, workingDirectory = '~', mode = '
                   ref={editorRef}
                   value={activeTabData.content}
                   onChange={(e) => updateTabContent(e.target.value)}
-                  className="flex-1 p-4 bg-black text-white font-mono text-sm resize-none outline-none custom-scrollbar"
+                  className="flex-1 p-4 bg-black text-white font-mono text-sm w-[100%] h-full resize-none outline-none custom-scrollbar"
                   style={{ 
                     lineHeight: '1.5',
                     tabSize: 2
