@@ -134,7 +134,7 @@ function App2() {
     <div className="min-h-screen bg-gradient-to-b from-[#006889] to-black overflow-hidden">
       <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black via-black to-[#00699a] h-16 text-white px-4 flex justify-between items-center shadow-lg">
         <h1 className="text-2xl md:text-4xl text-white [text-shadow:2px_2px_0px_#008aab,_-2px_-2px_2px_#000,_2px_-2px_2px_#000,_-2px_2px_0px_#008aab] [transform:scaleX(1.2)_translateX(2vw)]">
-        QUADRAX•ML
+        QUADRAX•VD
         </h1>
          {/* Search Bar */}
          <div className="flex mx-8">
@@ -157,7 +157,9 @@ function App2() {
           <span className="hidden md:inline">AI</span>
         </button>
         </div>
-        
+        <a id="badge" rel="url" href="https://bolt.new" target="_blank">
+      <img src="./src/images/white_circle_360x360.png" alt="Bolt badge" />
+    </a>
       </header>
       
       <main className="flex pt-16 h-screen">
